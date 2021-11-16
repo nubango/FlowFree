@@ -8,9 +8,9 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (_instance != null)
-        {
-            _instance.levelManager = levelManager;
-        }
+        //if (_instance != null)
+        //{
+        //    _instance.levelManager = levelManager;
+        //}
     }
 }
