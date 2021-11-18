@@ -392,7 +392,7 @@ MonoBehaviour:
   downWallThick: {fileID: 2186389542607717071}
   leftWallThick: {fileID: 5535568507732780993}
   rightWallThick: {fileID: 7711636503200964224}
-  num: 0
+  id: 0
 --- !u!1 &4194278096593016868
 GameObject:
   m_ObjectHideFlags: 0

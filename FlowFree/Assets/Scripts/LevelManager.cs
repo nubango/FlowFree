@@ -13,10 +13,5 @@ namespace Flow
         {
             boardManager.SetLevel();
         }
-
-        void Update()
-        {
-
-        }
     }
 }

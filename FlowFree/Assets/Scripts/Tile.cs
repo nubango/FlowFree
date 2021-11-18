@@ -9,42 +9,49 @@ namespace Flow
         [Header("SpriteRenderers")]
         public SpriteRenderer circle;
         public SpriteRenderer tick;
+        [Space]
         public SpriteRenderer upWallThin;
         public SpriteRenderer downWallThin;
         public SpriteRenderer leftWallThin;
         public SpriteRenderer rightWallThin;
+        [Space]
         public SpriteRenderer upWallThick;
         public SpriteRenderer downWallThick;
         public SpriteRenderer leftWallThick;
         public SpriteRenderer rightWallThick;
 
-        // DEBUG
-        public int num;
+        [HideInInspector]
+        public int id;
+
+        private Color _color;
 
 #if UNITY_EDITOR
         void Start()
         {
-            if (circle == null)
+            if (!circle || !tick || !upWallThin || !downWallThin || !leftWallThin || !rightWallThin ||
+                !upWallThick || !downWallThick || !leftWallThick || !rightWallThick)
             {
-                Debug.LogError("No me has dado el círculo, alma de cántaro");
+                Debug.LogError("No están asignados todos los SpriteRenderers");
             }
         }
 #endif
 
+        // Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
+
         public void SetColor(Color c)
         {
             circle.color = c;
-            _color = c;
+            //_color = c;
         }
 
-        public void EnableCircle()
+        public void SetCircle(bool active)
         {
-            circle.GetComponent<SpriteRenderer>().enabled = true;
+            circle.GetComponent<SpriteRenderer>().enabled = active;
         }
 
-        public void EnableTick()
+        public void SetTick(bool active)
         {
-            tick.GetComponent<SpriteRenderer>().enabled = true;
+            tick.GetComponent<SpriteRenderer>().enabled = active;
         }
 
         public void SetThinWalls(bool up, bool down, bool left, bool right)
@@ -62,8 +69,6 @@ namespace Flow
             leftWallThick.GetComponent<SpriteRenderer>().enabled = left;
             rightWallThick.GetComponent<SpriteRenderer>().enabled = right;
         }
-
-        private Color _color;
     }
 
 }

@@ -22,28 +22,33 @@ namespace Flow
         public void SetLevel()
         {
             _tiles = new Tile[5, 5];
-            int[] nums = { 1, 0, 2, 0, 3, 0, 0, 4, 0, 5, 0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 1, 4, 5, 0 };
+            // nivel "copiado" del #1
+            // 0: casilla vacia
+            // n>0: color, se asignan a pares
+            int[] fakeLevelIDs = { 1, 0, 2, 0, 3, 0, 0, 4, 0, 5, 0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 1, 4, 5, 0 };
 
-            for (int i = 0; i < 5; i++)
+            _width = _height = 5;
+
+            for (int i = 0; i < _width; i++)
             {
-                for (int j = 0; j < 5; j++)
+                for (int j = 0; j < _height; j++)
                 {
                     _tiles[i, j] = Instantiate(tilePrefab);
                     _tiles[i, j].gameObject.transform.SetParent(this.gameObject.transform);
                     _tiles[i, j].gameObject.transform.localPosition = new Vector2(j, -i);
 
-                    _tiles[i, j].num = nums[(i * 5) + j];
+                    _tiles[i, j].id = fakeLevelIDs[(i * 5) + j];
 
-                    if (_tiles[i, j].num != 0)
+                    if (_tiles[i, j].id != 0)
                     {
-                        _tiles[i, j].EnableCircle();
-                        _tiles[i, j].EnableTick();
+                        _tiles[i, j].SetCircle(true);
+                        _tiles[i, j].SetTick(true);
                     }
-                    _tiles[i, j].SetThinWalls(true, true, false, true);
+                    _tiles[i, j].SetThinWalls(true, true, true, true);
 
-                    _tiles[i, j].SetThickWalls(true, true, false, true);
+                    //_tiles[i, j].SetThickWalls(false, false, true, true);
 
-                    switch (_tiles[i, j].num)
+                    switch (_tiles[i, j].id)
                     {
                         case 1:
                             _tiles[i, j].SetColor(Color.red);
