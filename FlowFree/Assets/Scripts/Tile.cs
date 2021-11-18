@@ -10,6 +10,8 @@ namespace Flow
         [SerializeField]
         private SpriteRenderer circle;
 
+        // DEBUG
+        public int num;
 
 #if UNITY_EDITOR
         void Start()

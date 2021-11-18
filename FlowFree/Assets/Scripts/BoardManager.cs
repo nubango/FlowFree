@@ -22,16 +22,42 @@ namespace Flow
         public void SetLevel()
         {
             _tiles = new Tile[5, 5];
+            int[] nums = { 1, 0, 2, 0, 3, 0, 0, 4, 0, 5, 0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 1, 4, 5, 0 };
+
             for (int i = 0; i < 5; i++)
             {
                 for (int j = 0; j < 5; j++)
                 {
                     _tiles[i, j] = Instantiate(tilePrefab);
                     _tiles[i, j].gameObject.transform.SetParent(this.gameObject.transform);
-                    _tiles[i, j].gameObject.transform.localPosition = new Vector2(i, j);
+                    _tiles[i, j].gameObject.transform.localPosition = new Vector2(i,j);
 
-                    if ((i % 2) == 0)
-                        _tiles[i, j].SetColor(Color.cyan);
+                    _tiles[i, j].num = nums[(5 * i) + j];
+
+                    switch (_tiles[i, j].num)
+                    {
+                        case 0:
+                            _tiles[i, j].SetColor(Color.white);
+                            break;
+                        case 1:
+                            _tiles[i, j].SetColor(Color.red);
+
+                            break;
+                        case 2:
+                            _tiles[i, j].SetColor(Color.green);
+                            break;
+                        case 3:
+                            _tiles[i, j].SetColor(Color.yellow);
+                            break;
+                        case 4:
+                            _tiles[i, j].SetColor(Color.blue);
+                            break;
+                        case 5:
+                            _tiles[i, j].SetColor(Color.magenta);
+                            break;
+                    }
+                    //if ((i % 2) == 0)
+                    //    _tiles[i, j].SetColor(Color.cyan);
                 }
             }
         }
