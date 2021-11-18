@@ -34,11 +34,17 @@ namespace Flow
 
                     _tiles[i, j].num = nums[(i * 5) + j];
 
+                    if (_tiles[i, j].num != 0)
+                    {
+                        _tiles[i, j].EnableCircle();
+                        _tiles[i, j].EnableTick();
+                    }
+                    _tiles[i, j].SetThinWalls(true, true, false, true);
+
+                    _tiles[i, j].SetThickWalls(true, true, false, true);
+
                     switch (_tiles[i, j].num)
                     {
-                        case 0:
-                            _tiles[i, j].SetColor(Color.white);
-                            break;
                         case 1:
                             _tiles[i, j].SetColor(Color.red);
 
