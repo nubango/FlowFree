@@ -30,9 +30,9 @@ namespace Flow
                 {
                     _tiles[i, j] = Instantiate(tilePrefab);
                     _tiles[i, j].gameObject.transform.SetParent(this.gameObject.transform);
-                    _tiles[i, j].gameObject.transform.localPosition = new Vector2(i,j);
+                    _tiles[i, j].gameObject.transform.localPosition = new Vector2(j, -i);
 
-                    _tiles[i, j].num = nums[(5 * i) + j];
+                    _tiles[i, j].num = nums[(i * 5) + j];
 
                     switch (_tiles[i, j].num)
                     {
@@ -56,8 +56,6 @@ namespace Flow
                             _tiles[i, j].SetColor(Color.magenta);
                             break;
                     }
-                    //if ((i % 2) == 0)
-                    //    _tiles[i, j].SetColor(Color.cyan);
                 }
             }
         }
