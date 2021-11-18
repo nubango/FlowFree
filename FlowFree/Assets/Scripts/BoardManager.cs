@@ -6,13 +6,18 @@ namespace Flow
 {
     public class BoardManager : MonoBehaviour
     {
-        [Tooltip("Prefab del Tile")]
+        [Tooltip("Prefab de la casilla")]
         public Tile tilePrefab;
 
         private Tile[,] _tiles;
 
         private int _width;
         private int _height;
+
+        void Start()
+        {
+            transform.position = new Vector3(-2, 2, 0);
+        }
 
         public void SetMap(Logic.Map map)
         {
@@ -35,6 +40,7 @@ namespace Flow
                 {
                     _tiles[i, j] = Instantiate(tilePrefab);
                     _tiles[i, j].gameObject.transform.SetParent(this.gameObject.transform);
+                    // El Tile (0,0) esta en la esquina superior-izquierda del "grid"
                     _tiles[i, j].gameObject.transform.localPosition = new Vector2(j, -i);
 
                     _tiles[i, j].id = fakeLevelIDs[(i * 5) + j];
