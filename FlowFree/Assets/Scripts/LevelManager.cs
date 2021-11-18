@@ -6,13 +6,14 @@ namespace Flow
 {
     public class LevelManager : MonoBehaviour
     {
-        // Start is called before the first frame update
+        [Tooltip("Board Manager")]
+        public BoardManager boardManager;
+
         void Start()
         {
-
+            boardManager.SetLevel();
         }
 
-        // Update is called once per frame
         void Update()
         {
 

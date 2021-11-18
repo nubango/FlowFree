@@ -10,6 +10,7 @@ namespace Flow
         [SerializeField]
         private SpriteRenderer circle;
 
+
 #if UNITY_EDITOR
         void Start()
         {
@@ -22,6 +23,7 @@ namespace Flow
 
         public void SetColor(Color c)
         {
+            circle.color = c;
             _color = c;
         }
 

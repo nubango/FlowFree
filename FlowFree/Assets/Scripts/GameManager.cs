@@ -8,6 +8,9 @@ namespace Flow
     {
         public LevelManager levelManager;
 
+        [Header("DEBUG")]
+        public int currentLevel = 1;
+
         void Awake()
         {
             //if (_instance != null)
