@@ -9,6 +9,8 @@ namespace Flow
         [Header("SpriteRenderers")]
         public SpriteRenderer circle;
         public SpriteRenderer tick;
+        [Tooltip("Sprite ninepatch para dibujar el rastro")]
+        public SpriteRenderer trace;
         [Space]
         public SpriteRenderer upWallThin;
         public SpriteRenderer downWallThin;
@@ -28,7 +30,7 @@ namespace Flow
 #if UNITY_EDITOR
         void Start()
         {
-            if (!circle || !tick || !upWallThin || !downWallThin || !leftWallThin || !rightWallThin ||
+            if (!circle || !tick || !trace || !upWallThin || !downWallThin || !leftWallThin || !rightWallThin ||
                 !upWallThick || !downWallThick || !leftWallThick || !rightWallThick)
             {
                 Debug.LogError("No están asignados todos los SpriteRenderers");
@@ -68,6 +70,50 @@ namespace Flow
             downWallThick.GetComponent<SpriteRenderer>().enabled = down;
             leftWallThick.GetComponent<SpriteRenderer>().enabled = left;
             rightWallThick.GetComponent<SpriteRenderer>().enabled = right;
+        }
+
+
+        // Cambia el color del rastro
+        public void SetTraceColor(Color color)
+        {
+            trace.color = color;
+        }
+
+        
+        // Metodos para activar o desactivar el rastro 
+
+
+        public void SetUp(bool enabled)
+        {
+            trace.enabled = enabled;
+            // escalamos el ninepatch hacia arriba
+            trace.size = new Vector2(0.25f, 1.25f);
+            // reposicionamos para que quede centrado
+            trace.transform.localPosition = new Vector3(0, 0.5f, 0);
+        }
+        public void SetDown(bool enabled)
+        {
+            trace.enabled = enabled;
+            // escalamos el ninepatch hacia abajo
+            trace.size = new Vector2(0.25f, 1.25f);
+            // reposicionamos para que quede centrado
+            trace.transform.localPosition = new Vector3(0, -0.5f, 0);
+        }
+        public void SetLeft(bool enabled)
+        {
+            trace.enabled = enabled;
+            // escalamos el ninepatch hacia la izquierda
+            trace.size = new Vector2(1.25f, 0.25f);
+            // reposicionamos para que quede centrado
+            trace.transform.localPosition = new Vector3(-0.5f, 0, 0);
+        }
+        public void SetRight(bool enabled)
+        {
+            trace.enabled = enabled;
+            // escalamos el ninepatch hacia la derecha
+            trace.size = new Vector2(1.25f, 0.25f);
+            // reposicionamos para que quede centrado
+            trace.transform.localPosition = new Vector3(0.5f, 0, 0);
         }
     }
 
