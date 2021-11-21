@@ -333,6 +333,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circle: {fileID: 312584387}
+  tick: {fileID: 0}
+  trace: {fileID: 0}
+  upWallThin: {fileID: 0}
+  downWallThin: {fileID: 0}
+  leftWallThin: {fileID: 0}
+  rightWallThin: {fileID: 0}
+  upWallThick: {fileID: 0}
+  downWallThick: {fileID: 0}
+  leftWallThick: {fileID: 0}
+  rightWallThick: {fileID: 0}
+  id: 0
 --- !u!1 &1460266662
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,6 +389,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circle: {fileID: 1491503349}
+  tick: {fileID: 0}
+  trace: {fileID: 0}
+  upWallThin: {fileID: 0}
+  downWallThin: {fileID: 0}
+  leftWallThin: {fileID: 0}
+  rightWallThin: {fileID: 0}
+  upWallThick: {fileID: 0}
+  downWallThick: {fileID: 0}
+  leftWallThick: {fileID: 0}
+  rightWallThick: {fileID: 0}
+  id: 0
 --- !u!1 &1491503347
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,7 +497,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1977947666
 Transform:
   m_ObjectHideFlags: 0
