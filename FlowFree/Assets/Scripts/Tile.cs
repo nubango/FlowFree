@@ -85,6 +85,11 @@ namespace Flow
             trace.color = color;
         }
 
+        public Color GetTraceColor()
+        {
+            return trace.color;
+        }
+
 
         // Metodos para activar o desactivar el rastro 
 
@@ -98,6 +103,11 @@ namespace Flow
                 SetRight(true);
             else if(direction.x < 0)
                 SetLeft(true);
+        }
+
+        public void DesactiveTrace()
+        {
+            trace.enabled = false;
         }
 
         private void SetUp(bool enabled)

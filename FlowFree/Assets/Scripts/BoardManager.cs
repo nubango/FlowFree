@@ -25,10 +25,13 @@ namespace Flow
 
 
         // Contiene la posicion de la ultima pulsacion detectada
-        Vector2 _lastIndex;
+        private Vector2 _lastIndex;
 
         // Color actual del trazo
-        Color _colorTrace;
+        private Color _traceColor;
+
+        // flag para saber si se ha empezado en un circulo la pulsacion
+        private bool _correctPath = false;
         private void Update()
         {
             Vector3 unityPos = new Vector3(-1, -1);
@@ -55,10 +58,16 @@ namespace Flow
 
                 if (touch.phase == TouchPhase.Began && _tiles[(int)indexTile.y, (int)indexTile.x].IsCircleActive())
                 {
-                    _colorTrace = _tiles[(int)indexTile.y, (int)indexTile.x].GetColor();
+                    _traceColor = _tiles[(int)indexTile.y, (int)indexTile.x].GetColor();
                     _lastIndex = indexTile;
+                    _correctPath = true;
+                    foreach(Tile t in _tiles)
+                    {
+                        if (t.GetTraceColor() == _traceColor)
+                            t.DesactiveTrace();
+                    }
                 }
-                else if (touch.phase == TouchPhase.Moved)
+                else if (touch.phase == TouchPhase.Moved && _correctPath)
                 {
                     direction = touch.deltaPosition;
                     if (Mathf.Abs(touch.deltaPosition.x) > Mathf.Abs(touch.deltaPosition.y))
@@ -76,11 +85,17 @@ namespace Flow
 
                     if (!_tiles[(int)indexTile.y, (int)indexTile.x].IsCircleActive() && (_lastIndex.x != indexTile.x || _lastIndex.y != indexTile.y))
                     {
-                        _tiles[(int)_lastIndex.y, (int)_lastIndex.x].SetTraceColor(_colorTrace);
+                        _tiles[(int)_lastIndex.y, (int)_lastIndex.x].SetTraceColor(_traceColor);
                         _tiles[(int)_lastIndex.y, (int)_lastIndex.x].ActiveTrace(direction);
                         _lastIndex = indexTile;
                     }
+                    else if (_tiles[(int)indexTile.y, (int)indexTile.x].IsCircleActive() && (_lastIndex.x != indexTile.x || _lastIndex.y != indexTile.y))
+                    {
+                        _correctPath = false;
+                    }
                 }
+                else if (touch.phase == TouchPhase.Ended)
+                    _correctPath = false;
             }
         }
 
