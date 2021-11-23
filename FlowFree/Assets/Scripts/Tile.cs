@@ -90,6 +90,16 @@ namespace Flow
             return trace.color;
         }
 
+        public bool IsTraceActive()
+        {
+            return trace.enabled;
+        }
+
+        // Devuelve la direccion en la que esta activa el trazo
+        public Vector2 WhichDirectionIsTraceActive()
+        {
+            return trace.transform.localPosition;
+        }
 
         // Metodos para activar o desactivar el rastro 
 

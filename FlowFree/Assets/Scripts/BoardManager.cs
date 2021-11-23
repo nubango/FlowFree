@@ -32,17 +32,20 @@ namespace Flow
 
         // flag para saber si se ha empezado en un circulo la pulsacion
         private bool _correctPath = false;
+
+        private Stack<Vector2> traceStack = new Stack<Vector2>();
+
         private void Update()
         {
             Vector3 unityPos = new Vector3(-1, -1);
             Vector2 direction = new Vector2(0, 0);
             Vector3 touchPos;
             // Boton izquierdo del raton
-            if (Input.GetMouseButton(0))
-            {
-                touchPos = Input.mousePosition;
-                unityPos = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, Camera.main.nearClipPlane));
-            }
+            //if (Input.GetMouseButton(0))
+            //{
+            //    touchPos = Input.mousePosition;
+            //    unityPos = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, Camera.main.nearClipPlane));
+            //}
 
             // Input tactil
             if (Input.touchCount > 0)
@@ -83,8 +86,43 @@ namespace Flow
                         else direction.y = -1;
                     }
 
-                    if (!_tiles[(int)indexTile.y, (int)indexTile.x].IsCircleActive() && (_lastIndex.x != indexTile.x || _lastIndex.y != indexTile.y))
+                    if (_tiles[(int)indexTile.y, (int)indexTile.x].IsTraceActive() && (_lastIndex.x != indexTile.x || _lastIndex.y != indexTile.y))
                     {
+                        _tiles[(int)indexTile.y, (int)indexTile.x].DesactiveTrace();
+
+                        Vector2 position = traceStack.Pop();
+                        while (position.x != indexTile.x || position.y != indexTile.y)
+                        {
+                            _tiles[(int)position.y, (int)position.x].DesactiveTrace();
+                            position = traceStack.Pop();
+                        }
+
+                        _tiles[(int)position.y, (int)position.x].DesactiveTrace();
+
+                        // desactivamos los trazos en todas las direcciones
+                        if ((int)position.y - 1 > 0 && _tiles[(int)position.y - 1, (int)position.x].WhichDirectionIsTraceActive().y > 0)
+                        {
+                            _tiles[(int)position.y - 1, (int)position.x].DesactiveTrace();
+                        }
+                        else if ((int)position.y + 1 < _height && _tiles[(int)position.y - 1, (int)position.x].WhichDirectionIsTraceActive().y < 0)
+                        {
+                            _tiles[(int)position.y + 1, (int)position.x].DesactiveTrace();
+                        }
+                        else if ((int)position.x - 1 > 0 && _tiles[(int)position.y - 1, (int)position.x].WhichDirectionIsTraceActive().x > 0)
+                        {
+                            _tiles[(int)position.y, (int)position.x - 1].DesactiveTrace();
+                        }
+                        else if ((int)position.x + 1 < _width && _tiles[(int)position.y - 1, (int)position.x].WhichDirectionIsTraceActive().x < 0)
+                        {
+                            _tiles[(int)position.y, (int)position.x + 1].DesactiveTrace();
+                        }
+
+                    }
+
+                    else if (!_tiles[(int)indexTile.y, (int)indexTile.x].IsCircleActive() && (_lastIndex.x != indexTile.x || _lastIndex.y != indexTile.y))
+                    {
+                        traceStack.Push(indexTile);
+
                         _tiles[(int)_lastIndex.y, (int)_lastIndex.x].SetTraceColor(_traceColor);
                         _tiles[(int)_lastIndex.y, (int)_lastIndex.x].ActiveTrace(direction);
                         _lastIndex = indexTile;
@@ -98,6 +136,10 @@ namespace Flow
                     _correctPath = false;
             }
         }
+        /*
+        una pila donde se guardan las posiciones de las casillas por las que vas pasando (una por cada color) cada vez que se avanza se mete en la pila y si vuelve a una
+        posicion por la que ya se ha pasado, lo unico que hay que hacer es quitar posiciones de la pila correspondiente hasta que aparezca la casilla en cuestion
+         */
 
         /*
         Cuando pulso una casilla es como si cogiese el color de esa casilla (si tiene circulo de color) y lo arrastro por el tablero.
