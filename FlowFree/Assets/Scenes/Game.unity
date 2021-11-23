@@ -2053,7 +2053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.24313727, g: 0.24313727, b: 0.24313727, a: 0.392}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2842,6 +2842,18 @@ PrefabInstance:
       propertyPath: levelManager
       value: 
       objectReference: {fileID: 1665646020}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: currentPackage
+      value: 
+      objectReference: {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: levels.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: levels.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
     - target: {fileID: 4152030792916384848, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: m_Name
       value: GameManager
