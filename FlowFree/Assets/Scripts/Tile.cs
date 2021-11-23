@@ -25,8 +25,6 @@ namespace Flow
         [HideInInspector]
         public int id;
 
-        private Color _color;
-
 #if UNITY_EDITOR
         void Start()
         {
@@ -37,13 +35,21 @@ namespace Flow
             }
         }
 #endif
+        public bool IsCircleActive()
+        {
+            return circle.enabled;
+        }
+
+        public Color GetColor()
+        {
+            return circle.color;
+        }
 
         // Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
 
         public void SetColor(Color c)
         {
             circle.color = c;
-            //_color = c;
         }
 
         public void SetCircle(bool active)
@@ -79,11 +85,22 @@ namespace Flow
             trace.color = color;
         }
 
-        
+
         // Metodos para activar o desactivar el rastro 
 
+        public void ActiveTrace(Vector2 direction)
+        {
+            if (direction.y > 0)
+                SetUp(true);
+            else if(direction.y < 0)
+                SetDown(true);
+            else if(direction.x > 0)
+                SetRight(true);
+            else if(direction.x < 0)
+                SetLeft(true);
+        }
 
-        public void SetUp(bool enabled)
+        private void SetUp(bool enabled)
         {
             trace.enabled = enabled;
             // escalamos el ninepatch hacia arriba
@@ -91,7 +108,7 @@ namespace Flow
             // reposicionamos para que quede centrado
             trace.transform.localPosition = new Vector3(0, 0.5f, 0);
         }
-        public void SetDown(bool enabled)
+        private void SetDown(bool enabled)
         {
             trace.enabled = enabled;
             // escalamos el ninepatch hacia abajo
@@ -99,7 +116,7 @@ namespace Flow
             // reposicionamos para que quede centrado
             trace.transform.localPosition = new Vector3(0, -0.5f, 0);
         }
-        public void SetLeft(bool enabled)
+        private void SetLeft(bool enabled)
         {
             trace.enabled = enabled;
             // escalamos el ninepatch hacia la izquierda
@@ -107,7 +124,7 @@ namespace Flow
             // reposicionamos para que quede centrado
             trace.transform.localPosition = new Vector3(-0.5f, 0, 0);
         }
-        public void SetRight(bool enabled)
+        private void SetRight(bool enabled)
         {
             trace.enabled = enabled;
             // escalamos el ninepatch hacia la derecha
