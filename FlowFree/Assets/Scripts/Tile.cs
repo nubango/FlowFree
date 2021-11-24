@@ -25,6 +25,9 @@ namespace Flow
         [HideInInspector]
         public int id;
 
+        // Flag para saber si el tile es un extremo o no
+        private bool _isExtreme = false;
+
 #if UNITY_EDITOR
         void Start()
         {
@@ -35,9 +38,10 @@ namespace Flow
             }
         }
 #endif
-        public bool IsCircleActive()
+        // Metodo que devuelve TRUE si la casilla esta vacia y FALSE si tiene algun camino ya asignado
+        public bool IsEmpty()
         {
-            return circle.enabled;
+            return !circle.enabled && !trace.enabled;
         }
 
         public Color GetColor()
@@ -55,7 +59,16 @@ namespace Flow
         public void SetCircle(bool active)
         {
             circle.GetComponent<SpriteRenderer>().enabled = active;
+            _isExtreme = true;
         }
+
+        public void SetSmallCircle(bool active)
+        {
+            circle.GetComponent<SpriteRenderer>().enabled = active;
+            circle.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        }
+
+        public bool IsExtreme() { return _isExtreme; }
 
         public void SetTick(bool active)
         {
