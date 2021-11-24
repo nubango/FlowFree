@@ -8,7 +8,13 @@ namespace Flow
     {
         public LevelManager levelManager;
 
-        public LevelPack.LevelPackage[] levels;
+        [Header("Categories")]
+        public LevelPack.CategoryPackage intro;
+        public LevelPack.CategoryPackage manias;
+        public LevelPack.CategoryPackage rectangles;
+
+        [Header("Current Skin")]
+        public LevelPack.SkinPackage currentSkin;
 
         [Header("DEBUG")]
         public int currentLevel = 1;

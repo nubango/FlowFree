@@ -2839,6 +2839,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: intro
+      value: 
+      objectReference: {fileID: 11400000, guid: 29b43d53431c93c44b0d5fd1ef966ddf, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: manias
+      value: 
+      objectReference: {fileID: 11400000, guid: 112d67dbc353ee3419ec53ec728b941d, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: rectangles
+      value: 
+      objectReference: {fileID: 11400000, guid: ece4ec9d74a8a044ca81dfc02682237b, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: currentSkin
+      value: 
+      objectReference: {fileID: 11400000, guid: b15acc52678233e4da3dbe36f9751820, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: levelManager
       value: 
       objectReference: {fileID: 1665646020}
@@ -2847,13 +2863,73 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: intro.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: levels.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: manias.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: intro.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: intro.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 827f6dca96beb1649a36e3a68bcd796a, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: intro.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 73fa49eea0f34dd469690a0977457daf, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: intro.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: f653aab8060502842a3c76352504d071, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: levels.Array.data[0]
       value: 
       objectReference: {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: manias.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 14a05404cd7afe94da68cb5f1a1f1997, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: manias.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 74b100ce83cd8f8458e9d7de597ec9e0, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: manias.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 9797ce1df486a104f812baa8d4d4c89a, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: manias.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 89d6c74bd1188b94d909861b6f9bc92f, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: manias.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: 77ae7ef55c0c30046ab1ef8206a0e002, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: rectangles.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: rectangles.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 9469faedc45db384dad645ee66571f1c, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: rectangles.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 0c186988bd74a3b41b17a66038ed8361, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: rectangles.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 300abdf3cc891cb4592f37faa608884a, type: 2}
     - target: {fileID: 4152030792916384848, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: m_Name
       value: GameManager

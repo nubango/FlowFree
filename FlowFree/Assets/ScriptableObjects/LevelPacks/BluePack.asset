@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8afe75cc89a99e740ba03d4814c30353, type: 3}
-  m_Name: ClassicPack
+  m_Name: BluePack
   m_EditorClassIdentifier: 
-  packName: ClassicPack
-  maps: {fileID: 4900000, guid: 70a124d904dfc1745809b71886ab81be, type: 3}
+  packName: Blue Pack
+  maps: {fileID: 4900000, guid: c5708fd8620d4864c8ddf13ed361437d, type: 3}
