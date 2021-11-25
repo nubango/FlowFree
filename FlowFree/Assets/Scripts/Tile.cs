@@ -44,14 +44,15 @@ namespace Flow
             return !circle.enabled && !trace.enabled;
         }
 
-        public Color GetColor()
+        // devuelve el color del circulo
+        public Color GetCircleColor()
         {
             return circle.color;
         }
 
         // Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
 
-        public void SetColor(Color c)
+        public void SetCircleColor(Color c)
         {
             circle.color = c;
         }
@@ -68,6 +69,7 @@ namespace Flow
             circle.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
+        // Devuelve TRUE si es un extremo del path
         public bool IsExtreme() { return _isExtreme; }
 
         public void SetTick(bool active)
