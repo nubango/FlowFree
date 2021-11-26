@@ -120,9 +120,9 @@ namespace Flow
 
         public void ActiveTrace(Vector2 direction)
         {
-            if (direction.y > 0)
+            if (direction.y < 0)
                 SetUp(true);
-            else if(direction.y < 0)
+            else if(direction.y > 0)
                 SetDown(true);
             else if(direction.x > 0)
                 SetRight(true);

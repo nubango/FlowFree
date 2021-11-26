@@ -963,7 +963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 4194278096440219247, guid: 12a935c1bb7b7ab4589aea6cf841439c, type: 3}
-  circleFinguer: {fileID: 1281319378}
+  circleFinger: {fileID: 1281319378}
 --- !u!4 &658434043
 Transform:
   m_ObjectHideFlags: 0

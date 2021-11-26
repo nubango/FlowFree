@@ -9,7 +9,7 @@ namespace Flow
         [Tooltip("Prefab de la casilla")]
         public Tile tilePrefab;
 
-        public SpriteRenderer circleFinguer;
+        public SpriteRenderer circleFinger;
 
         private Tile[,] _tiles;
 
@@ -22,12 +22,12 @@ namespace Flow
         private Vector2 _lastIndex;
 
         // Color actual del trazo
-        private Color _traceColor;
+        private Color _currentTraceColor;
 
         private Stack<Coord>[] _traceStacks;
 
 
-        private Coord _firstPress;
+        private Coord _currentTilePress;
 
 
         private void Awake()
@@ -63,7 +63,7 @@ namespace Flow
             }
 
             public static bool operator ==(Coord a, Coord b) => (a.x == b.x && a.y == b.y);
-            public static bool operator !=(Coord a, Coord b) => (a.x != b.x && a.y != b.y);
+            public static bool operator !=(Coord a, Coord b) => (a.x != b.x || a.y != b.y);
             public static Coord operator -(Coord a, Coord b) => new Coord(a.x - b.x, a.y - b.y);
         }
         private bool ValidCoords(Coord coord)
@@ -95,130 +95,130 @@ namespace Flow
             return -1;
         }
 
+        // Metodo que activa un rastro en 
+        private void PutTraceInTile(Coord coord)
+        {
+            // Accedo al tile correspondiente a las coordenadas pasadas por parametro
+            Tile t = _tiles[coord.y, coord.x];
+            int indexTraceStack = GetColorIndex(_currentTraceColor);
+
+            // direccion en la que tenemos que activar el trace
+            Coord direction = _currentTilePress - coord;
+
+            t.SetTraceColor(_currentTraceColor);
+            t.ActiveTrace(new Vector2(direction.x, direction.y).normalized);
+        }
+
+        // Retrocede hasta la casilla correspondiente
+        private void BackToTile(Coord coord)
+        {
+            Tile t = _tiles[coord.y, coord.x];
+            int indexTraceStack = GetColorIndex(_currentTraceColor);
+
+            // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
+            Coord position = coord;
+            if (_traceStacks[indexTraceStack].Count > 0)
+                position = _traceStacks[indexTraceStack].Pop();
+
+            while (position != coord && _traceStacks[indexTraceStack].Count > 0)
+            {
+                _tiles[position.y, position.x].DesactiveTrace();
+                position = _traceStacks[indexTraceStack].Pop();
+            }
+        }
+
+        /*
+         Los tiles con circulos grandes tienen que tener mismo color en el trace
+         */
+
         // Metodo que ocurre cuando se pulsa la pantalla
         private void TouchDown(Vector2 touchPos)
         {
             // Transformamos la coordenada de la pantalla a coordenadas de unity
             Vector2 unityPos = Camera.main.ScreenToWorldPoint(touchPos);
 
-            // Este redondeo se esta haciendo regular por que las pulsaciones no coinciden bien con los tiles
+            // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
             Coord indexTile = new Coord((int)Mathf.Round(unityPos.x), (int)Mathf.Round(-unityPos.y));
             if (!ValidCoords(indexTile))
                 return;
+            Debug.Log(indexTile.x + " " + indexTile.y);
 
             Tile tile = _tiles[indexTile.y, indexTile.x];
             // Si pulsamos en una casilla con color
             if (!tile.IsEmpty())
             {
                 // Asigno el color 
-                _traceColor = tile.GetCircleColor();
-                int indexColor = GetColorIndex(_traceColor);
+                _currentTraceColor = tile.GetTraceColor();
+                int indexTraceStack = GetColorIndex(_currentTraceColor);
 
                 // Activamos el circulo en la posicion pulsada con el color correspondiente
-                circleFinguer.enabled = true;
-                circleFinguer.color = new Color(_traceColor.r, _traceColor.g, _traceColor.b, 0.5f);
-                circleFinguer.transform.position = new Vector3(unityPos.x, unityPos.y, 0);
+                circleFinger.enabled = true;
+                circleFinger.color = new Color(_currentTraceColor.r, _currentTraceColor.g, _currentTraceColor.b, 0.5f);
+                circleFinger.transform.position = new Vector3(unityPos.x, unityPos.y, 0);
 
-                _firstPress = indexTile;
+                _currentTilePress = indexTile;
 
                 // Desactivo las casillas que estan despues de esta
-                while (_traceStacks[indexColor].Count > 0 && _traceStacks[indexColor].Peek() != indexTile)
-                {
-                    Coord c = _traceStacks[indexColor].Pop();
-                    _tiles[c.y, c.x].DesactiveTrace();
-                }
+                BackToTile(indexTile);
+
+                // Si la casilla que hemos pulsado no esta en la pila, la metemos
+                if (!_traceStacks[indexTraceStack].Contains(indexTile))
+                    _traceStacks[indexTraceStack].Push(indexTile);
             }
-        }
-
-        private void PutTraceInTile(Coord coord)
-        {
-            // Accedo al tile correspondiente a las coordenadas pasadas por parametro
-            Tile t = _tiles[coord.y, coord.x];
-            int index = GetColorIndex(t.GetTraceColor());
-
-            Coord lastIndex = _firstPress;
-
-            if (_traceStacks[index].Count > 0)
-                // calculo la direccion en la que tengo que activar el rastro, la contraria a la del movimiento porque se activa el rastro de la casilla nueva
-                lastIndex = _traceStacks[index].Peek();
-
-            Coord direction = lastIndex - coord;
-
-            // Asigno el color y activo el rastro
-            _tiles[coord.y, coord.x].SetTraceColor(_traceColor);
-            _tiles[coord.y, coord.x].ActiveTrace(new Vector2(direction.x, direction.y));
-
-            // Introduzco a la pila de posiciones la nueva coordenada
-            _traceStacks[index].Push(coord);
-        }
-
-        private void BackToTile(Coord coord)
-        {
-            Tile t = _tiles[coord.y, coord.x];
-            int index = GetColorIndex(t.GetTraceColor());
-
-            // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
-            Coord position = _traceStacks[index].Pop();
-            while (position != coord)
-            {
-                _tiles[position.y, position.x].DesactiveTrace();
-                position = _traceStacks[index].Pop();
-            }
-
-            _tiles[position.y, position.x].DesactiveTrace();
         }
 
         // Metodo que ocurre cuando se mueve la pulsacion por la pantalla
         private void TouchDrag(Vector2 dragPos)
         {
             // si no hemos pulsado en ningun color no hacemos nada
-            if (!circleFinguer.enabled)
+            if (!circleFinger.enabled)
                 return;
 
             // Transformamos la coordenada de la pantalla a coordenadas de unity
             Vector2 unityPos = Camera.main.ScreenToWorldPoint(dragPos);
             // ponemos el circulo grande en la posicion de contacto
-            circleFinguer.transform.position = new Vector3(unityPos.x, unityPos.y, 0);
+            circleFinger.transform.position = new Vector3(unityPos.x, unityPos.y, 0);
 
-            // estamos dentro de los limites del tablero?
-            Coord indexTile = new Coord((int)unityPos.x, (int)-unityPos.y);
-            if (indexTile.x < 0 || indexTile.y < 0 || indexTile.x >= _width || indexTile.y >= _height)
+            // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
+            Coord indexTile = new Coord((int)Mathf.Round(unityPos.x), (int)Mathf.Round(-unityPos.y));
+            if (!ValidCoords(indexTile))
                 return;
 
-            // obtenemos el tile pulsado
+            // obtenemos el tile pulsado y le asignamos el color
             Tile tile = _tiles[indexTile.y, indexTile.x];
-            int indexTraceStack = GetColorIndex(tile.GetCircleColor());
+            int indexTraceStack = GetColorIndex(_currentTraceColor);
 
-            // comprobamos si el tile es el final del path
-            if (tile.IsExtreme() && _traceStacks[indexTraceStack].Count > 0 && !_traceStacks[indexTraceStack].Contains(indexTile))
+            // Si todavia estamos en el mismo tile no pintamos nada
+            if (indexTile == _currentTilePress)
+                return;
+
+            // Si estamos en un tile por el que ya hemos pasado eliminamos los trace posteriores a ese tile
+            if (_traceStacks[indexTraceStack].Contains(indexTile))
             {
-                // animacion de los circulitos
-            }
-            // si tiene activado un trace (ya hemos pasado por aqui)
-            else if (tile.IsTraceActive())
-            {
-                // recolocamos el path del antiguo color
                 BackToTile(indexTile);
+                _currentTilePress = indexTile;
+                return;
             }
 
-            // cambiamos de color
-            tile.SetTraceColor(_traceColor);
-
-            // "pulsamos" el tile (pintamos rastro correspondiente)
             PutTraceInTile(indexTile);
+
+            _traceStacks[indexTraceStack].Push(indexTile);
+            _currentTilePress = indexTile;
+
         }
 
         // Metodo que ocurre cuando se deja de pulsar la pantalla
         private void TouchRelease(Vector2 dragPos)
         {
             // quitamos el circulo grande
-            circleFinguer.enabled = false;
+            circleFinger.enabled = false;
             // ponemos el circulo pequeño al ultimo tile presionado
             // comprobamos si hemos ganado
         }
 
         private void Update()
         {
+#if !UNITY_EDITOR && (UNITY_ANDROID)
             if (Input.touchCount > 0)
             {
                 Touch touch = Input.GetTouch(0);
@@ -237,6 +237,17 @@ namespace Flow
                         break;
                 }
             }
+#else
+            //Lo acabamos de pulsar
+            if (Input.GetMouseButtonDown(0))
+                TouchDown(Input.mousePosition);
+            //Lo estamos pulsando
+            else if (Input.GetMouseButton(0))
+                TouchDrag(Input.mousePosition);
+            //Lo acabamos de soltar
+            else if (Input.GetMouseButtonUp(0))
+                TouchRelease(Input.mousePosition);
+#endif
         }
         /*
         una pila donde se guardan las posiciones de las casillas por las que vas pasando (una por cada color) cada vez que se avanza se mete en la pila y si vuelve a una
@@ -298,18 +309,23 @@ namespace Flow
                     {
                         case 1:
                             _tiles[i, j].SetCircleColor(Color.red);
+                            _tiles[i, j].SetTraceColor(Color.red);
                             break;
                         case 2:
                             _tiles[i, j].SetCircleColor(Color.green);
+                            _tiles[i, j].SetTraceColor(Color.green);
                             break;
                         case 3:
                             _tiles[i, j].SetCircleColor(Color.yellow);
+                            _tiles[i, j].SetTraceColor(Color.yellow);
                             break;
                         case 4:
                             _tiles[i, j].SetCircleColor(Color.blue);
+                            _tiles[i, j].SetTraceColor(Color.blue);
                             break;
                         case 5:
                             _tiles[i, j].SetCircleColor(Color.magenta);
+                            _tiles[i, j].SetTraceColor(Color.magenta);
                             break;
                     }
                 }
