@@ -100,7 +100,6 @@ namespace Flow
         {
             // Accedo al tile correspondiente a las coordenadas pasadas por parametro
             Tile t = _tiles[coord.y, coord.x];
-            int indexTraceStack = GetColorIndex(_currentTraceColor);
 
             // direccion en la que tenemos que activar el trace
             Coord direction = _currentTilePress - coord;
@@ -113,14 +112,14 @@ namespace Flow
         private void BackToTile(Coord coord)
         {
             Tile t = _tiles[coord.y, coord.x];
-            int indexTraceStack = GetColorIndex(_currentTraceColor);
+            int indexTraceStack = GetColorIndex(t.GetTraceColor());
 
             // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
             Coord position = coord;
             if (_traceStacks[indexTraceStack].Count > 0)
                 position = _traceStacks[indexTraceStack].Peek();
 
-            while ((position != coord || t.IsExtreme()) && _traceStacks[indexTraceStack].Count > 0)
+            while ((position != coord || t.IsEnd()) && _traceStacks[indexTraceStack].Count > 0)
             {
                 _traceStacks[indexTraceStack].Pop();
                 _tiles[position.y, position.x].DesactiveTrace();
@@ -129,15 +128,16 @@ namespace Flow
                     position = _traceStacks[indexTraceStack].Peek();
             }
 
-            //_tiles[position.y, position.x].DesactiveTrace();
+            if (_currentTraceColor != t.GetTraceColor())
+            {
+                _traceStacks[indexTraceStack].Pop();
+                PutTraceInTile(coord);
 
-            //if (_traceStacks[indexTraceStack].Count > 1)
-            //    _traceStacks[indexTraceStack].Push(position);
+                indexTraceStack = GetColorIndex(_currentTraceColor);
+                _traceStacks[indexTraceStack].Push(coord);
+                _currentTilePress = coord;
+            }
         }
-
-        /*
-         Los tiles con circulos grandes tienen que tener mismo color en el trace
-         */
 
         // Metodo que ocurre cuando se pulsa la pantalla
         private void TouchDown(Vector2 touchPos)
@@ -153,7 +153,7 @@ namespace Flow
 
             Tile tile = _tiles[indexTile.y, indexTile.x];
             // Si pulsamos en una casilla con color
-            if (!tile.IsEmpty())
+            if (tile.IsTraceActive() || tile.IsEnd())
             {
                 // Asigno el color 
                 _currentTraceColor = tile.GetTraceColor();
@@ -201,7 +201,7 @@ namespace Flow
                 return;
 
             // Si estamos en un tile por el que ya hemos pasado eliminamos los trace posteriores a ese tile
-            if (_traceStacks[indexTraceStack].Contains(indexTile))
+            if (tile.IsTraceActive() || tile.IsEnd())
             {
                 BackToTile(indexTile);
                 _currentTilePress = indexTile;

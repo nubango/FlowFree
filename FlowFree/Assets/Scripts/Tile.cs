@@ -7,7 +7,7 @@ namespace Flow
     public class Tile : MonoBehaviour
     {
         [Header("SpriteRenderers")]
-        public SpriteRenderer circle;
+        public SpriteRenderer circleEnd;
         public SpriteRenderer tick;
         [Tooltip("Sprite ninepatch para dibujar el rastro")]
         public SpriteRenderer trace;
@@ -25,76 +25,97 @@ namespace Flow
         [HideInInspector]
         public int id;
 
-        // Flag para saber si el tile es un extremo o no
-        private bool _isExtreme = false;
-
 #if UNITY_EDITOR
         void Start()
         {
-            if (!circle || !tick || !trace || !upWallThin || !downWallThin || !leftWallThin || !rightWallThin ||
+            if (!circleEnd || !tick || !trace || !upWallThin || !downWallThin || !leftWallThin || !rightWallThin ||
                 !upWallThick || !downWallThick || !leftWallThick || !rightWallThick)
             {
                 Debug.LogError("No están asignados todos los SpriteRenderers");
             }
         }
 #endif
-        // Metodo que devuelve TRUE si la casilla esta vacia y FALSE si tiene algun camino ya asignado
-        public bool IsEmpty()
-        {
-            return !circle.enabled && !trace.enabled;
-        }
 
-        // devuelve el color del circulo
+        /// <summary>
+        /// devuelve el color del circulo
+        /// </summary>
+        /// <returns></returns>
         public Color GetCircleColor()
         {
-            return circle.color;
+            return circleEnd.color;
         }
 
-        // Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
-
+        /// <summary>
+        /// Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
+        /// </summary>
+        /// <param name="c"></param>
         public void SetCircleColor(Color c)
         {
-            circle.color = c;
+            circleEnd.color = c;
         }
 
+        /// <summary>
+        /// Activa/desactiva el circulo (extremo) en una casilla
+        /// </summary>
+        /// <param name="active"></param>
         public void SetCircle(bool active)
         {
-            circle.GetComponent<SpriteRenderer>().enabled = active;
-            _isExtreme = true;
+            circleEnd.enabled = active;
         }
 
+        /// <summary>
+        /// Activa/desactiva el circulo pequeño de la ultima casilla del rastro
+        /// </summary>
+        /// <param name="active"></param>
         public void SetSmallCircle(bool active)
         {
-            circle.GetComponent<SpriteRenderer>().enabled = active;
-            circle.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            circleEnd.GetComponent<SpriteRenderer>().enabled = active;
+            circleEnd.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
-        // Devuelve TRUE si es un extremo del path
-        public bool IsExtreme() { return _isExtreme; }
+        /// <summary>
+        /// Devuelve TRUE si es el final del path
+        /// </summary>
+        /// <returns></returns>
+        public bool IsEnd() { return circleEnd.enabled; }
 
+        /// <summary>
+        /// Activa/desactiva el sprite del Tick 
+        /// </summary>
+        /// <param name="active"></param>
         public void SetTick(bool active)
         {
-            tick.GetComponent<SpriteRenderer>().enabled = active;
+            tick.enabled = active;
         }
 
+        /// <summary>
+        /// Activa/desactiva los bordes verdes de las casillas
+        /// </summary>
+        /// <param name="up"></param>
+        /// <param name="down"></param>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
         public void SetThinWalls(bool up, bool down, bool left, bool right)
         {
-            upWallThin.GetComponent<SpriteRenderer>().enabled = up;
-            downWallThin.GetComponent<SpriteRenderer>().enabled = down;
-            leftWallThin.GetComponent<SpriteRenderer>().enabled = left;
-            rightWallThin.GetComponent<SpriteRenderer>().enabled = right;
+            upWallThin.enabled = up;
+            downWallThin.enabled = down;
+            leftWallThin.enabled = left;
+            rightWallThin.enabled = right;
         }
 
         public void SetThickWalls(bool up, bool down, bool left, bool right)
         {
-            upWallThick.GetComponent<SpriteRenderer>().enabled = up;
-            downWallThick.GetComponent<SpriteRenderer>().enabled = down;
-            leftWallThick.GetComponent<SpriteRenderer>().enabled = left;
-            rightWallThick.GetComponent<SpriteRenderer>().enabled = right;
+            upWallThick.enabled = up;
+            downWallThick.enabled = down;
+            leftWallThick.enabled = left;
+            rightWallThick.enabled = right;
         }
 
 
-        // Cambia el color del rastro
+        /// <summary>
+        /// Cambia el color del rastro
+        /// </summary>
+        /// <param name="color"></param>
         public void SetTraceColor(Color color)
         {
             trace.color = color;
@@ -105,28 +126,39 @@ namespace Flow
             return trace.color;
         }
 
+        /// <summary>
+        /// TRUE si esta activaso el rastro, FALSE en caso contrario
+        /// </summary>
+        /// <returns></returns>
         public bool IsTraceActive()
         {
             return trace.enabled;
         }
 
-        // Devuelve la direccion en la que esta activa el trazo
+        /// <summary>
+        /// Devuelve la direccion en la que esta activa el trazo
+        /// </summary>
+        /// <returns></returns>
         public Vector2 WhichDirectionIsTraceActive()
         {
             return trace.transform.localPosition;
         }
 
-        // Metodos para activar o desactivar el rastro 
+        /* -Metodos para activar o desactivar el rastro- */
 
+        /// <summary>
+        /// Activa el trazo en la direccion pasada por parametro
+        /// </summary>
+        /// <param name="direction"></param>
         public void ActiveTrace(Vector2 direction)
         {
             if (direction.y < 0)
                 SetUp(true);
-            else if(direction.y > 0)
+            else if (direction.y > 0)
                 SetDown(true);
-            else if(direction.x > 0)
+            else if (direction.x > 0)
                 SetRight(true);
-            else if(direction.x < 0)
+            else if (direction.x < 0)
                 SetLeft(true);
         }
 

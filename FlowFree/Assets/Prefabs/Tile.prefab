@@ -548,7 +548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b1acfa6ef961ae4fa8709b5b1fc59a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circle: {fileID: 4194278096776336494}
+  circleEnd: {fileID: 4194278096776336494}
   tick: {fileID: 4194278096593016870}
   trace: {fileID: 1722383475}
   upWallThin: {fileID: 1582453134480859549}
