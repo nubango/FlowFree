@@ -118,13 +118,21 @@ namespace Flow
             // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
             Coord position = coord;
             if (_traceStacks[indexTraceStack].Count > 0)
-                position = _traceStacks[indexTraceStack].Pop();
+                position = _traceStacks[indexTraceStack].Peek();
 
-            while (position != coord && _traceStacks[indexTraceStack].Count > 0)
+            while ((position != coord || t.IsExtreme()) && _traceStacks[indexTraceStack].Count > 0)
             {
+                _traceStacks[indexTraceStack].Pop();
                 _tiles[position.y, position.x].DesactiveTrace();
-                position = _traceStacks[indexTraceStack].Pop();
+
+                if (_traceStacks[indexTraceStack].Count > 0)
+                    position = _traceStacks[indexTraceStack].Peek();
             }
+
+            //_tiles[position.y, position.x].DesactiveTrace();
+
+            //if (_traceStacks[indexTraceStack].Count > 1)
+            //    _traceStacks[indexTraceStack].Push(position);
         }
 
         /*
