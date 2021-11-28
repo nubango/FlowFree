@@ -239,10 +239,12 @@ namespace Flow
                 return;
             }
 
+            // pintamos el tile y lo metemos en la pila correspondiente
             PutTraceInTile(indexTile);
             _traceStacks[indexTraceStack].Push(indexTile);
             _currentTilePress = indexTile;
 
+            // Si hemos llegado al final lo notificamos para no seguir pintando 
             if (tile.IsEnd())
                 _isDiffEnd = true;
         }
