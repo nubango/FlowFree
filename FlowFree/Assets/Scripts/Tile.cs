@@ -40,7 +40,7 @@ namespace Flow
         /// devuelve el color del circulo
         /// </summary>
         /// <returns></returns>
-        public Color GetCircleColor()
+        public Color GetColor()
         {
             return circleEnd.color;
         }
@@ -49,9 +49,10 @@ namespace Flow
         /// Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
         /// </summary>
         /// <param name="c"></param>
-        public void SetCircleColor(Color c)
+        public void SetColor(Color c)
         {
             circleEnd.color = c;
+            trace.color = c;
         }
 
         /// <summary>
@@ -109,21 +110,6 @@ namespace Flow
             downWallThick.enabled = down;
             leftWallThick.enabled = left;
             rightWallThick.enabled = right;
-        }
-
-
-        /// <summary>
-        /// Cambia el color del rastro
-        /// </summary>
-        /// <param name="color"></param>
-        public void SetTraceColor(Color color)
-        {
-            trace.color = color;
-        }
-
-        public Color GetTraceColor()
-        {
-            return trace.color;
         }
 
         /// <summary>
