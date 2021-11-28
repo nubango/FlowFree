@@ -220,13 +220,10 @@ namespace Flow
 
             // Si todavia estamos en el mismo tile no pintamos nada
             if (indexTile == _currentTilePress)
-            {
-                //_isDiffEnd = false;
                 return;
-            }
 
             // Si es un final de color distinto al que tenemos, no pintamos rastro
-            if ((tile.GetColor() != _currentTraceColor && tile.IsEnd()) || (_isDiffEnd && tile.GetColor() != _currentTraceColor))
+            if ((tile.GetColor() != _currentTraceColor && tile.IsEnd()) || _isDiffEnd)
             {
                 _isDiffEnd = true;
                 return;
