@@ -51,10 +51,10 @@ namespace Flow.Logic
                 for (int i = 0; i < murosS.Length; i++)
                     muros.Add(murosS[i]);
             }
-            tuberias
+            //tuberias
             for(int i = 7; i < provisional.Length; i++) //vale provisional.Leght y flujos
             {
-                tuberias = tuberias
+                tuberias = tuberias;
             }
             return false;
         }
