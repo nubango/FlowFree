@@ -29,6 +29,7 @@ namespace Flow
 
         // Flag para no pintar despues de los extremos
         private bool _isDiffEnd = false;
+        private bool _isEndPath = false;
 
         private void Awake()
         {
@@ -162,12 +163,12 @@ namespace Flow
             Coord indexTile = new Coord((int)Mathf.Round(unityPos.x), (int)Mathf.Round(-unityPos.y));
             if (!ValidCoords(indexTile))
                 return;
-            Debug.Log(indexTile.x + " " + indexTile.y);
 
             Tile tile = _tiles[indexTile.y, indexTile.x];
             // Si pulsamos en una casilla con color
             if (tile.IsTraceActive() || tile.IsEnd())
             {
+                _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(false);
                 _isDiffEnd = false;
                 // Asigno el color 
                 _currentTraceColor = tile.GetColor();
@@ -246,7 +247,10 @@ namespace Flow
 
             // Si hemos llegado al final lo notificamos para no seguir pintando 
             if (tile.IsEnd())
+            {
                 _isDiffEnd = true;
+                _isEndPath = true;
+            }
         }
 
         /// <summary>
@@ -258,6 +262,17 @@ namespace Flow
             // quitamos el circulo grande
             circleFinger.enabled = false;
             // ponemos el circulo pequeño al ultimo tile presionado
+            if (_isEndPath)
+            {
+                Debug.Log("Camino " + _currentTraceColor + " acabado");
+                // animacion correspondiente
+                _isEndPath = false;
+            }
+            else
+            {
+                _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(true);
+            }
+
             // comprobamos si hemos ganado
         }
 
@@ -323,7 +338,7 @@ namespace Flow
 
                     if (_tiles[i, j].id != 0)
                     {
-                        _tiles[i, j].SetCircle(true);
+                        _tiles[i, j].SetCircleEnd(true);
                         _tiles[i, j].SetTick(true);
                     }
                     _tiles[i, j].SetThinWalls(true, true, true, true);

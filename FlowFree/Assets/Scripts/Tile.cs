@@ -8,6 +8,7 @@ namespace Flow
     {
         [Header("SpriteRenderers")]
         public SpriteRenderer circleEnd;
+        public SpriteRenderer circleTrace;
         public SpriteRenderer tick;
         [Tooltip("Sprite ninepatch para dibujar el rastro")]
         public SpriteRenderer trace;
@@ -52,6 +53,7 @@ namespace Flow
         public void SetColor(Color c)
         {
             circleEnd.color = c;
+            circleTrace.color = c;
             trace.color = c;
         }
 
@@ -59,9 +61,18 @@ namespace Flow
         /// Activa/desactiva el circulo (extremo) en una casilla
         /// </summary>
         /// <param name="active"></param>
-        public void SetCircle(bool active)
+        public void SetCircleEnd(bool active)
         {
             circleEnd.enabled = active;
+        }
+        
+        /// <summary>
+        /// Activa/desactiva el circulo del rastro en una casilla (cuando un rastro se queda a mitad)
+        /// </summary>
+        /// <param name="active"></param>
+        public void SetCircleTrace(bool active)
+        {
+            circleTrace.enabled = active;
         }
 
         /// <summary>
