@@ -213,7 +213,7 @@ namespace Flow
         {
             // quitamos el circulo grande
             circleFinguer.enabled = false;
-            // ponemos el circulo pequeño al ultimo tile presionado
+            // ponemos el circulo pequeï¿½o al ultimo tile presionado
             // comprobamos si hemos ganado
         }
 

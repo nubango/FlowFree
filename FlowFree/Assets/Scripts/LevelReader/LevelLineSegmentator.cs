@@ -4,7 +4,26 @@ using UnityEngine;
 
 public class LevelLineSegmentator : MonoBehaviour
 {
-    string line;
+   /* 
+    struct paquetes
+    {
+        mapa[];
+    }
+    struct mapa
+    {
+        line[];
+    }
+    struct line
+    {
+        string linea;
+        int ancho;
+        int alto;
+    }
+
+    transformador.cs*/
+
+
+    //string line;
     char [] segments;
 
     //hasta el 14 son 4 digitos, tambien el w1-1 = dimension,0,levelnumber,tuberiasNumber;
@@ -33,3 +52,28 @@ public class LevelLineSegmentator : MonoBehaviour
     }
 
 }
+
+//crear una clase no monobehaviour ke condensa la info de un mapa y se abstraiga de como funciona
+    /*
+     * 
+    public TextAsset [] levels;
+    void start{
+       //levels.ToString();
+        
+    }
+
+
+
+        [System.Serializable]
+    public struct level{
+    }
+
+
+    
+    
+
+
+
+
+
+     */
