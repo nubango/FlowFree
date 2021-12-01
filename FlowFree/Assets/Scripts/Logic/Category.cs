@@ -7,8 +7,17 @@ namespace Flow.Logic
     public class Category
     {
         [Tooltip("Color de la categoria")]
-        public Color categoryColor;
+        private Color _categoryColor;
         [Tooltip("Paquetes de la categoria")]
-        public Level[] levels;
+        private Package[] _packages;
+
+        public Category(Package[] packages, Color color)
+        {
+            _packages = packages;
+            _categoryColor = color;
+        }
+
+        public Package[] GetLevels() { return _packages; }
+        public Color GetColor() { return _categoryColor; }
     }
 }

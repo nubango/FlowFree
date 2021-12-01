@@ -81,7 +81,7 @@ namespace Flow
         /// <param name="active"></param>
         public void SetSmallCircle(bool active)
         {
-            circleEnd.GetComponent<SpriteRenderer>().enabled = active;
+            circleEnd.enabled = active;
             circleEnd.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         }
 

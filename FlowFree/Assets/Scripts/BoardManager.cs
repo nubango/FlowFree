@@ -98,7 +98,7 @@ namespace Flow
             return -1;
         }
 
-        // Metodo que activa un rastro en 
+        // Metodo que activa un rastro en la posicion indicada
         private void PutTraceInTile(Coord coord)
         {
             // Accedo al tile correspondiente a las coordenadas pasadas por parametro
@@ -109,6 +109,7 @@ namespace Flow
 
             if (!t.IsEnd())
                 t.SetColor(_currentTraceColor);
+
             t.ActiveTrace(new Vector2(direction.x, direction.y).normalized);
         }
 
@@ -156,11 +157,8 @@ namespace Flow
         /// <param name="touchPos"></param>
         private void TouchDown(Vector2 touchPos)
         {
-            // Transformamos la coordenada de la pantalla a coordenadas de unity
-            Vector2 unityPos = Camera.main.ScreenToWorldPoint(touchPos);
-
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
-            Coord indexTile = new Coord((int)Mathf.Round(unityPos.x), (int)Mathf.Round(-unityPos.y));
+            Coord indexTile = new Coord((int)Mathf.Round(touchPos.x), (int)Mathf.Round(-touchPos.y));
             if (!ValidCoords(indexTile))
                 return;
 
@@ -177,7 +175,7 @@ namespace Flow
                 // Activamos el circulo en la posicion pulsada con el color correspondiente
                 circleFinger.enabled = true;
                 circleFinger.color = new Color(_currentTraceColor.r, _currentTraceColor.g, _currentTraceColor.b, 0.5f);
-                circleFinger.transform.position = new Vector3(unityPos.x, unityPos.y, 0);
+                circleFinger.transform.position = new Vector3(touchPos.x, touchPos.y, 0);
 
                 _currentTilePress = indexTile;
 
@@ -202,13 +200,11 @@ namespace Flow
             if (!circleFinger.enabled)
                 return;
 
-            // Transformamos la coordenada de la pantalla a coordenadas de unity
-            Vector2 unityPos = Camera.main.ScreenToWorldPoint(dragPos);
             // ponemos el circulo grande en la posicion de contacto
-            circleFinger.transform.position = new Vector3(unityPos.x, unityPos.y, 0);
+            circleFinger.transform.position = new Vector3(dragPos.x, dragPos.y, 0);
 
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
-            Coord indexTile = new Coord((int)Mathf.Round(unityPos.x), (int)Mathf.Round(-unityPos.y));
+            Coord indexTile = new Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
             if (!ValidCoords(indexTile))
             {
                 _isDiffEnd = true;
@@ -231,7 +227,6 @@ namespace Flow
             }
 
             // Si estamos en un tile por el que ya hemos pasado o el camino contiene esa casilla eliminamos los trace posteriores a ese tile
-            //if (tile.IsTraceActive())
             if ((tile.IsTraceActive()) || _traceStacks[indexTraceStack].Contains(indexTile))
             {
                 _isDiffEnd = false;
@@ -267,47 +262,58 @@ namespace Flow
                 Debug.Log("Camino " + _currentTraceColor + " acabado");
                 // animacion correspondiente
                 _isEndPath = false;
+
+                // comprobamos si hemos ganado
             }
             else
             {
                 _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(true);
             }
 
-            // comprobamos si hemos ganado
         }
 
         private void Update()
         {
-#if !UNITY_EDITOR && (UNITY_ANDROID)
+            ProcessInput();
+        }
+
+        private void ProcessInput()
+        {
+            bool press = false, drag = false, release = false;
+            Vector2 pos = new Vector2(0, 0);
+
+#if !UNITY_EDITOR && UNITY_ANDROID
             if (Input.touchCount > 0)
             {
                 Touch touch = Input.GetTouch(0);
-                switch (touch.phase)
-                {
-                    case TouchPhase.Began:
-                        TouchDown(touch.position);
-                        break;
-                    case TouchPhase.Moved:
-                        TouchDrag(touch.position);
-                        break;
-                    case TouchPhase.Ended:
-                        TouchRelease(touch.position);
-                        break;
-                    default:
-                        break;
-                }
+
+                press = touch.phase == TouchPhase.Began;
+                drag = touch.phase == TouchPhase.Moved;
+                release = touch.phase == TouchPhase.Ended;
+
+                pos = touch.position;
             }
 #else
             //Lo acabamos de pulsar
-            if (Input.GetMouseButtonDown(0))
-                TouchDown(Input.mousePosition);
+            press = Input.GetMouseButtonDown(0);
             //Lo estamos pulsando
-            else if (Input.GetMouseButton(0))
-                TouchDrag(Input.mousePosition);
+            drag = Input.GetMouseButton(0);
             //Lo acabamos de soltar
-            else if (Input.GetMouseButtonUp(0))
-                TouchRelease(Input.mousePosition);
+            release = Input.GetMouseButtonUp(0);
+
+            pos = Input.mousePosition;
 #endif
+
+            Vector2 unityPos = Camera.main.ScreenToWorldPoint(pos);
+            if (press)
+                TouchDown(unityPos);
+            //Lo estamos pulsando
+            else if (drag)
+                TouchDrag(unityPos);
+            //Lo acabamos de soltar
+            else if (release)
+                TouchRelease(unityPos);
+
         }
 
         public void SetMap(Logic.Map map)
