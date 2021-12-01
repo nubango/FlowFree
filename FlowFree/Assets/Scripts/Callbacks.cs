@@ -19,9 +19,9 @@ namespace Flow
             Color[] colors = { new Color32(255, 0, 0, 255), new Color32(0, 141, 0, 255), new Color32(12, 41, 254, 255), new Color32(234, 224, 0, 255), new Color32(251, 137, 0, 255) };
             int rnd = Random.Range(0, colors.Length);
             color.pressedColor = colors[rnd];
-            GetComponent<Button>().colors = color;
+            go.GetComponent<Button>().colors = color;
 
-            //GameManager.Instance().FreePlay();
+            GameManager.Instance().LoadCategoryScene();
             Debug.Log("JUEGO LIBRE!");
         }
 

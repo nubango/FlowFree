@@ -13,5 +13,14 @@ namespace Flow
         {
             boardManager.SetLevel();
         }
+
+        /// <summary>
+        /// Metodo se llama para cambiar al siguiente nivel (lo llama el boardmanager)
+        /// </summary>
+        public void NextLevel()
+        {
+            // cambia el tablero con el siguiente nivel 
+            boardManager.SetMap(GameManager.Instance().NextLevel());
+        }
     }
 }

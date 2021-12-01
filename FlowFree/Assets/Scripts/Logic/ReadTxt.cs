@@ -18,7 +18,7 @@ public class ReadTxt : MonoBehaviour
     {
         Flow.GameManager _GMInstance = Flow.GameManager.Instance();
         //_GMInstance.intro.categoryPackages[0].packName;
-        TextAsset txt = _GMInstance.intro.categoryPackages[pack].maps;
+        TextAsset txt = _GMInstance.introCategory.categoryPackages[pack].maps;
         
             string h = txt.text;
             string[] levels = h.Split('\n');
