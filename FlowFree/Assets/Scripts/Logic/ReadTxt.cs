@@ -5,18 +5,27 @@ using System.IO;
 
 public class ReadTxt : MonoBehaviour
 {   //es la ruta obligada para todos los niveles
-    private string _route = "Assets/Levels/levelpack_"; 
-    private string _path = ".txt"; //es el trozo de ruta que falta
-
+    //private string _route = "Assets/Levels/levelpack_"; 
+    //private string _path = ".txt"; //es el trozo de ruta que falta
+    
+    
     /*public void Update()
     {
         readLine(121,"37_jumboCourtyard");
     }*/
     //This method returns a line on the txt
-    public string readLine(int level, string pack)
+    public string readLine(int level, int pack,LevelPack.CategoryPackage Cp)
     {
+        Flow.GameManager _GMInstance = Flow.GameManager.Instance();
+        //_GMInstance.intro.categoryPackages[0].packName;
+        TextAsset txt = _GMInstance.intro.categoryPackages[pack].maps;
+        
+            string h = txt.text;
+            string[] levels = h.Split('\n');
+        Debug.Log(levels[level]);
+        return levels[level];
+        /*try
         int linea = 1;
-        try
         {
             StreamReader streamReader = new StreamReader(_route + pack + _path);
             string line = "level not selected";
@@ -33,7 +42,7 @@ public class ReadTxt : MonoBehaviour
         {
             Debug.Log("Error selecting level");
             throw;
-        }
+        }*/
        
     }
     
