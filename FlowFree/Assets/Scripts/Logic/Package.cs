@@ -9,15 +9,15 @@ namespace Flow.Logic
         [Tooltip("Nombre del lote")]
         private string _packName;
         [Tooltip("Mapas del nivel")]
-        private Map[] _levels;
+        private Level[] _levels;
 
-        public Package(Map[] levels, string name)
+        public Package(Level[] levels, string name)
         {
             _levels = levels;
             _packName = name;
         }
 
-        public Map[] GetMaps() { return _levels; }
+        public Level[] GetMaps() { return _levels; }
     
         public string GetPackName() { return _packName; }
     }

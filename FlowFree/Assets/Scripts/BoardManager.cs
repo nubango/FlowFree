@@ -316,7 +316,7 @@ namespace Flow
 
         }
 
-        public void SetMap(Logic.Map map)
+        public void SetMap(Logic.Level map)
         {
         }
 

@@ -13,7 +13,7 @@ namespace Flow.Logic
         public pos a, b;
     }
     
-    public class Map
+    public class Level
     {
         int ancho;
         int alto;
@@ -40,7 +40,7 @@ namespace Flow.Logic
         public List<wallPos> getMuros() { return muros; }
         public List<List<pos>> getTuberias() { return tuberias; }
 
-        public Map(string lineaLevel)
+        public Level(string lineaLevel)
         {
             vacios = new List<pos>();
             muros = new List<wallPos>();
