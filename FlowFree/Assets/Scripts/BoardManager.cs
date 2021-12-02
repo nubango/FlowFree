@@ -316,8 +316,71 @@ namespace Flow
 
         }
 
+        private int CompareTile(List<List<pos>> tuberias, int i, int j)
+        {
+            for (int h = 0; h < tuberias.Count; h++)
+            {
+                if (tuberias[h][0].x == j && tuberias[h][0].y == i ||
+                    tuberias[h][tuberias[h].Count - 1].x == j && tuberias[h][tuberias[h].Count - 1].y == i)
+                    return h + 1;
+            }
+
+            return 0;
+        }
+
         public void SetMap(Logic.Level map)
         {
+            int alto = map.getAlto();
+            int ancho = map.getAncho();
+
+            _tiles = new Tile[alto, ancho];
+
+            for (int i = 0; i < alto; i++)
+            {
+                for (int j = 0; j < ancho; j++)
+                {
+                    _tiles[i, j] = Instantiate(tilePrefab);
+                    _tiles[i, j].gameObject.transform.SetParent(gameObject.transform);
+                    // El Tile (0,0) esta en la esquina superior-izquierda del "grid"
+                    _tiles[i, j].gameObject.transform.localPosition = new Vector2(j, -i);
+
+                    _tiles[i, j].id = CompareTile(map.getTuberias(), i, j);
+
+                    if (_tiles[i, j].id != 0)
+                    {
+                        _tiles[i, j].SetCircleEnd(true);
+                        _tiles[i, j].SetTick(true);
+                    }
+                    _tiles[i, j].SetThinWalls(true, true, true, true);
+
+                    //_tiles[i, j].SetThickWalls(false, false, true, true);
+
+                    switch (_tiles[i, j].id)
+                    {
+                        case 1:
+                            _tiles[i, j].SetColor(Color.red);
+                            _tiles[i, j].SetColor(Color.red);
+                            break;
+                        case 2:
+                            _tiles[i, j].SetColor(Color.green);
+                            _tiles[i, j].SetColor(Color.green);
+                            break;
+                        case 3:
+                            _tiles[i, j].SetColor(Color.yellow);
+                            _tiles[i, j].SetColor(Color.yellow);
+                            break;
+                        case 4:
+                            _tiles[i, j].SetColor(Color.blue);
+                            _tiles[i, j].SetColor(Color.blue);
+                            break;
+                        case 5:
+                            _tiles[i, j].SetColor(Color.magenta);
+                            _tiles[i, j].SetColor(Color.magenta);
+                            break;
+                    }
+                }
+            }
+
         }
 
         // DEBUG

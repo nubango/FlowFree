@@ -71,6 +71,13 @@ namespace Flow
             // gestionar si estamos en el ultimo nivel de un paquete o no y actuar en consecuencia
             return null;
         }
+
+        // DEBUG
+        public Logic.Level GetDebugLevel()
+        {
+            return rectangles.GetPackages()[2].GetMaps()[30];
+        }
+        // DEBUG
         #endregion
 
 

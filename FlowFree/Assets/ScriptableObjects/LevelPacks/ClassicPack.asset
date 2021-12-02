@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ClassicPack
   m_EditorClassIdentifier: 
   packName: Classic Pack
-  maps: {fileID: 4900000, guid: 70a124d904dfc1745809b71886ab81be, type: 3}
+  maps: {fileID: 4900000, guid: 65e03e372cde618418828e232b289184, type: 3}

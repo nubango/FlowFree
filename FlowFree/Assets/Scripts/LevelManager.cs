@@ -11,7 +11,7 @@ namespace Flow
 
         void Start()
         {
-            boardManager.SetLevel();
+            boardManager.SetMap(GameManager.Instance().GetDebugLevel());
         }
 
         /// <summary>

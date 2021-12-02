@@ -16,8 +16,6 @@ namespace Flow.Logic
         List<wallPos> _muros;
         List<List<pos>> _tuberias;
 
-        
-
         public int getAncho(){ return _ancho; }
         public int getAlto(){ return _alto; }
         public int getNumLevel() { return _numLevel; }

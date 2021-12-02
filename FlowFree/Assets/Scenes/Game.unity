@@ -2942,9 +2942,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1665646020}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: introCategory
+      value: 
+      objectReference: {fileID: 11400000, guid: 29b43d53431c93c44b0d5fd1ef966ddf, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: currentPackage
       value: 
       objectReference: {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: maniasCategory
+      value: 
+      objectReference: {fileID: 11400000, guid: 112d67dbc353ee3419ec53ec728b941d, type: 2}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: intro.Array.size
       value: 4
@@ -2957,6 +2965,10 @@ PrefabInstance:
       propertyPath: manias.Array.size
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: rectanglesCategory
+      value: 
+      objectReference: {fileID: 11400000, guid: ece4ec9d74a8a044ca81dfc02682237b, type: 2}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: intro.Array.data[0]
       value: 

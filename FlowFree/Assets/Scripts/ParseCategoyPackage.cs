@@ -15,7 +15,7 @@ namespace Flow
     }
     public class ParseCategoyPackage
     {
-       
+
         public static Logic.Category Parse(LevelPack.CategoryPackage cp)
         {
             Logic.Category category = new Logic.Category();
@@ -35,7 +35,7 @@ namespace Flow
             string h = LP.maps.text;
             string[] textLevels = h.Split('\n');
             Logic.Level[] levels = new Logic.Level[textLevels.Length];
-            for(int i = 0; i < textLevels.Length; i++)
+            for (int i = 0; i < textLevels.Length - 1; i++)
             {
                 levels[i] = ParseLevel(textLevels[i]);
             }
@@ -58,11 +58,11 @@ namespace Flow
             int numLevel;
             int flujos;
 
-            
+
             List<pos> vacios = new List<pos>();
             List<wallPos> muros = new List<wallPos>();
             List<List<pos>> tuberias = new List<List<pos>>();
-            
+
 
             string[] provisional;
             provisional = lineaLevel.Split(';');
