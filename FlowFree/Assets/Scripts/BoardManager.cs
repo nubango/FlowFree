@@ -330,14 +330,14 @@ namespace Flow
 
         public void SetMap(Logic.Level map)
         {
-            int alto = map.getAlto();
-            int ancho = map.getAncho();
+            _height = map.getAlto();
+            _width = map.getAncho();
 
-            _tiles = new Tile[alto, ancho];
+            _tiles = new Tile[_height, _width];
 
-            for (int i = 0; i < alto; i++)
+            for (int i = 0; i < _height; i++)
             {
-                for (int j = 0; j < ancho; j++)
+                for (int j = 0; j < _width; j++)
                 {
                     _tiles[i, j] = Instantiate(tilePrefab);
                     _tiles[i, j].gameObject.transform.SetParent(gameObject.transform);
