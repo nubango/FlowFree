@@ -76,7 +76,6 @@ namespace Flow
             }
             else
             {
-                Debug.Log(dim[0]);
                 ancho = Int32.Parse(dim[0]);
                 alto = Int32.Parse(dim[0]);
             }

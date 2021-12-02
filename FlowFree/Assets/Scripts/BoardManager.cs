@@ -34,9 +34,6 @@ namespace Flow
         private void Awake()
         {
             // TODO: Inicializacion debe depender de cuantos colores tenga el nivel
-            _traceStacks = new Stack<Coord>[5];
-            for (int i = 0; i < _traceStacks.Length; i++)
-                _traceStacks[i] = new Stack<Coord>();
         }
         void Start()
         {
@@ -77,23 +74,11 @@ namespace Flow
         /// <returns></returns>
         private int GetColorIndex(Color color)
         {
-            //for(int i = 0; i < _numeroDeColores.length; i++)
-            //{
-            //    if (color == _numeroDeColores[i])
-            //        return i;
-            //}
-
-            // ifs provisionales hasta que este implementado los colores de forma generica
-            if (color == Color.red)
-                return 0;
-            else if (color == Color.green)
-                return 1;
-            else if (color == Color.yellow)
-                return 2;
-            else if (color == Color.blue)
-                return 3;
-            else if (color == Color.magenta)
-                return 4;
+            for (int i = 0; i < GameManager.Instance().currentSkin.colores.Length; i++)
+            {
+                if (color == GameManager.Instance().currentSkin.colores[i])
+                    return i;
+            }
 
             return -1;
         }
@@ -333,6 +318,10 @@ namespace Flow
             _height = map.getAlto();
             _width = map.getAncho();
 
+            _traceStacks = new Stack<Coord>[map.getFlujos()];
+            for (int i = 0; i < _traceStacks.Length; i++)
+                _traceStacks[i] = new Stack<Coord>();
+
             _tiles = new Tile[_height, _width];
 
             for (int i = 0; i < _height; i++)
@@ -348,6 +337,7 @@ namespace Flow
 
                     if (_tiles[i, j].id != 0)
                     {
+                        _tiles[i, j].SetColor(GameManager.Instance().currentSkin.colores[_tiles[i, j].id - 1]);
                         _tiles[i, j].SetCircleEnd(true);
                         _tiles[i, j].SetTick(true);
                     }
@@ -355,29 +345,6 @@ namespace Flow
 
                     //_tiles[i, j].SetThickWalls(false, false, true, true);
 
-                    switch (_tiles[i, j].id)
-                    {
-                        case 1:
-                            _tiles[i, j].SetColor(Color.red);
-                            _tiles[i, j].SetColor(Color.red);
-                            break;
-                        case 2:
-                            _tiles[i, j].SetColor(Color.green);
-                            _tiles[i, j].SetColor(Color.green);
-                            break;
-                        case 3:
-                            _tiles[i, j].SetColor(Color.yellow);
-                            _tiles[i, j].SetColor(Color.yellow);
-                            break;
-                        case 4:
-                            _tiles[i, j].SetColor(Color.blue);
-                            _tiles[i, j].SetColor(Color.blue);
-                            break;
-                        case 5:
-                            _tiles[i, j].SetColor(Color.magenta);
-                            _tiles[i, j].SetColor(Color.magenta);
-                            break;
-                    }
                 }
             }
 

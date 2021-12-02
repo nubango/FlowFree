@@ -75,7 +75,7 @@ namespace Flow
         // DEBUG
         public Logic.Level GetDebugLevel()
         {
-            return intro.GetPackages()[0].GetMaps()[0];
+            return rectangles.GetPackages()[2].GetMaps()[149];
         }
         // DEBUG
         #endregion
