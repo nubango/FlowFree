@@ -16,7 +16,15 @@ namespace Flow.Logic
             _levels = levels;
             _packName = name;
         }
-
+        public Package() { }
+        public void SetMaps(Level[] levels)
+        {
+            _levels = levels;
+        }
+        public void SetPackName(string packName)
+        {
+            _packName = packName;
+        }
         public Level[] GetMaps() { return _levels; }
     
         public string GetPackName() { return _packName; }

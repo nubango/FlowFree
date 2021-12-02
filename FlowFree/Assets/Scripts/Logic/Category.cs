@@ -16,8 +16,11 @@ namespace Flow.Logic
             _packages = packages;
             _categoryColor = color;
         }
+        public Category() { }
+        public void SetCategoriColor(Color c) { _categoryColor = c; }
+        public void SetPackage(Package[] packages) { _packages = packages; }
 
-        public Package[] GetLevels() { return _packages; }
+        public Package[] GetPackages() { return _packages; }
         public Color GetColor() { return _categoryColor; }
     }
 }
