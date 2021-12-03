@@ -1374,7 +1374,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1104437290}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1104437290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3010,9 +3022,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 77ae7ef55c0c30046ab1ef8206a0e002, type: 2}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: categories.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: rectangles.Array.size
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: categories.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 29b43d53431c93c44b0d5fd1ef966ddf, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: categories.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 112d67dbc353ee3419ec53ec728b941d, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: categories.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: ece4ec9d74a8a044ca81dfc02682237b, type: 2}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: rectangles.Array.data[0]
       value: 

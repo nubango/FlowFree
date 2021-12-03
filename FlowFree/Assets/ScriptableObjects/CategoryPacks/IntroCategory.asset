@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: IntroCategory
   m_EditorClassIdentifier: 
   categoryColor: {r: 0, g: 0.5529412, b: 0, a: 0}
-  categoryPackages:
+  levelsPackage:
   - {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
   - {fileID: 11400000, guid: 827f6dca96beb1649a36e3a68bcd796a, type: 2}
-  - {fileID: 11400000, guid: 73fa49eea0f34dd469690a0977457daf, type: 2}
-  - {fileID: 11400000, guid: f653aab8060502842a3c76352504d071, type: 2}

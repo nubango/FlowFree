@@ -11,12 +11,6 @@ namespace Flow.Logic
         [Tooltip("Mapas del nivel")]
         private Level[] _levels;
 
-        public Package(Level[] levels, string name)
-        {
-            _levels = levels;
-            _packName = name;
-        }
-        public Package() { }
         public void SetMaps(Level[] levels)
         {
             _levels = levels;
@@ -25,7 +19,7 @@ namespace Flow.Logic
         {
             _packName = packName;
         }
-        public Level[] GetMaps() { return _levels; }
+        public Level[] GetLevels() { return _levels; }
     
         public string GetPackName() { return _packName; }
     }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ManiasCategory
   m_EditorClassIdentifier: 
   categoryColor: {r: 1, g: 0, b: 0, a: 0}
-  categoryPackages:
+  levelsPackage:
   - {fileID: 11400000, guid: 14a05404cd7afe94da68cb5f1a1f1997, type: 2}
   - {fileID: 11400000, guid: 74b100ce83cd8f8458e9d7de597ec9e0, type: 2}
   - {fileID: 11400000, guid: 9797ce1df486a104f812baa8d4d4c89a, type: 2}

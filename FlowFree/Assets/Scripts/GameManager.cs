@@ -11,9 +11,7 @@ namespace Flow
         public LevelManager levelManager;
 
         [Header("Categories")]
-        public LevelPack.CategoryPackage introCategory;
-        public LevelPack.CategoryPackage maniasCategory;
-        public LevelPack.CategoryPackage rectanglesCategory;
+        public LevelPack.CategoryPackage[] categories;
 
         [Header("Current Skin")]
         public LevelPack.SkinPackage currentSkin;
@@ -30,9 +28,12 @@ namespace Flow
         // Game Manager es un Singleton
         private static GameManager _instance;
 
-        private Logic.Category intro;
-        private Logic.Category manias;
-        private Logic.Category rectangles;
+        private Logic.Category[] logicCategories;
+
+        // Nivel actual
+        private int _currentLevel;
+        private int _currentPackage;
+        private int _currentCategory;
         #endregion
 
 
@@ -66,16 +67,45 @@ namespace Flow
         /// Metodo que devuelve el siguiente nivel a jugar
         /// </summary>
         /// <returns></returns>
-        public Logic.Level NextLevel()
+        public void NextLevel()
         {
-            // gestionar si estamos en el ultimo nivel de un paquete o no y actuar en consecuencia
-            return null;
+            // Si nos hemos pasado el ultimo nivel, volvemos al menu de las categorias
+            if (_currentLevel + 1 >= logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels().Length)
+            {
+                LoadCategoryScene();
+                return;
+            }
+
+            _currentLevel++;
         }
+
+        /// <summary>
+        /// Metodo que Devuelve el nivel actual
+        /// </summary>
+        /// <returns></returns>
+        public Logic.Level GetCurrentLevel()
+        {
+            return logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
+        }
+
+
+        /// <summary>
+        /// Cambia el nivel actual
+        /// </summary>
+        /// <returns></returns>
+        public Logic.Level AssignCurrentLevel(int category, int package, int level)
+        {
+            _currentCategory = category;
+            _currentPackage = package;
+            _currentLevel = level;
+            return logicCategories[category].GetPackages()[package].GetLevels()[level];
+        }
+
 
         // DEBUG
         public Logic.Level GetDebugLevel()
         {
-            return rectangles.GetPackages()[2].GetMaps()[149];
+            return logicCategories[0].GetPackages()[0].GetLevels()[0];
         }
         // DEBUG
         #endregion
@@ -94,6 +124,7 @@ namespace Flow
                 DestroyImmediate(gameObject);
                 return;
             }
+
             _instance = this;
 
             InitCategories();
@@ -101,10 +132,6 @@ namespace Flow
             DontDestroyOnLoad(gameObject);
         }
 
-        private void Start()
-        {
-            //intro.GetPackages()[0].GetMaps()[0].
-        }
         #endregion
 
 
@@ -113,20 +140,24 @@ namespace Flow
         /// </summary>
         private void InitCategories()
         {
-            // Comprobamos si se han inicializado
-            if (_instance.intro != null && _instance.manias != null && _instance.rectangles != null)
+            // si ya hemos inicializado las categorias no hacemos nada
+            if (_instance.logicCategories != null)
                 return;
 
             // Comprobamos si se han asignado en el editor las Categorias
-            if (introCategory == null || maniasCategory == null || rectanglesCategory == null)
-            {
-                Debug.Log("INFORMACION: No se han asignado las categorias en el editor");
-                return;
-            }
+            foreach (LevelPack.CategoryPackage c in _instance.categories)
+                if (c == null)
+                {
+                    Debug.Log("INFORMACION: No se han asignado las categorias en el editor");
+                    return;
+                }
 
-            _instance.intro = ParseCategoyPackage.Parse(introCategory);
-            _instance.manias = ParseCategoyPackage.Parse(maniasCategory);
-            _instance.rectangles = ParseCategoyPackage.Parse(rectanglesCategory);
+            _instance.logicCategories = new Logic.Category[_instance.categories.Length];
+
+            // Parseamos las categorias
+            for (int i = 0; i < _instance.categories.Length; i++)
+                _instance.logicCategories[i] = ParseCategoyPackage.Parse(_instance.categories[i]);
+
         }
         #endregion
 

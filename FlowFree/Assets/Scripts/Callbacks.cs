@@ -45,6 +45,11 @@ namespace Flow
             //GameManager.Instance().LoadScene();
         }
 
+        public void OnClickNextLevel()
+        {
+            GameManager.Instance().levelManager.NextLevel();
+        }
+
     }
 
 }

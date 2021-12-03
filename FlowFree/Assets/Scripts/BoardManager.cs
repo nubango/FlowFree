@@ -22,14 +22,17 @@ namespace Flow
         private Color _currentTraceColor;
 
         // Array de pilas que contienen los caminos actuales de cada color
-        private Stack<Coord>[] _traceStacks;
+        private Stack<Utils.Coord>[] _traceStacks;
 
         // Tile actual por donde esta pasando el dedo/raton
-        private Coord _currentTilePress;
+        private Utils.Coord _currentTilePress;
 
         // Flag para no pintar despues de los extremos
         private bool _isDiffEnd = false;
         private bool _isEndPath = false;
+
+        // Flag para invalidar el update y evitar el re procese el input
+        bool _invalidate = false;
 
         private void Awake()
         {
@@ -40,29 +43,16 @@ namespace Flow
             transform.position = new Vector3(0, 0, 0);
         }
 
-        public struct Coord
+        private void Update()
         {
-            public Coord(int x, int y)
-            {
-                this.x = x;
-                this.y = y;
-            }
+            if (_invalidate)
+                return;
 
-            public int x { get; }
-            public int y { get; }
-
-            public override bool Equals(object obj)
-            {
-                return obj is Coord coord &&
-                       x == coord.x &&
-                       y == coord.y;
-            }
-
-            public static bool operator ==(Coord a, Coord b) => (a.x == b.x && a.y == b.y);
-            public static bool operator !=(Coord a, Coord b) => (a.x != b.x || a.y != b.y);
-            public static Coord operator -(Coord a, Coord b) => new Coord(a.x - b.x, a.y - b.y);
+            ProcessInput();
         }
-        private bool ValidCoords(Coord coord)
+
+
+        private bool ValidCoords(Utils.Coord coord)
         {
             return coord.x >= 0 && coord.y >= 0 && coord.x < _width && coord.y < _height;
         }
@@ -84,13 +74,13 @@ namespace Flow
         }
 
         // Metodo que activa un rastro en la posicion indicada
-        private void PutTraceInTile(Coord coord)
+        private void PutTraceInTile(Utils.Coord coord)
         {
             // Accedo al tile correspondiente a las coordenadas pasadas por parametro
             Tile t = _tiles[coord.y, coord.x];
 
             // direccion en la que tenemos que activar el trace
-            Coord direction = _currentTilePress - coord;
+            Utils.Coord direction = _currentTilePress - coord;
 
             if (!t.IsEnd())
                 t.SetColor(_currentTraceColor);
@@ -102,13 +92,13 @@ namespace Flow
         ///  Retrocede hasta la casilla correspondiente
         /// </summary>
         /// <param name="coord"></param>
-        private void BackToTile(Coord coord)
+        private void BackToTile(Utils.Coord coord)
         {
             Tile t = _tiles[coord.y, coord.x];
             int indexTraceStack = GetColorIndex(t.GetColor());
 
             // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
-            Coord position = coord;
+            Utils.Coord position = coord;
             if (_traceStacks[indexTraceStack].Count > 0)
                 position = _traceStacks[indexTraceStack].Peek();
 
@@ -143,7 +133,7 @@ namespace Flow
         private void TouchDown(Vector2 touchPos)
         {
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
-            Coord indexTile = new Coord((int)Mathf.Round(touchPos.x), (int)Mathf.Round(-touchPos.y));
+            Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(touchPos.x), (int)Mathf.Round(-touchPos.y));
             if (!ValidCoords(indexTile))
                 return;
 
@@ -189,7 +179,7 @@ namespace Flow
             circleFinger.transform.position = new Vector3(dragPos.x, dragPos.y, 0);
 
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
-            Coord indexTile = new Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
+            Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
             if (!ValidCoords(indexTile))
             {
                 _isDiffEnd = true;
@@ -239,6 +229,10 @@ namespace Flow
         /// <param name="dragPos"></param>
         private void TouchRelease(Vector2 dragPos)
         {
+            Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
+            if (!ValidCoords(indexTile))
+                return;
+
             // quitamos el circulo grande
             circleFinger.enabled = false;
             // ponemos el circulo peque�o al ultimo tile presionado
@@ -255,11 +249,6 @@ namespace Flow
                 _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(true);
             }
 
-        }
-
-        private void Update()
-        {
-            ProcessInput();
         }
 
         private void ProcessInput()
@@ -301,7 +290,7 @@ namespace Flow
 
         }
 
-        private int CompareTile(List<List<pos>> tuberias, int i, int j)
+        private int CompareTile(List<List<Utils.Coord>> tuberias, int i, int j)
         {
             for (int h = 0; h < tuberias.Count; h++)
             {
@@ -313,14 +302,28 @@ namespace Flow
             return 0;
         }
 
+        private void ResetBoard()
+        {
+            for (int i = 0; i < _height; i++)
+                for (int j = 0; j < _width; j++)
+                    Destroy(_tiles[i, j].gameObject);
+        }
+
+        public void InvalidateUpdate()
+        {
+            _invalidate = true;
+        }
+
         public void SetMap(Logic.Level map)
         {
+            ResetBoard();
+
             _height = map.getAlto();
             _width = map.getAncho();
 
-            _traceStacks = new Stack<Coord>[map.getFlujos()];
+            _traceStacks = new Stack<Utils.Coord>[map.getFlujos()];
             for (int i = 0; i < _traceStacks.Length; i++)
-                _traceStacks[i] = new Stack<Coord>();
+                _traceStacks[i] = new Stack<Utils.Coord>();
 
             _tiles = new Tile[_height, _width];
 
@@ -350,63 +353,8 @@ namespace Flow
 
         }
 
-        // DEBUG
-        public void SetLevel()
-        {
-            _tiles = new Tile[5, 5];
-            // nivel "copiado" del #1
-            // 0: casilla vacia
-            // n>0: color, se asignan a pares
-            int[] fakeLevelIDs = { 1, 0, 2, 0, 3, 0, 0, 4, 0, 5, 0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 0, 1, 4, 5, 0 };
-
-            _width = _height = 5;
-
-            for (int i = 0; i < _width; i++)
-            {
-                for (int j = 0; j < _height; j++)
-                {
-                    _tiles[i, j] = Instantiate(tilePrefab);
-                    _tiles[i, j].gameObject.transform.SetParent(this.gameObject.transform);
-                    // El Tile (0,0) esta en la esquina superior-izquierda del "grid"
-                    _tiles[i, j].gameObject.transform.localPosition = new Vector2(j, -i);
-
-                    _tiles[i, j].id = fakeLevelIDs[(i * 5) + j];
-
-                    if (_tiles[i, j].id != 0)
-                    {
-                        _tiles[i, j].SetCircleEnd(true);
-                        _tiles[i, j].SetTick(true);
-                    }
-                    _tiles[i, j].SetThinWalls(true, true, true, true);
-
-                    //_tiles[i, j].SetThickWalls(false, false, true, true);
-
-                    switch (_tiles[i, j].id)
-                    {
-                        case 1:
-                            _tiles[i, j].SetColor(Color.red);
-                            _tiles[i, j].SetColor(Color.red);
-                            break;
-                        case 2:
-                            _tiles[i, j].SetColor(Color.green);
-                            _tiles[i, j].SetColor(Color.green);
-                            break;
-                        case 3:
-                            _tiles[i, j].SetColor(Color.yellow);
-                            _tiles[i, j].SetColor(Color.yellow);
-                            break;
-                        case 4:
-                            _tiles[i, j].SetColor(Color.blue);
-                            _tiles[i, j].SetColor(Color.blue);
-                            break;
-                        case 5:
-                            _tiles[i, j].SetColor(Color.magenta);
-                            _tiles[i, j].SetColor(Color.magenta);
-                            break;
-                    }
-                }
-            }
-        }
+       
+        
     }
 
 }

@@ -8,6 +8,6 @@ namespace LevelPack
         [Tooltip("Color de la categoria")]
         public Color categoryColor;
         [Tooltip("Paquetes de la categoria")]
-        public LevelPackage[] categoryPackages;
+        public LevelPackage[] levelsPackage;
     }
 }
