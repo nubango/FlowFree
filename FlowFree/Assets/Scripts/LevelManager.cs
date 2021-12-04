@@ -28,11 +28,28 @@ namespace Flow
         }
 
         /// <summary>
-        /// Metodo se llama para cambiar al siguiente nivel (lo llama el boardmanager)
+        /// Metodo se llama para cambiar al siguiente nivel
         /// </summary>
         public void NextLevel()
         {
-            GameManager.Instance().NextLevel();
+            if (!GameManager.Instance().NextLevel())
+                return;
+
+            Logic.Level level = GameManager.Instance().GetCurrentLevel();
+
+            UpdateUI(level);
+            // cambia el tablero con el siguiente nivel 
+            boardManager.SetMap(level);
+        }
+
+        /// <summary>
+        /// Metodo se llama para cambiar al nivel anterior(lo llama el boardmanager)
+        /// </summary>
+        public void PreviousLevel()
+        {
+            if (!GameManager.Instance().PreviousLevel())
+                return;
+
             Logic.Level level = GameManager.Instance().GetCurrentLevel();
 
             UpdateUI(level);

@@ -23,6 +23,7 @@ namespace Flow
 
         // Array de pilas que contienen los caminos actuales de cada color
         private Stack<Utils.Coord>[] _traceStacks;
+        private bool[] _traceEnds;
 
         // Tile actual por donde esta pasando el dedo/raton
         private Utils.Coord _currentTilePress;
@@ -51,7 +52,11 @@ namespace Flow
             ProcessInput();
         }
 
-
+        /// <summary>
+        /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <returns></returns>
         private bool ValidCoords(Utils.Coord coord)
         {
             return coord.x >= 0 && coord.y >= 0 && coord.x < _width && coord.y < _height;
@@ -73,7 +78,9 @@ namespace Flow
             return -1;
         }
 
-        // Metodo que activa un rastro en la posicion indicada
+        /// <summary>
+        /// Metodo que activa un rastro en la posicion indicada
+        /// </summary>
         private void PutTraceInTile(Utils.Coord coord)
         {
             // Accedo al tile correspondiente a las coordenadas pasadas por parametro
@@ -96,6 +103,8 @@ namespace Flow
         {
             Tile t = _tiles[coord.y, coord.x];
             int indexTraceStack = GetColorIndex(t.GetColor());
+
+            _traceEnds[GetColorIndex(_currentTraceColor)] = false;
 
             // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
             Utils.Coord position = coord;
@@ -243,6 +252,9 @@ namespace Flow
                 _isEndPath = false;
 
                 // comprobamos si hemos ganado
+                _traceEnds[GetColorIndex(_currentTraceColor)] = true;
+                if (AllColorsEnd())
+                    Win();
             }
             else
             {
@@ -251,6 +263,30 @@ namespace Flow
 
         }
 
+        /// <summary>
+        /// Metodo que comprueba si todas las tuberias estan completas
+        /// </summary>
+        /// <returns>TRUE si todas las tuberias estan completas. FALSE en caso contrario</returns>
+        private bool AllColorsEnd()
+        {
+            foreach (bool b in _traceEnds)
+                if (!b)
+                    return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Metodo que se llama cuando se ha ganado el nivel. Muestra la ventana de victoria con los botones correspondientes
+        /// </summary>
+        private void Win()
+        {
+            InvalidateUpdate();
+            Debug.Log("has ganado el nivel!!");
+        }
+
+        /// <summary>
+        /// Metodo que procesa el input en funcion de si se esta ejecutando en el editor de unity o en un movil android
+        /// </summary>
         private void ProcessInput()
         {
             bool press = false, drag = false, release = false;
@@ -290,7 +326,17 @@ namespace Flow
 
         }
 
-        private int CompareTile(List<List<Utils.Coord>> tuberias, int i, int j)
+        /// <summary>
+        /// Metodo que sirve para saber si las coordenadas ij son el principio o final de un color
+        /// </summary>
+        /// <param name="tuberias">Lista de tuberias. Cada tuberia equivale a un color distinto</param>
+        /// <param name="i">Coordenada en el eje y</param>
+        /// <param name="j">Coordenada en el eje x</param>
+        /// <returns>
+        /// Devuelve 0 si la coordenada ij no equivale a ningun principio/fin del alguna tuberia.
+        /// Devuelve h+1 siendo h el identificador de cada lista. Ej: [0(tuberia roja), 1(tuberia azul), etc.] + 1 
+        /// </returns>
+        private int IsEndOrStart(List<List<Utils.Coord>> tuberias, int i, int j)
         {
             for (int h = 0; h < tuberias.Count; h++)
             {
@@ -302,6 +348,9 @@ namespace Flow
             return 0;
         }
 
+        /// <summary>
+        /// Resetea el tablero y elimina todas las casillas
+        /// </summary>
         private void ResetBoard()
         {
             for (int i = 0; i < _height; i++)
@@ -309,17 +358,30 @@ namespace Flow
                     Destroy(_tiles[i, j].gameObject);
         }
 
+        /// <summary>
+        /// Invalida el update del board
+        /// </summary>
         public void InvalidateUpdate()
         {
             _invalidate = true;
         }
 
+        /// <summary>
+        /// Metodo que sirve para asignar el tablero
+        /// </summary>
+        /// <param name="map">Datos logicos del tablero</param>
         public void SetMap(Logic.Level map)
         {
+            _invalidate = false;
+
             ResetBoard();
 
             _height = map.getAlto();
             _width = map.getAncho();
+
+            _traceEnds = new bool[map.getFlujos()];
+            for (int i = 0; i < _traceEnds.Length; i++) 
+                _traceEnds[i] = false;
 
             _traceStacks = new Stack<Utils.Coord>[map.getFlujos()];
             for (int i = 0; i < _traceStacks.Length; i++)
@@ -336,7 +398,7 @@ namespace Flow
                     // El Tile (0,0) esta en la esquina superior-izquierda del "grid"
                     _tiles[i, j].gameObject.transform.localPosition = new Vector2(j, -i);
 
-                    _tiles[i, j].id = CompareTile(map.getTuberias(), i, j);
+                    _tiles[i, j].id = IsEndOrStart(map.getTuberias(), i, j);
 
                     if (_tiles[i, j].id != 0)
                     {
@@ -353,8 +415,8 @@ namespace Flow
 
         }
 
-       
-        
+
+
     }
 
 }

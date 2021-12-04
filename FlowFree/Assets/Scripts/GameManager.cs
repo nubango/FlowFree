@@ -64,25 +64,42 @@ namespace Flow
 
 
         /// <summary>
-        /// Metodo que devuelve el siguiente nivel a jugar
+        /// Metodo suma uno al nivel actual
         /// </summary>
-        /// <returns></returns>
-        public void NextLevel()
+        public bool NextLevel()
         {
             // Si nos hemos pasado el ultimo nivel, volvemos al menu de las categorias
-            if (_currentLevel + 1 >= logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels().Length)
+            // (es Length - 1 porque esta cogiendo un nivel 150 null)
+            if (_currentLevel + 1 >= logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels().Length - 1)
             {
                 LoadCategoryScene();
-                return;
+                return false;
             }
 
             _currentLevel++;
+            return true;
+        }
+
+        /// <summary>
+        /// Metodo que resta uno al nivel actual
+        /// </summary>
+        public bool PreviousLevel()
+        {
+            // Si nos hemos pasado el ultimo nivel, volvemos al menu de las categorias
+            if (_currentLevel - 1 < 0)
+            {
+                // invalidar el boton?
+                return false;
+            }
+
+            _currentLevel--;
+            return true;
         }
 
         /// <summary>
         /// Metodo que Devuelve el nivel actual
         /// </summary>
-        /// <returns></returns>
+        /// <returns>El nivel actual</returns>
         public Logic.Level GetCurrentLevel()
         {
             return logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];

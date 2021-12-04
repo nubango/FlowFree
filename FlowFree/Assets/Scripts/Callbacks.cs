@@ -50,6 +50,10 @@ namespace Flow
             GameManager.Instance().levelManager.NextLevel();
         }
 
+        public void OnClickPreviousLevel()
+        {
+            GameManager.Instance().levelManager.PreviousLevel();
+        }
     }
 
 }
