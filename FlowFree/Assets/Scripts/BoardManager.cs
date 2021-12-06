@@ -35,10 +35,6 @@ namespace Flow
         // Flag para invalidar el update y evitar el re procese el input
         bool _invalidate = false;
 
-        private void Awake()
-        {
-            // TODO: Inicializacion debe depender de cuantos colores tenga el nivel
-        }
         void Start()
         {
             transform.position = new Vector3(0, 0, 0);
@@ -104,7 +100,7 @@ namespace Flow
             Tile t = _tiles[coord.y, coord.x];
             int indexTraceStack = GetColorIndex(t.GetColor());
 
-            _traceEnds[GetColorIndex(_currentTraceColor)] = false;
+            _traceEnds[indexTraceStack] = false;
 
             // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
             Utils.Coord position = coord;
@@ -238,10 +234,6 @@ namespace Flow
         /// <param name="dragPos"></param>
         private void TouchRelease(Vector2 dragPos)
         {
-            Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
-            if (!ValidCoords(indexTile))
-                return;
-
             // quitamos el circulo grande
             circleFinger.enabled = false;
             // ponemos el circulo peque�o al ultimo tile presionado
@@ -260,7 +252,6 @@ namespace Flow
             {
                 _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(true);
             }
-
         }
 
         /// <summary>
@@ -280,7 +271,8 @@ namespace Flow
         /// </summary>
         private void Win()
         {
-            InvalidateUpdate();
+            SetActiveUpdate(false);
+            GameManager.Instance().Win();
             Debug.Log("has ganado el nivel!!");
         }
 
@@ -361,9 +353,9 @@ namespace Flow
         /// <summary>
         /// Invalida el update del board
         /// </summary>
-        public void InvalidateUpdate()
+        public void SetActiveUpdate(bool b)
         {
-            _invalidate = true;
+            _invalidate = !b;
         }
 
         /// <summary>

@@ -16,8 +16,14 @@ namespace Flow
         [Tooltip("Texto de la dimension del tablero")]
         public Text dimensionText;
 
+        [Tooltip("Menu que sale al pasarte el nivel")]
+        public GameObject endLevelMenu;
+
+
+
         void Start()
         {
+            DisableWinMenu();
             boardManager.SetMap(GameManager.Instance().GetDebugLevel());
         }
 
@@ -32,6 +38,7 @@ namespace Flow
         /// </summary>
         public void NextLevel()
         {
+            DisableWinMenu();
             if (!GameManager.Instance().NextLevel())
                 return;
 
@@ -47,6 +54,7 @@ namespace Flow
         /// </summary>
         public void PreviousLevel()
         {
+            DisableWinMenu();
             if (!GameManager.Instance().PreviousLevel())
                 return;
 
@@ -65,10 +73,28 @@ namespace Flow
         /// <param name="level"></param>
         public void SetLevel(int category, int package, int level)
         {
+            DisableWinMenu();
             Logic.Level logicLevel = GameManager.Instance().AssignCurrentLevel(category, package, level);
 
             UpdateUI(logicLevel);
             boardManager.SetMap(logicLevel);
+        }
+
+        /// <summary>
+        /// Metodo activa el menu de nivel ganado
+        /// </summary>
+        public void Win()
+        {
+            endLevelMenu.SetActive(true);
+        }
+
+        /// <summary>
+        /// Deshabilita el menu que sale al ganar un nivel
+        /// </summary>
+        public void DisableWinMenu()
+        {
+            boardManager.SetActiveUpdate(true);
+            endLevelMenu.SetActive(false);
         }
     }
 }

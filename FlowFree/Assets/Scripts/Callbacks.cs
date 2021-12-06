@@ -54,6 +54,11 @@ namespace Flow
         {
             GameManager.Instance().levelManager.PreviousLevel();
         }
+
+        public void OnClickDisableWinMenu()
+        {
+            GameManager.Instance().DisableWinMenu();
+        }
     }
 
 }

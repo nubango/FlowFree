@@ -31,9 +31,9 @@ namespace Flow
         private Logic.Category[] logicCategories;
 
         // Nivel actual
-        private int _currentLevel;
-        private int _currentPackage;
-        private int _currentCategory;
+        private int _currentLevel = 0;
+        private int _currentPackage = 0;
+        private int _currentCategory = 0;
         #endregion
 
 
@@ -118,11 +118,24 @@ namespace Flow
             return logicCategories[category].GetPackages()[package].GetLevels()[level];
         }
 
+        /// <summary>
+        /// Metodo que se llama cuando nos hemos pasado un nivel
+        /// </summary>
+        public void Win()
+        {
+            levelManager.Win();
+        }
+
+
+        public void DisableWinMenu()
+        {
+            levelManager.DisableWinMenu();
+        }
 
         // DEBUG
         public Logic.Level GetDebugLevel()
         {
-            return logicCategories[0].GetPackages()[0].GetLevels()[0];
+            return logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
         }
         // DEBUG
         #endregion
