@@ -23,19 +23,35 @@ namespace Flow
 
         // Array de pilas que contienen los caminos actuales de cada color
         private Stack<Utils.Coord>[] _traceStacks;
+
+        // Array que guarda TRUE si un flujo esta completo y FALSE en caso contrario
         private bool[] _traceEnds;
 
         // Tile actual por donde esta pasando el dedo/raton
         private Utils.Coord _currentTilePress;
+        private Utils.Coord _lastTilePress;
 
         // Flag para no pintar despues de los extremos
         private bool _isDiffEnd = false;
         private bool _isEndPath = false;
 
         // Flag para invalidar el update y evitar el re procese el input
-        bool _invalidate = false;
+        private bool _invalidate = false;
 
-        void Start()
+        // cuenta de los movimientos que llevamos en el nivel
+        private int _movementsCount = 0;
+
+        // flag que muestra si ha habido algun cambio en el tablero
+        private bool _isMove = false;
+
+        // flag que muestra si hemos cambiado de color pulsado
+        private bool _changeColor = false;
+
+        // cuenta de la cantidad de casillas que tienen color asignado
+        private int _countTileWithColor = 0;
+
+        #region PRIVATE METHODS
+        private void Start()
         {
             transform.position = new Vector3(0, 0, 0);
         }
@@ -89,13 +105,15 @@ namespace Flow
                 t.SetColor(_currentTraceColor);
 
             t.ActiveTrace(new Vector2(direction.x, direction.y).normalized);
+
+            _isMove = true;
         }
 
         /// <summary>
         ///  Retrocede hasta la casilla correspondiente
         /// </summary>
         /// <param name="coord"></param>
-        private void BackToTile(Utils.Coord coord)
+        private void BackToTile(Utils.Coord coord, Color currentColor)
         {
             Tile t = _tiles[coord.y, coord.x];
             int indexTraceStack = GetColorIndex(t.GetColor());
@@ -114,10 +132,12 @@ namespace Flow
 
                 if (_traceStacks[indexTraceStack].Count > 0)
                     position = _traceStacks[indexTraceStack].Peek();
+
+                _isMove = true;
             }
 
             // Si estamos en una colision de colores hay que pintar el nuevo rastro
-            if (_currentTraceColor != t.GetColor())
+            if (currentColor != t.GetColor())
             {
                 // eliminamos la ultima casilla del color antiguo
                 _traceStacks[indexTraceStack].Pop();
@@ -125,10 +145,22 @@ namespace Flow
                 PutTraceInTile(coord);
 
                 // a�adimos el nuevo rastro a su nuevo color
-                indexTraceStack = GetColorIndex(_currentTraceColor);
+                indexTraceStack = GetColorIndex(currentColor);
                 _traceStacks[indexTraceStack].Push(coord);
                 _currentTilePress = coord;
             }
+        }
+
+        /// <summary>
+        /// Cuenta las casillas que tienen un color asignado
+        /// </summary>
+        /// <returns>Devuelve un INT que representa el numero de casillas que tienen color asignado</returns>
+        private int CountTileWithColor()
+        {
+            int count = 0;
+            foreach (Stack<Utils.Coord> s in _traceStacks)
+                count += s.Count;
+            return count;
         }
 
         /// <summary>
@@ -142,28 +174,36 @@ namespace Flow
             if (!ValidCoords(indexTile))
                 return;
 
+            _countTileWithColor = CountTileWithColor();
+
             Tile tile = _tiles[indexTile.y, indexTile.x];
+
+            _changeColor = _currentTraceColor != tile.GetColor();
+            // Asigno el color 
+            _currentTraceColor = tile.GetColor();
+
             // Si pulsamos en una casilla con color
             if (tile.IsTraceActive() || tile.IsEnd())
             {
                 _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(false);
                 _isDiffEnd = false;
-                // Asigno el color 
-                _currentTraceColor = tile.GetColor();
-                int indexTraceStack = GetColorIndex(_currentTraceColor);
+
+                Color c = tile.GetColor();
+                int indexTraceStack = GetColorIndex(c);
 
                 // Activamos el circulo en la posicion pulsada con el color correspondiente
                 circleFinger.enabled = true;
-                circleFinger.color = new Color(_currentTraceColor.r, _currentTraceColor.g, _currentTraceColor.b, 0.5f);
+                circleFinger.color = new Color(c.r, c.g, c.b, 0.5f);
                 circleFinger.transform.position = new Vector3(touchPos.x, touchPos.y, 0);
 
                 _currentTilePress = indexTile;
 
                 // Desactivo las casillas que estan despues de esta
-                BackToTile(indexTile);
+                BackToTile(indexTile, c);
 
                 if (tile.IsEnd() && _traceStacks[indexTraceStack].Count > 0)
                     _traceStacks[indexTraceStack].Pop();
+
                 // Si la casilla que hemos pulsado no esta en la pila, la metemos
                 if (!_traceStacks[indexTraceStack].Contains(indexTile))
                     _traceStacks[indexTraceStack].Push(indexTile);
@@ -210,7 +250,7 @@ namespace Flow
             if ((tile.IsTraceActive()) || _traceStacks[indexTraceStack].Contains(indexTile))
             {
                 _isDiffEnd = false;
-                BackToTile(indexTile);
+                BackToTile(indexTile, _currentTraceColor);
                 _currentTilePress = indexTile;
                 return;
             }
@@ -239,7 +279,6 @@ namespace Flow
             // ponemos el circulo peque�o al ultimo tile presionado
             if (_isEndPath)
             {
-                Debug.Log("Camino " + _currentTraceColor + " acabado");
                 // animacion correspondiente
                 _isEndPath = false;
 
@@ -251,6 +290,14 @@ namespace Flow
             else
             {
                 _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(true);
+            }
+
+            if (_changeColor)
+            //if (_countTileWithColor != CountTileWithColor() && _isMove && _changeColor)
+            {
+                _isMove = false;
+                _changeColor = false;
+                _movementsCount++;
             }
         }
 
@@ -273,7 +320,6 @@ namespace Flow
         {
             SetActiveUpdate(false);
             GameManager.Instance().Win();
-            Debug.Log("has ganado el nivel!!");
         }
 
         /// <summary>
@@ -349,6 +395,40 @@ namespace Flow
                 for (int j = 0; j < _width; j++)
                     Destroy(_tiles[i, j].gameObject);
         }
+        #endregion
+
+        #region PUBLIC METHODS
+        /// <summary>
+        /// Metodo para obtener el numeor de flows completos
+        /// </summary>
+        /// <returns>Devuelve un numero INT que representa de flows completos</returns>
+        public int GetNumFlowsEnded()
+        {
+            int count = 0;
+            foreach (bool b in _traceEnds)
+                if (b)
+                    count++;
+
+            return count;
+        }
+
+        /// <summary>
+        /// Metodo para obtener el numero de flows que tiene el nivel
+        /// </summary>
+        /// <returns>Devuelve un INT que representa el numero de flows que tiene el nivel</returns>
+        public int GetNumFlows()
+        {
+            return _traceEnds.Length;
+        }
+
+        /// <summary>
+        /// Metodo para obtener el numero de moviminetos hechos
+        /// </summary>
+        /// <returns>Devuelve un numero INT que representa el numero de movimientos hechos</returns>
+        public int GetNumMovements()
+        {
+            return _movementsCount;
+        }
 
         /// <summary>
         /// Invalida el update del board
@@ -365,6 +445,10 @@ namespace Flow
         public void SetMap(Logic.Level map)
         {
             _invalidate = false;
+            _movementsCount = 0;
+            _countTileWithColor = 0;
+            _isMove = false;
+            _changeColor = false;
 
             ResetBoard();
 
@@ -372,7 +456,7 @@ namespace Flow
             _width = map.getAncho();
 
             _traceEnds = new bool[map.getFlujos()];
-            for (int i = 0; i < _traceEnds.Length; i++) 
+            for (int i = 0; i < _traceEnds.Length; i++)
                 _traceEnds[i] = false;
 
             _traceStacks = new Stack<Utils.Coord>[map.getFlujos()];
@@ -406,6 +490,7 @@ namespace Flow
             }
 
         }
+        #endregion
 
 
 

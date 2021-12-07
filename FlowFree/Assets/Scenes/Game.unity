@@ -3966,6 +3966,8 @@ MonoBehaviour:
   boardManager: {fileID: 658434042}
   levelText: {fileID: 117945508}
   dimensionText: {fileID: 783262247}
+  movementsText: {fileID: 1079566341}
+  flowsText: {fileID: 1693783723}
   endLevelMenu: {fileID: 2116483265}
 --- !u!4 &1665646021
 Transform:
