@@ -50,6 +50,11 @@ namespace Flow
         // cuenta de la cantidad de casillas que tienen color asignado
         private int _countTileWithColor = 0;
 
+        private int _screenWidth;
+        private int _screenHeight;
+
+        private float _scaleFactor;
+
         #region PRIVATE METHODS
         private void Start()
         {
@@ -58,6 +63,9 @@ namespace Flow
 
         private void Update()
         {
+            if (_screenWidth != Screen.width || _screenHeight != Screen.height)
+                MapRescaling();
+
             if (_invalidate)
                 return;
 
@@ -178,13 +186,13 @@ namespace Flow
 
             Tile tile = _tiles[indexTile.y, indexTile.x];
 
-            _changeColor = _currentTraceColor != tile.GetColor();
-            // Asigno el color 
-            _currentTraceColor = tile.GetColor();
-
             // Si pulsamos en una casilla con color
             if (tile.IsTraceActive() || tile.IsEnd())
             {
+                _changeColor = _currentTraceColor != tile.GetColor();
+                // Asigno el color 
+                _currentTraceColor = tile.GetColor();
+
                 _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(false);
                 _isDiffEnd = false;
 
@@ -221,7 +229,7 @@ namespace Flow
                 return;
 
             // ponemos el circulo grande en la posicion de contacto
-            circleFinger.transform.position = new Vector3(dragPos.x, dragPos.y, 0);
+            circleFinger.transform.position = new Vector3(dragPos.x * _scaleFactor, dragPos.y * _scaleFactor, 0);
 
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
             Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
@@ -274,6 +282,15 @@ namespace Flow
         /// <param name="dragPos"></param>
         private void TouchRelease(Vector2 dragPos)
         {
+
+            if (_changeColor)
+            //if (_countTileWithColor != CountTileWithColor() && _isMove && _changeColor)
+            {
+                _isMove = false;
+                _changeColor = false;
+                _movementsCount++;
+            }
+
             // quitamos el circulo grande
             circleFinger.enabled = false;
             // ponemos el circulo peque�o al ultimo tile presionado
@@ -290,14 +307,6 @@ namespace Flow
             else
             {
                 _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(true);
-            }
-
-            if (_changeColor)
-            //if (_countTileWithColor != CountTileWithColor() && _isMove && _changeColor)
-            {
-                _isMove = false;
-                _changeColor = false;
-                _movementsCount++;
             }
         }
 
@@ -353,6 +362,7 @@ namespace Flow
 #endif
 
             Vector2 unityPos = Camera.main.ScreenToWorldPoint(pos);
+            unityPos /= _scaleFactor;
             if (press)
                 TouchDown(unityPos);
             //Lo estamos pulsando
@@ -394,7 +404,50 @@ namespace Flow
             for (int i = 0; i < _height; i++)
                 for (int j = 0; j < _width; j++)
                     Destroy(_tiles[i, j].gameObject);
+            gameObject.transform.localScale = new Vector3(1, 1, 1);
         }
+
+
+
+        /// <summary>
+        /// Aplica al boardManager un escalado y una transformacion segun la cantidad de celdas del mapa y la resolucion de la pantalla
+        /// </summary>
+        private void MapRescaling()
+        {
+            _screenWidth = Screen.width;
+            _screenHeight = Screen.height;
+
+            // agrandamos la pantalla para que quepan el baner de abajo y los botones de arriba
+            float offsetLateral = 0.98f;
+            float offsetVertical = 0.7f;
+
+            float scaleFactorW, scaleFactorH;
+            float offsetX, offsetY;
+
+            float cameraSize = Camera.main.orthographicSize;
+
+            // resolucion de la cámara en unidades de unity 
+            float tilesByHeight = cameraSize * 2;
+            float tilesByWidth = (Screen.width * tilesByHeight) / Screen.height;
+
+            scaleFactorW = (tilesByWidth * offsetLateral) / _tiles.GetLength(1);
+            scaleFactorH = (tilesByHeight * offsetVertical) / _tiles.GetLength(0);
+            _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
+
+            // Calculos para centrar la camara
+            offsetX = (-tilesByWidth / 2) + 0.5f * _scaleFactor;
+            offsetY = (-tilesByHeight / 2) + 0.5f * _scaleFactor;
+
+            offsetX += (tilesByWidth - _tiles.GetLength(1) * _scaleFactor) / 2;
+            offsetY += (tilesByHeight - _tiles.GetLength(0) * _scaleFactor) / 2;
+
+            // asignamos los valores calculados 
+            Camera.main.transform.position = new Vector3(-offsetX, offsetY, -10);
+
+            // escalamos el tablero
+            gameObject.transform.localScale = new Vector3(_scaleFactor, _scaleFactor, _scaleFactor);
+        }
+
         #endregion
 
         #region PUBLIC METHODS
@@ -449,6 +502,7 @@ namespace Flow
             _countTileWithColor = 0;
             _isMove = false;
             _changeColor = false;
+            _currentTraceColor = Color.clear;
 
             ResetBoard();
 
@@ -482,13 +536,14 @@ namespace Flow
                         _tiles[i, j].SetCircleEnd(true);
                         _tiles[i, j].SetTick(true);
                     }
+                    //_tiles[i, j].SetThinWalls(false, false, false, false);
                     _tiles[i, j].SetThinWalls(true, true, true, true);
 
                     //_tiles[i, j].SetThickWalls(false, false, true, true);
-
                 }
             }
 
+            MapRescaling();
         }
         #endregion
 

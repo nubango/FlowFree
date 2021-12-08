@@ -22,6 +22,9 @@ namespace Flow
         [Tooltip("Texto del numero de flojos finalizados")]
         public Text flowsText;
 
+        [Tooltip("Descripcion que aparece en ele menu de ganar un nivel")]
+        public Text descriptionText;
+
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
@@ -103,6 +106,7 @@ namespace Flow
         public void Win()
         {
             endLevelMenu.SetActive(true);
+            descriptionText.text = "You complete the level in " + boardManager.GetNumMovements() + " moves";
         }
 
         /// <summary>

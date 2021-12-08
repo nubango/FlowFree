@@ -21,8 +21,8 @@ namespace Flow
             color.pressedColor = colors[rnd];
             go.GetComponent<Button>().colors = color;
 
-            GameManager.Instance().LoadCategoryScene();
-            Debug.Log("JUEGO LIBRE!");
+            //GameManager.Instance().LoadCategoryScene();
+            GameManager.Instance().LoadGameScene();
         }
 
         public void OnClickedOptions()

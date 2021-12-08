@@ -187,7 +187,6 @@ namespace Flow
             // Parseamos las categorias
             for (int i = 0; i < _instance.categories.Length; i++)
                 _instance.logicCategories[i] = ParseCategoyPackage.Parse(_instance.categories[i]);
-
         }
         #endregion
 
