@@ -34,6 +34,12 @@ namespace Flow
         private int _currentLevel = 0;
         private int _currentPackage = 0;
         private int _currentCategory = 0;
+
+        // Array de niveles que guarda la informacion que se va a guardar
+        private List<SaveLevel> _levels;
+
+        // Flag que gestiona si se muestran o no los anuncios
+        private bool _ads = true;
         #endregion
 
 
@@ -75,6 +81,14 @@ namespace Flow
                 LoadCategoryScene();
                 return false;
             }
+
+            Logic.Level l = logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
+
+            int record = levelManager.GetNumMovements();
+
+            record = l.GetRecord() == 0 ? record : l.GetRecord() > record ? record : l.GetRecord();
+
+            l.SetRecord(record);
 
             _currentLevel++;
             return true;
@@ -121,11 +135,21 @@ namespace Flow
         /// <summary>
         /// Metodo que se llama cuando nos hemos pasado un nivel
         /// </summary>
-        public void Win()
+        public void Win(int record)
         {
+            Logic.Level l = logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
+            SaveLevel saveLevel = new SaveLevel();
+
+            saveLevel.category = _currentCategory;
+            saveLevel.package = _currentPackage;
+            saveLevel.level = _currentLevel;
+            saveLevel.record = l.GetRecord() == 0 ? record : l.GetRecord() > record ? record : l.GetRecord();
+            saveLevel.active = true;
+            _levels.Add(saveLevel);
+
+            SaveSystem.Instance().Save(_levels, levelManager.GetNumHints(), _ads);
             levelManager.Win();
         }
-
 
         public void DisableWinMenu()
         {
@@ -150,16 +174,33 @@ namespace Flow
             if (_instance != null)
             {
                 _instance.levelManager = levelManager;
-                InitCategories();
+                _instance._levels = _levels;
+                _instance.InitCategories();
                 DestroyImmediate(gameObject);
                 return;
             }
 
             _instance = this;
+            _levels = new List<SaveLevel>();
 
             InitCategories();
 
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void Start()
+        {
+            if (SaveSystem.Instance().Load())
+            {
+                levelManager.SetNumHints(SaveSystem.Instance().GetGame().hints);
+                _ads = SaveSystem.Instance().GetGame().ads;
+                List<SaveLevel> l = SaveSystem.Instance().GetGame().levels;
+
+                for (int i = 0; i < l.Count; i++)
+                {
+                    logicCategories[l[i].category].GetPackages()[l[i].package].GetLevels()[l[i].level].SetRecord(l[i].record);
+                }
+            }
         }
 
         #endregion
@@ -171,23 +212,24 @@ namespace Flow
         private void InitCategories()
         {
             // si ya hemos inicializado las categorias no hacemos nada
-            if (_instance.logicCategories != null)
+            if (logicCategories != null)
                 return;
 
             // Comprobamos si se han asignado en el editor las Categorias
-            foreach (LevelPack.CategoryPackage c in _instance.categories)
+            foreach (LevelPack.CategoryPackage c in categories)
                 if (c == null)
                 {
                     Debug.Log("INFORMACION: No se han asignado las categorias en el editor");
                     return;
                 }
 
-            _instance.logicCategories = new Logic.Category[_instance.categories.Length];
+            logicCategories = new Logic.Category[categories.Length];
 
             // Parseamos las categorias
-            for (int i = 0; i < _instance.categories.Length; i++)
-                _instance.logicCategories[i] = ParseCategoyPackage.Parse(_instance.categories[i]);
+            for (int i = 0; i < categories.Length; i++)
+                logicCategories[i] = ParseCategoyPackage.Parse(categories[i]);
         }
+
         #endregion
 
     }

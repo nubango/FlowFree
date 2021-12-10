@@ -29,7 +29,6 @@ namespace Flow
 
         // Tile actual por donde esta pasando el dedo/raton
         private Utils.Coord _currentTilePress;
-        private Utils.Coord _lastTilePress;
 
         // Flag para no pintar despues de los extremos
         private bool _isDiffEnd = false;
@@ -328,7 +327,7 @@ namespace Flow
         private void Win()
         {
             SetActiveUpdate(false);
-            GameManager.Instance().Win();
+            GameManager.Instance().Win(_movementsCount);
         }
 
         /// <summary>
@@ -506,14 +505,14 @@ namespace Flow
 
             ResetBoard();
 
-            _height = map.getAlto();
-            _width = map.getAncho();
+            _height = map.GetAlto();
+            _width = map.GetAncho();
 
-            _traceEnds = new bool[map.getFlujos()];
+            _traceEnds = new bool[map.GetFlujos()];
             for (int i = 0; i < _traceEnds.Length; i++)
                 _traceEnds[i] = false;
 
-            _traceStacks = new Stack<Utils.Coord>[map.getFlujos()];
+            _traceStacks = new Stack<Utils.Coord>[map.GetFlujos()];
             for (int i = 0; i < _traceStacks.Length; i++)
                 _traceStacks[i] = new Stack<Utils.Coord>();
 
@@ -528,7 +527,7 @@ namespace Flow
                     // El Tile (0,0) esta en la esquina superior-izquierda del "grid"
                     _tiles[i, j].gameObject.transform.localPosition = new Vector2(j, -i);
 
-                    _tiles[i, j].id = IsEndOrStart(map.getTuberias(), i, j);
+                    _tiles[i, j].id = IsEndOrStart(map.GetTuberias(), i, j);
 
                     if (_tiles[i, j].id != 0)
                     {

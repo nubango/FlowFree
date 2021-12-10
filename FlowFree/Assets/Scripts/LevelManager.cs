@@ -18,7 +18,10 @@ namespace Flow
 
         [Tooltip("Texto del numero de moviminetos realizados")]
         public Text movementsText;
-        
+
+        [Tooltip("Texto del record de numero de moviminetos realizados")]
+        public Text recordText;
+
         [Tooltip("Texto del numero de flojos finalizados")]
         public Text flowsText;
 
@@ -28,12 +31,13 @@ namespace Flow
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
-
+        private int _hints;
 
         private void Start()
         {
             DisableWinMenu();
             boardManager.SetMap(GameManager.Instance().GetDebugLevel());
+            SetUIData(GameManager.Instance().GetDebugLevel());
         }
 
         private void Update()
@@ -49,8 +53,9 @@ namespace Flow
 
         private void SetUIData(Logic.Level level)
         {
-            levelText.text = "Nivel " + level.getNumLevel();
-            dimensionText.text = level.getAlto() + "x" + level.getAncho();
+            levelText.text = "Nivel " + level.GetNumLevel();
+            dimensionText.text = level.GetAlto() + "x" + level.GetAncho();
+            recordText.text = "record: " + level.GetRecord();
         }
 
         /// <summary>
@@ -117,5 +122,17 @@ namespace Flow
             boardManager.SetActiveUpdate(true);
             endLevelMenu.SetActive(false);
         }
+
+        public int GetNumHints()
+        {
+            return _hints;
+        }
+
+        public void SetNumHints(int hints)
+        {
+            _hints = hints;
+        }
+
+        public int GetNumMovements() { return boardManager.GetNumMovements(); }
     }
 }
