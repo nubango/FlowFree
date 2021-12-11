@@ -190,6 +190,7 @@ namespace Flow
 
         private void Start()
         {
+            // todo: cambiar de sitio este if
             if (SaveSystem.Instance().Load())
             {
                 levelManager.SetNumHints(SaveSystem.Instance().GetGame().hints);

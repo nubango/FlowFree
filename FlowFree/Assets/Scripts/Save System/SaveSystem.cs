@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -74,7 +75,7 @@ namespace Flow
             {
                 txt = File.ReadAllText("C:/Users/gonza/Desktop/save.json");
             }
-            catch (FileNotFoundException fileEx)
+            catch (Exception)
             {
                 return false;
             }
