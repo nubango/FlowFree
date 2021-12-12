@@ -4,6 +4,13 @@ using UnityEngine;
 
 namespace Flow
 {
+    /*
+    ERRORES:
+    - Al ir quitando el trazo a otro color no pinta el color nuevo
+    - Puedes empezar y acabar en el mismo punto
+    - Al acabar un trazo se le quita el color a la casilla finalizada
+    - Al acabar un trazo no puedes ir para atras
+     */
     public class TraceInput
     {
         #region ATRIBUTTES
@@ -25,7 +32,6 @@ namespace Flow
         private Utils.Coord _currentTilePress;
 
         // Flag para no pintar despues de los extremos
-        private bool _isDiffEnd = false;
         private bool _isEndPath = false;
 
         // cuenta de los movimientos que llevamos en el nivel
@@ -199,20 +205,14 @@ namespace Flow
             // Calcula la tangente del angulo formado por el triangulo rectangulo que define el segmento que une los dos puntos. 
             Utils.Coord segment = _lastColorTile - _currentTilePress;
 
-            float tangent;
-            if (segment.x == 0)
-                tangent = 0;
-            else
-                tangent = Mathf.Abs((float)segment.y / segment.x);
-
             segment = Normalize(segment);
             Vector2 d = new Vector2(-segment.x, -segment.y);
             Utils.Coord direction = new Utils.Coord((int)d.x, (int)d.y);
 
             //Debug.Log(direction.x + " " + direction.y);
-            Debug.Log(d.x + " " + d.y);
+            Debug.Log(_currentTilePress.x + " " + _currentTilePress.y);
 
-            GoToDirection(direction, tangent);
+            GoToDirection(direction);
 
         }
 
@@ -247,7 +247,6 @@ namespace Flow
             {
                 _tiles[_lastColorTile.y, _lastColorTile.x].SetCircleTrace(true);
             }
-
         }
 
 
@@ -261,7 +260,7 @@ namespace Flow
                     v.x = -1;
                 v.y = 0;
             }
-            else
+            else if (Mathf.Abs(v.x) < Mathf.Abs(v.y))
             {
                 v.x = 0;
                 if (v.y > 0)
@@ -274,50 +273,40 @@ namespace Flow
         }
 
 
-        private void GoToDirection(Utils.Coord direction, float tangent)
+        private void GoToDirection(Utils.Coord direction)
         {
             // intentar poner un rastro en el siguiente tile que marca la direccion
 
             // Tangente = T Angulo = A
-            // Si T es igual a 1 entonces A es igual a 45. Hay que ir para arriba o para abajo (segun se pueda)
-            if (tangent == 1)
-            {
-
-            }
             // Si T es mayor que 1 entonces A es mayor que 45 (para arriba)
             // Si T es menor que 1 entonces A es menor que 45 (para abajo)
-            else
-            {
-                Utils.Coord nextPos = _lastColorTile + direction;
-                //Debug.Log(nextPos.x + " " + nextPos.y);
-                // si estamos en una posicion valida y no es un final de trazo, volvemos para atras y pintamos el trazo
-                if (ValidCoords(nextPos) && !_tiles[nextPos.y, nextPos.x].IsEnd())
-                {
+            // Si T es igual a 1 entonces A es igual a 45. Hay que ir para arriba o para abajo (segun se pueda)
+            if (Mathf.Abs(direction.x) == Mathf.Abs(direction.y))
+                return;
 
-                    BackToTile(nextPos);
+            Utils.Coord nextPos = _lastColorTile + direction;
+            if (!ValidCoords(nextPos))
+                return;
+            Tile t = _tiles[nextPos.y, nextPos.x];
+            // si estamos en una posicion valida y no es un final de trazo, volvemos para atras y pintamos el trazo
+            if (!t.IsEnd() || (t.GetColor() == _currentTraceColor))
+            {
+                if (!_isEndPath)
+                {
+                    if (!t.IsEnd())
+                        BackToTile(nextPos);
+
+                    int indexTraceStack = GetColorIndex(t.GetColor());
+
+                    _isEndPath = t.IsEnd() && t.GetColor() == _currentTraceColor && _traceStacks[indexTraceStack].Count > 1 &&
+                                 !_traceStacks[indexTraceStack].Contains(nextPos);
 
                     // Si estamos en una colision de colores hay que pintar el nuevo rastro
-                    if (_currentTraceColor != _tiles[nextPos.y, nextPos.x].GetColor())
-                    {
+                    if (_currentTraceColor != _tiles[nextPos.y, nextPos.x].GetColor() || (t.IsEnd() && t.GetColor() == _currentTraceColor))
                         PutTraceInTile(nextPos);
-                    }
-
                     _lastColorTile = nextPos;
-
-                    // Calcula la tangente del angulo formado por el triangulo rectangulo que define el segmento que une los dos puntos. 
-                    //Utils.Coord segment = _lastColorTile - _currentTilePress;
-
-                    //int nextTangent;
-                    //if (segment.x == 0)
-                    //    nextTangent = 0;
-                    //else
-                    //    nextTangent = Mathf.Abs(segment.y / segment.x);
-
-                    //Vector2 d = new Vector2(segment.y, segment.x).normalized;
-                    //Utils.Coord newDirection = new Utils.Coord((int)d.x, (int)d.y);
-
-                    //GoToDirection(newDirection, nextTangent);
                 }
+
             }
         }
 
@@ -325,7 +314,7 @@ namespace Flow
         /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
         /// </summary>
         /// <param name="coord"></param>
-        /// <returns></returns>
+        /// <returns>TRUE si esta dentro de los limites. False en caso contrario</returns>
         private bool ValidCoords(Utils.Coord coord)
         {
             return coord.x >= 0 && coord.y >= 0 && coord.x < _boardManager.GetWidth() && coord.y < _boardManager.GetHeight();
@@ -354,15 +343,15 @@ namespace Flow
         {
             Tile t = _tiles[coord.y, coord.x];
             int indexTraceStack = GetColorIndex(t.GetColor());
-            if (indexTraceStack != -1)
-                // eliminamos la ultima casilla del color antiguo
-                _traceStacks[indexTraceStack].Pop();
+            //if (indexTraceStack != -1)
+            //    // eliminamos la ultima casilla del color antiguo
+            //    _traceStacks[indexTraceStack].Pop();
 
             // direccion en la que tenemos que activar el trace
             Utils.Coord direction = _lastColorTile - coord;
 
             if (!t.IsEnd())
-                t.SetColor(_currentTraceColor);
+                t.SetColorTrace(_currentTraceColor);
 
             t.ActiveTrace(new Vector2(direction.x, direction.y).normalized);
 

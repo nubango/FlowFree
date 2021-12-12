@@ -43,18 +43,27 @@ namespace Flow
         /// <returns></returns>
         public Color GetColor()
         {
-            return circleEnd.color;
+            return circleTrace.color;
         }
 
         /// <summary>
-        /// Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
+        /// Cambia el color del trazo
         /// </summary>
         /// <param name="c"></param>
-        public void SetColor(Color c)
+        public void SetColorTrace(Color c)
         {
-            circleEnd.color = c;
             circleTrace.color = c;
             trace.color = c;
+        }
+
+        /// <summary>
+        /// Cambia el color de la casilla 
+        /// </summary>
+        /// <param name="c"></param>
+        public void SetColorStart(Color c)
+        {
+            circleEnd.color = c;
+            SetColorTrace(c);
         }
 
         /// <summary>
@@ -162,7 +171,7 @@ namespace Flow
         public void DesactiveTrace()
         {
             trace.enabled = false;
-            SetColor(Color.clear);
+            SetColorTrace(Color.clear);
         }
 
         private void SetUp(bool enabled)
