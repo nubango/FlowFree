@@ -18,6 +18,9 @@ namespace Flow
         // Array que guarda TRUE si un flujo esta completo y FALSE en caso contrario
         private bool[] _traceEnds;
 
+        // Ultimo tile que tiene color
+        private Utils.Coord _lastColorTile;
+
         // Tile actual por donde esta pasando el dedo/raton
         private Utils.Coord _currentTilePress;
 
@@ -133,101 +136,6 @@ namespace Flow
 
         #region PRIVATE_METHODS
         /// <summary>
-        /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
-        private bool ValidCoords(Utils.Coord coord)
-        {
-            return coord.x >= 0 && coord.y >= 0 && coord.x < _boardManager.GetWidth() && coord.y < _boardManager.GetHeight();
-        }
-
-        /// <summary>
-        ///  Metodo que devuelve el indice de la pila de moviminetos correspondiente al color que se le pasa por parametro
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        private int GetColorIndex(Color color)
-        {
-            for (int i = 0; i < GameManager.Instance().currentSkin.colores.Length; i++)
-            {
-                if (color == GameManager.Instance().currentSkin.colores[i])
-                    return i;
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        /// Metodo que activa un rastro en la posicion indicada
-        /// </summary>
-        private void PutTraceInTile(Utils.Coord coord)
-        {
-            // Accedo al tile correspondiente a las coordenadas pasadas por parametro
-            Tile t = _tiles[coord.y, coord.x];
-
-            // direccion en la que tenemos que activar el trace
-            Utils.Coord direction = _currentTilePress - coord;
-
-            if (!t.IsEnd())
-                t.SetColor(_currentTraceColor);
-
-            t.ActiveTrace(new Vector2(direction.x, direction.y).normalized);
-        }
-
-        /// <summary>
-        ///  Retrocede hasta la casilla correspondiente
-        /// </summary>
-        /// <param name="coord"></param>
-        private void BackToTile(Utils.Coord coord, Color currentColor)
-        {
-            Tile t = _tiles[coord.y, coord.x];
-            int indexTraceStack = GetColorIndex(t.GetColor());
-
-            _traceEnds[indexTraceStack] = false;
-
-            // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
-            Utils.Coord position = coord;
-            if (_traceStacks[indexTraceStack].Count > 0)
-                position = _traceStacks[indexTraceStack].Peek();
-
-            while ((position != coord || t.IsEnd()) && _traceStacks[indexTraceStack].Count > 1)
-            {
-                _traceStacks[indexTraceStack].Pop();
-                _tiles[position.y, position.x].DesactiveTrace();
-
-                if (_traceStacks[indexTraceStack].Count > 0)
-                    position = _traceStacks[indexTraceStack].Peek();
-            }
-
-            // Si estamos en una colision de colores hay que pintar el nuevo rastro
-            if (currentColor != t.GetColor())
-            {
-                // eliminamos la ultima casilla del color antiguo
-                _traceStacks[indexTraceStack].Pop();
-                // ponemos el rastro del color nuevo
-                PutTraceInTile(coord);
-
-                // a�adimos el nuevo rastro a su nuevo color
-                indexTraceStack = GetColorIndex(currentColor);
-                _traceStacks[indexTraceStack].Push(coord);
-                _currentTilePress = coord;
-            }
-        }
-
-        /// <summary>
-        /// Cuenta las casillas que tienen un color asignado
-        /// </summary>
-        /// <returns>Devuelve un INT que representa el numero de casillas que tienen color asignado</returns>
-        private int CountTileWithColor()
-        {
-            int count = 0;
-            foreach (Stack<Utils.Coord> s in _traceStacks)
-                count += s.Count;
-            return count;
-        }
-
-        /// <summary>
         ///  Metodo que ocurre cuando se pulsa la pantalla
         /// </summary>
         /// <param name="touchPos"></param>
@@ -243,14 +151,10 @@ namespace Flow
             // Si pulsamos en una casilla con color
             if (tile.IsTraceActive() || tile.IsEnd())
             {
-                _changeColor = _currentTraceColor != tile.GetColor();
-                // Asigno el color 
-                _currentTraceColor = tile.GetColor();
-
-                _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(false);
-                _isDiffEnd = false;
+                _tiles[_lastColorTile.y, _lastColorTile.x].SetCircleTrace(false);
 
                 Color c = tile.GetColor();
+                _currentTraceColor = c;
                 int indexTraceStack = GetColorIndex(c);
 
                 // Activamos el circulo en la posicion pulsada con el color correspondiente
@@ -258,10 +162,10 @@ namespace Flow
                 _circleFinger.color = new Color(c.r, c.g, c.b, 0.5f);
                 _circleFinger.transform.position = new Vector3(touchPos.x, touchPos.y, 0);
 
-                _currentTilePress = indexTile;
+                _lastColorTile = indexTile;
 
                 // Desactivo las casillas que estan despues de esta
-                BackToTile(indexTile, c);
+                BackToTile(indexTile);
 
                 if (tile.IsEnd() && _traceStacks[indexTraceStack].Count > 0)
                     _traceStacks[indexTraceStack].Pop();
@@ -288,46 +192,28 @@ namespace Flow
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
             Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
             if (!ValidCoords(indexTile))
-            {
-                _isDiffEnd = true;
-                return;
-            }
-
-            // obtenemos el tile pulsado y le asignamos el color
-            Tile tile = _tiles[indexTile.y, indexTile.x];
-            int indexTraceStack = GetColorIndex(_currentTraceColor);
-
-            // Si todavia estamos en el mismo tile no pintamos nada
-            if (indexTile == _currentTilePress)
                 return;
 
-            // Si es un final de color distinto al que tenemos, no pintamos rastro
-            if ((tile.GetColor() != _currentTraceColor && tile.IsEnd()) || _isDiffEnd)
-            {
-                _isDiffEnd = true;
-                return;
-            }
-
-            // Si estamos en un tile por el que ya hemos pasado o el camino contiene esa casilla eliminamos los trace posteriores a ese tile
-            if ((tile.IsTraceActive()) || _traceStacks[indexTraceStack].Contains(indexTile))
-            {
-                _isDiffEnd = false;
-                BackToTile(indexTile, _currentTraceColor);
-                _currentTilePress = indexTile;
-                return;
-            }
-
-            // pintamos el tile y lo metemos en la pila correspondiente
-            PutTraceInTile(indexTile);
-            _traceStacks[indexTraceStack].Push(indexTile);
             _currentTilePress = indexTile;
 
-            // Si hemos llegado al final lo notificamos para no seguir pintando 
-            if (tile.IsEnd())
-            {
-                _isDiffEnd = true;
-                _isEndPath = true;
-            }
+            // Calcula la tangente del angulo formado por el triangulo rectangulo que define el segmento que une los dos puntos. 
+            Utils.Coord segment = _lastColorTile - _currentTilePress;
+
+            float tangent;
+            if (segment.x == 0)
+                tangent = 0;
+            else
+                tangent = Mathf.Abs((float)segment.y / segment.x);
+
+            segment = Normalize(segment);
+            Vector2 d = new Vector2(-segment.x, -segment.y);
+            Utils.Coord direction = new Utils.Coord((int)d.x, (int)d.y);
+
+            //Debug.Log(direction.x + " " + direction.y);
+            Debug.Log(d.x + " " + d.y);
+
+            GoToDirection(direction, tangent);
+
         }
 
         /// <summary>
@@ -359,8 +245,171 @@ namespace Flow
             }
             else
             {
-                _tiles[_currentTilePress.y, _currentTilePress.x].SetCircleTrace(true);
+                _tiles[_lastColorTile.y, _lastColorTile.x].SetCircleTrace(true);
             }
+
+        }
+
+
+        private Utils.Coord Normalize(Utils.Coord v)
+        {
+            if (Mathf.Abs(v.x) > Mathf.Abs(v.y))
+            {
+                if (v.x > 0)
+                    v.x = 1;
+                else if (v.x < 0)
+                    v.x = -1;
+                v.y = 0;
+            }
+            else
+            {
+                v.x = 0;
+                if (v.y > 0)
+                    v.y = 1;
+                else if (v.y < 0)
+                    v.y = -1;
+            }
+
+            return v;
+        }
+
+
+        private void GoToDirection(Utils.Coord direction, float tangent)
+        {
+            // intentar poner un rastro en el siguiente tile que marca la direccion
+
+            // Tangente = T Angulo = A
+            // Si T es igual a 1 entonces A es igual a 45. Hay que ir para arriba o para abajo (segun se pueda)
+            if (tangent == 1)
+            {
+
+            }
+            // Si T es mayor que 1 entonces A es mayor que 45 (para arriba)
+            // Si T es menor que 1 entonces A es menor que 45 (para abajo)
+            else
+            {
+                Utils.Coord nextPos = _lastColorTile + direction;
+                //Debug.Log(nextPos.x + " " + nextPos.y);
+                // si estamos en una posicion valida y no es un final de trazo, volvemos para atras y pintamos el trazo
+                if (ValidCoords(nextPos) && !_tiles[nextPos.y, nextPos.x].IsEnd())
+                {
+
+                    BackToTile(nextPos);
+
+                    // Si estamos en una colision de colores hay que pintar el nuevo rastro
+                    if (_currentTraceColor != _tiles[nextPos.y, nextPos.x].GetColor())
+                    {
+                        PutTraceInTile(nextPos);
+                    }
+
+                    _lastColorTile = nextPos;
+
+                    // Calcula la tangente del angulo formado por el triangulo rectangulo que define el segmento que une los dos puntos. 
+                    //Utils.Coord segment = _lastColorTile - _currentTilePress;
+
+                    //int nextTangent;
+                    //if (segment.x == 0)
+                    //    nextTangent = 0;
+                    //else
+                    //    nextTangent = Mathf.Abs(segment.y / segment.x);
+
+                    //Vector2 d = new Vector2(segment.y, segment.x).normalized;
+                    //Utils.Coord newDirection = new Utils.Coord((int)d.x, (int)d.y);
+
+                    //GoToDirection(newDirection, nextTangent);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <returns></returns>
+        private bool ValidCoords(Utils.Coord coord)
+        {
+            return coord.x >= 0 && coord.y >= 0 && coord.x < _boardManager.GetWidth() && coord.y < _boardManager.GetHeight();
+        }
+
+        /// <summary>
+        ///  Metodo que devuelve el indice de la pila de moviminetos correspondiente al color que se le pasa por parametro
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        private int GetColorIndex(Color color)
+        {
+            for (int i = 0; i < GameManager.Instance().currentSkin.colores.Length; i++)
+            {
+                if (color == GameManager.Instance().currentSkin.colores[i])
+                    return i;
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Metodo que activa un rastro en la posicion indicada
+        /// </summary>
+        private void PutTraceInTile(Utils.Coord coord)
+        {
+            Tile t = _tiles[coord.y, coord.x];
+            int indexTraceStack = GetColorIndex(t.GetColor());
+            if (indexTraceStack != -1)
+                // eliminamos la ultima casilla del color antiguo
+                _traceStacks[indexTraceStack].Pop();
+
+            // direccion en la que tenemos que activar el trace
+            Utils.Coord direction = _lastColorTile - coord;
+
+            if (!t.IsEnd())
+                t.SetColor(_currentTraceColor);
+
+            t.ActiveTrace(new Vector2(direction.x, direction.y).normalized);
+
+            // añadimos el nuevo rastro a su nuevo color
+            indexTraceStack = GetColorIndex(t.GetColor());
+            _traceStacks[indexTraceStack].Push(coord);
+        }
+
+        /// <summary>
+        ///  Retrocede hasta la casilla correspondiente
+        /// </summary>
+        /// <param name="coord"></param>
+        private void BackToTile(Utils.Coord coord)
+        {
+            Tile t = _tiles[coord.y, coord.x];
+            int indexTraceStack = GetColorIndex(t.GetColor());
+            if (indexTraceStack == -1)
+                return;
+
+            _traceEnds[indexTraceStack] = false;
+
+            // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
+            Utils.Coord position = coord;
+            if (_traceStacks[indexTraceStack].Count > 0)
+                position = _traceStacks[indexTraceStack].Peek();
+
+            while ((position != coord || t.IsEnd()) && _traceStacks[indexTraceStack].Count > 1)
+            {
+                _traceStacks[indexTraceStack].Pop();
+                _tiles[position.y, position.x].DesactiveTrace();
+
+
+                if (_traceStacks[indexTraceStack].Count > 0)
+                    position = _traceStacks[indexTraceStack].Peek();
+            }
+        }
+
+        /// <summary>
+        /// Cuenta las casillas que tienen un color asignado
+        /// </summary>
+        /// <returns>Devuelve un INT que representa el numero de casillas que tienen color asignado</returns>
+        private int CountTileWithColor()
+        {
+            int count = 0;
+            foreach (Stack<Utils.Coord> s in _traceStacks)
+                count += s.Count;
+            return count;
         }
 
         /// <summary>

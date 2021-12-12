@@ -162,6 +162,7 @@ namespace Flow
         public void DesactiveTrace()
         {
             trace.enabled = false;
+            SetColor(Color.clear);
         }
 
         private void SetUp(bool enabled)
