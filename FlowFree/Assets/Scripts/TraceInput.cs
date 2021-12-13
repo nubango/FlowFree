@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Flow
 {
+    /*
+    ERRORES:
+    - si al lado de una casilla, que es un final, hay un path de otro color, completamos el path de esa casilla y nos permite seguir pintando hacia el lado en el que esta el path del otro color
+     */
     public class TraceInput
     {
         #region ATRIBUTTES
@@ -12,7 +16,6 @@ namespace Flow
         // Color actual del trazo
         private Color _currentTraceColor;
 
-        // Color anterior
         private Color _lastTraceColor;
 
         // Array de pilas que contienen los caminos actuales de cada color
@@ -187,6 +190,15 @@ namespace Flow
                 // Si la casilla que hemos pulsado no esta en la pila, la metemos
                 if (!_traceStacks[indexTraceStack].Contains(indexTile))
                     _traceStacks[indexTraceStack].Push(indexTile);
+
+                // vemos si hemos pulsado en un inicio y no hemos avanzado, entonces actualizamos para que no cuente como movimiento
+                for (int i = 0; i < _traceStacksLengthCount.Length; i++)
+                {
+                    if (_traceStacksLengthCount[i] == _traceStacks[i].Count || _traceStacksLengthCount[i] + 1 == _traceStacks[i].Count)
+                    {
+                        _traceStacksLengthCount[i] = _traceStacks[i].Count;
+                    }
+                }
             }
         }
 
@@ -230,13 +242,12 @@ namespace Flow
         /// <param name="dragPos"></param>
         private void TouchRelease(Vector2 dragPos)
         {
+            // falta que al pulsar un color no sume un movimiento. Eso es porque al pulsar un color se añade la casilla inicio a la pila y entonces cuenta como que ha cambiado la longitud de un path
             if (_lastTraceColor != _currentTraceColor && ChangePaths())
             {
                 _movementsCount++;
                 _lastTraceColor = _currentTraceColor;
             }
-
-            _currentTraceColor = Color.clear;
 
             // quitamos el circulo grande
             _circleFinger.enabled = false;
@@ -249,12 +260,17 @@ namespace Flow
                 // comprobamos si hemos ganado
                 _traceEnds[GetColorIndex(_currentTraceColor)] = true;
                 if (AllColorsEnd())
+                {
+                    _lastTraceColor = Color.clear;
                     _boardManager.Win();
+                }
             }
             else
             {
                 _tiles[_lastColorTile.y, _lastColorTile.x].SetCircleTrace(true);
             }
+
+            _currentTraceColor = Color.clear;
         }
 
         private bool ChangePaths()
@@ -292,8 +308,6 @@ namespace Flow
 
         private void GoToDirection(Utils.Coord direction)
         {
-            // intentar poner un rastro en el siguiente tile que marca la direccion
-
             // si vamos en diagonal no hacemos nada
             if (Mathf.Abs(direction.x) == Mathf.Abs(direction.y))
                 return;
@@ -320,9 +334,12 @@ namespace Flow
             {
                 // pinto el trazo
                 PutTraceInTile(nextPos);
+
+                _isEndPath = t.IsEnd() && t.GetColor() == _currentTraceColor;
             }
             // si la casilla siguiente es un trazo de otro color y no un final
-            else if (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd())
+            else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd()) ||
+                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd() && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd()))
             {
                 // vuelvo atras en esa casilla
                 BackToTile(nextPos);
@@ -332,7 +349,6 @@ namespace Flow
 
             if (t.GetColor() == _currentTraceColor)
                 _lastColorTile = nextPos;
-
         }
 
         /// <summary>
@@ -413,18 +429,6 @@ namespace Flow
                 if (_traceStacks[indexTraceStack].Count > 0)
                     position = _traceStacks[indexTraceStack].Peek();
             }
-        }
-
-        /// <summary>
-        /// Cuenta las casillas que tienen un color asignado
-        /// </summary>
-        /// <returns>Devuelve un INT que representa el numero de casillas que tienen color asignado</returns>
-        private int CountTileWithColor()
-        {
-            int count = 0;
-            foreach (Stack<Utils.Coord> s in _traceStacks)
-                count += s.Count;
-            return count;
         }
 
         /// <summary>
