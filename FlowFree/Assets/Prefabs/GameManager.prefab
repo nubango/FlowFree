@@ -44,9 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelManager: {fileID: 0}
-  intro: {fileID: 11400000, guid: 29b43d53431c93c44b0d5fd1ef966ddf, type: 2}
-  manias: {fileID: 11400000, guid: 112d67dbc353ee3419ec53ec728b941d, type: 2}
-  rectangles: {fileID: 11400000, guid: ece4ec9d74a8a044ca81dfc02682237b, type: 2}
+  categories: []
   currentSkin: {fileID: 11400000, guid: b15acc52678233e4da3dbe36f9751820, type: 2}
   currentLevel: 1
   currentLevelTxt: {fileID: 0}

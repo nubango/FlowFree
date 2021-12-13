@@ -28,6 +28,9 @@ namespace Flow
         [Tooltip("Descripcion que aparece en ele menu de ganar un nivel")]
         public Text descriptionText;
 
+        [Tooltip("Texto del boton de siguiente nivel/paquete")]
+        public Text nextLevelButtonText;
+
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
@@ -108,8 +111,14 @@ namespace Flow
         /// <summary>
         /// Metodo activa el menu de nivel ganado
         /// </summary>
-        public void Win()
+        public void Win(bool nextPackage)
         {
+            if (nextPackage) 
+                nextLevelButtonText.text = "next package";
+            else
+                nextLevelButtonText.text = "next level";
+
+
             endLevelMenu.SetActive(true);
             descriptionText.text = "You complete the level in " + boardManager.GetNumMovements() + " moves";
         }

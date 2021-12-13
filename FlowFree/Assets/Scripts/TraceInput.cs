@@ -4,10 +4,6 @@ using UnityEngine;
 
 namespace Flow
 {
-    /*
-    ERRORES:
-    - si al lado de una casilla, que es un final, hay un path de otro color, completamos el path de esa casilla y nos permite seguir pintando hacia el lado en el que esta el path del otro color
-     */
     public class TraceInput
     {
         #region ATRIBUTTES

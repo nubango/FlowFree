@@ -36,7 +36,7 @@ namespace Flow
         private int _currentCategory = 0;
 
         // Array de niveles que guarda la informacion que se va a guardar
-        private List<SaveLevel> _levels;
+        private List<SaveLevel> _saveLevels;
 
         // Flag que gestiona si se muestran o no los anuncios
         private bool _ads = true;
@@ -145,10 +145,12 @@ namespace Flow
             saveLevel.level = _currentLevel;
             saveLevel.record = l.GetRecord() == 0 ? record : l.GetRecord() > record ? record : l.GetRecord();
             saveLevel.active = true;
-            _levels.Add(saveLevel);
+            _saveLevels.Add(saveLevel);
 
-            SaveSystem.Instance().Save(_levels, levelManager.GetNumHints(), _ads);
-            levelManager.Win();
+            SaveSystem.Instance().Save(_saveLevels, levelManager.GetNumHints(), _ads);
+
+            bool nextPackage = _currentLevel == logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels().Length - 2;
+            levelManager.Win(nextPackage);
         }
 
         public void DisableWinMenu()
@@ -174,14 +176,14 @@ namespace Flow
             if (_instance != null)
             {
                 _instance.levelManager = levelManager;
-                _instance._levels = _levels;
+                _instance._saveLevels = _saveLevels;
                 _instance.InitCategories();
                 DestroyImmediate(gameObject);
                 return;
             }
 
             _instance = this;
-            _levels = new List<SaveLevel>();
+            _saveLevels = new List<SaveLevel>();
 
             InitCategories();
 

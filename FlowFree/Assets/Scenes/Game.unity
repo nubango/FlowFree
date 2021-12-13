@@ -4025,6 +4025,7 @@ MonoBehaviour:
   recordText: {fileID: 498017606}
   flowsText: {fileID: 1693783723}
   descriptionText: {fileID: 1081918315}
+  nextLevelButtonText: {fileID: 1894125422}
   endLevelMenu: {fileID: 2116483265}
 --- !u!4 &1665646021
 Transform:
@@ -4204,7 +4205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1700471162}
   m_Layer: 5
-  m_Name: Buttons
+  m_Name: Elements
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
