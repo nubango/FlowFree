@@ -4,10 +4,6 @@ using UnityEngine;
 
 namespace Flow
 {
-    /*
-    ERRORES:
-    - Una vez acabado el path puedes seguir avanzando 
-     */
     public class TraceInput
     {
         #region ATRIBUTTES
@@ -16,8 +12,14 @@ namespace Flow
         // Color actual del trazo
         private Color _currentTraceColor;
 
+        // Color anterior
+        private Color _lastTraceColor;
+
         // Array de pilas que contienen los caminos actuales de cada color
         private Stack<Utils.Coord>[] _traceStacks;
+
+        // Array que lleva la cuenta de los cambios en los diferentes caminos
+        private int[] _traceStacksLengthCount;
 
         // Array que guarda TRUE si un flujo esta completo y FALSE en caso contrario
         private bool[] _traceEnds;
@@ -51,13 +53,18 @@ namespace Flow
             _movementsCount = 0;
             _changeColor = false;
             _currentTraceColor = Color.clear;
+            _lastTraceColor = Color.clear;
 
             _traceEnds = new bool[numFlujos];
             for (int i = 0; i < _traceEnds.Length; i++)
                 _traceEnds[i] = false;
 
+            _traceStacksLengthCount = new int[numFlujos];
+            for (int i = 0; i < numFlujos; i++)
+                _traceStacksLengthCount[i] = 0;
+
             _traceStacks = new Stack<Utils.Coord>[numFlujos];
-            for (int i = 0; i < _traceStacks.Length; i++)
+            for (int i = 0; i < numFlujos; i++)
                 _traceStacks[i] = new Stack<Utils.Coord>();
         }
 
@@ -154,6 +161,10 @@ namespace Flow
             // Si pulsamos en una casilla con color
             if (tile.IsTraceActive() || tile.IsEnd())
             {
+                // actualiza la longitud de cada path
+                for (int i = 0; i < _traceStacksLengthCount.Length; i++)
+                    _traceStacksLengthCount[i] = _traceStacks[i].Count;
+
                 _tiles[_lastColorTile.y, _lastColorTile.x].SetCircleTrace(false);
 
                 Color c = tile.GetColor();
@@ -219,13 +230,13 @@ namespace Flow
         /// <param name="dragPos"></param>
         private void TouchRelease(Vector2 dragPos)
         {
-
-            if (_changeColor)
-            //if (_countTileWithColor != CountTileWithColor() && _isMove && _changeColor)
+            if (_lastTraceColor != _currentTraceColor && ChangePaths())
             {
-                _changeColor = false;
                 _movementsCount++;
+                _lastTraceColor = _currentTraceColor;
             }
+
+            _currentTraceColor = Color.clear;
 
             // quitamos el circulo grande
             _circleFinger.enabled = false;
@@ -246,6 +257,15 @@ namespace Flow
             }
         }
 
+        private bool ChangePaths()
+        {
+            bool change = false;
+
+            for (int i = 0; i < _traceStacksLengthCount.Length && !change; i++)
+                change = _traceStacksLengthCount[i] != _traceStacks[i].Count;
+
+            return change;
+        }
 
         private Utils.Coord Normalize(Utils.Coord v)
         {
@@ -284,7 +304,6 @@ namespace Flow
 
             Tile t = _tiles[nextPos.y, nextPos.x];
             int indexTraceStack = GetColorIndex(_currentTraceColor);
-
 
             // si la casilla siguiente es el inicio o si la casilla siguiente es un trazo del mismo color 
             if ((t.IsEnd() && _traceStacks[indexTraceStack].Contains(nextPos)) || (t.GetColor() == _currentTraceColor && !t.IsEnd()))
