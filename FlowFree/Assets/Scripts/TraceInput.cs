@@ -6,10 +6,7 @@ namespace Flow
 {
     /*
     ERRORES:
-    - Al ir quitando el trazo a otro color no pinta el color nuevo
-    - Puedes empezar y acabar en el mismo punto
-    - Al acabar un trazo se le quita el color a la casilla finalizada
-    - Al acabar un trazo no puedes ir para atras
+    - Una vez acabado el path puedes seguir avanzando 
      */
     public class TraceInput
     {
@@ -210,7 +207,7 @@ namespace Flow
             Utils.Coord direction = new Utils.Coord((int)d.x, (int)d.y);
 
             //Debug.Log(direction.x + " " + direction.y);
-            Debug.Log(_currentTilePress.x + " " + _currentTilePress.y);
+            //Debug.Log(_currentTilePress.x + " " + _currentTilePress.y);
 
             GoToDirection(direction);
 
@@ -277,37 +274,46 @@ namespace Flow
         {
             // intentar poner un rastro en el siguiente tile que marca la direccion
 
-            // Tangente = T Angulo = A
-            // Si T es mayor que 1 entonces A es mayor que 45 (para arriba)
-            // Si T es menor que 1 entonces A es menor que 45 (para abajo)
-            // Si T es igual a 1 entonces A es igual a 45. Hay que ir para arriba o para abajo (segun se pueda)
+            // si vamos en diagonal no hacemos nada
             if (Mathf.Abs(direction.x) == Mathf.Abs(direction.y))
                 return;
 
             Utils.Coord nextPos = _lastColorTile + direction;
             if (!ValidCoords(nextPos))
                 return;
+
             Tile t = _tiles[nextPos.y, nextPos.x];
-            // si estamos en una posicion valida y no es un final de trazo, volvemos para atras y pintamos el trazo
-            if (!t.IsEnd() || (t.GetColor() == _currentTraceColor))
+            int indexTraceStack = GetColorIndex(_currentTraceColor);
+
+
+            // si la casilla siguiente es el inicio o si la casilla siguiente es un trazo del mismo color 
+            if ((t.IsEnd() && _traceStacks[indexTraceStack].Contains(nextPos)) || (t.GetColor() == _currentTraceColor && !t.IsEnd()))
             {
-                if (!_isEndPath)
-                {
-                    if (!t.IsEnd())
-                        BackToTile(nextPos);
-
-                    int indexTraceStack = GetColorIndex(t.GetColor());
-
-                    _isEndPath = t.IsEnd() && t.GetColor() == _currentTraceColor && _traceStacks[indexTraceStack].Count > 1 &&
-                                 !_traceStacks[indexTraceStack].Contains(nextPos);
-
-                    // Si estamos en una colision de colores hay que pintar el nuevo rastro
-                    if (_currentTraceColor != _tiles[nextPos.y, nextPos.x].GetColor() || (t.IsEnd() && t.GetColor() == _currentTraceColor))
-                        PutTraceInTile(nextPos);
-                    _lastColorTile = nextPos;
-                }
-
+                // vuelvo atras en esa casilla
+                BackToTile(nextPos);
             }
+            // si la casilla siguiente esta vacia y la anterior no es un final o
+            // si la casilla siguiente esta vacia y la anterior es el inicio o 
+            // si la casilla siguiente es el final
+            else if ((GetColorIndex(t.GetColor()) == -1 && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && _traceStacks[indexTraceStack].Count > 1) ||
+                (GetColorIndex(t.GetColor()) == -1 && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && _traceStacks[indexTraceStack].Count == 1) ||
+                (t.IsEnd() && !_traceStacks[indexTraceStack].Contains(nextPos) && t.GetColor() == _currentTraceColor))
+            {
+                // pinto el trazo
+                PutTraceInTile(nextPos);
+            }
+            // si la casilla siguiente es un trazo de otro color y no un final
+            else if (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd())
+            {
+                // vuelvo atras en esa casilla
+                BackToTile(nextPos);
+                // pinto el trazo nuevo
+                PutTraceInTile(nextPos);
+            }
+
+            if (t.GetColor() == _currentTraceColor)
+                _lastColorTile = nextPos;
+
         }
 
         /// <summary>
@@ -343,9 +349,9 @@ namespace Flow
         {
             Tile t = _tiles[coord.y, coord.x];
             int indexTraceStack = GetColorIndex(t.GetColor());
-            //if (indexTraceStack != -1)
-            //    // eliminamos la ultima casilla del color antiguo
-            //    _traceStacks[indexTraceStack].Pop();
+            if (indexTraceStack != -1 && _traceStacks[indexTraceStack].Count > 0 && t.GetColor() != _currentTraceColor)
+                // eliminamos la ultima casilla del color antiguo
+                _traceStacks[indexTraceStack].Pop();
 
             // direccion en la que tenemos que activar el trace
             Utils.Coord direction = _lastColorTile - coord;
@@ -380,6 +386,7 @@ namespace Flow
 
             while ((position != coord || t.IsEnd()) && _traceStacks[indexTraceStack].Count > 1)
             {
+                Debug.Log(position.x + " " + position.y);
                 _traceStacks[indexTraceStack].Pop();
                 _tiles[position.y, position.x].DesactiveTrace();
 

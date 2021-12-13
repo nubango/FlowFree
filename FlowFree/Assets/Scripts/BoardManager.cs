@@ -225,8 +225,8 @@ namespace Flow
 
                     if (_tiles[i, j].id != 0)
                     {
-                        _tiles[i, j].SetColorStart(GameManager.Instance().currentSkin.colores[_tiles[i, j].id - 1]);
                         _tiles[i, j].SetCircleEnd(true);
+                        _tiles[i, j].SetColorStart(GameManager.Instance().currentSkin.colores[_tiles[i, j].id - 1]);
                         _tiles[i, j].SetTick(true);
                     }
                     //_tiles[i, j].SetThinWalls(false, false, false, false);

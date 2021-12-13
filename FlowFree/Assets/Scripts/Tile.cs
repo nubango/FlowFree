@@ -52,8 +52,11 @@ namespace Flow
         /// <param name="c"></param>
         public void SetColorTrace(Color c)
         {
-            circleTrace.color = c;
-            trace.color = c;
+            if (!circleEnd.enabled)
+            {
+                circleTrace.color = c;
+                trace.color = c;
+            }
         }
 
         /// <summary>
@@ -63,7 +66,8 @@ namespace Flow
         public void SetColorStart(Color c)
         {
             circleEnd.color = c;
-            SetColorTrace(c);
+            circleTrace.color = c;
+            trace.color = c;
         }
 
         /// <summary>
