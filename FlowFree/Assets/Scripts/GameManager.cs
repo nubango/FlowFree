@@ -82,14 +82,6 @@ namespace Flow
                 return false;
             }
 
-            Logic.Level l = logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
-
-            int record = levelManager.GetNumMovements();
-
-            record = l.GetRecord() == 0 ? record : l.GetRecord() > record ? record : l.GetRecord();
-
-            l.SetRecord(record);
-
             _currentLevel++;
             return true;
         }
@@ -137,15 +129,30 @@ namespace Flow
         /// </summary>
         public void Win(int record)
         {
-            Logic.Level l = logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
-            SaveLevel saveLevel = new SaveLevel();
 
-            saveLevel.category = _currentCategory;
-            saveLevel.package = _currentPackage;
-            saveLevel.level = _currentLevel;
-            saveLevel.record = l.GetRecord() == 0 ? record : l.GetRecord() > record ? record : l.GetRecord();
-            saveLevel.active = true;
-            _saveLevels.Add(saveLevel);
+            Logic.Level l = logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
+
+            int r = l.GetRecord() == 0 ? record : l.GetRecord() > record ? record : l.GetRecord();
+
+            l.SetRecord(r);
+
+            int index = -1;
+            // comprobar si se ha guardado el nivel anteriormente
+            if (ContainsLevel(ref index))
+            {
+                _saveLevels[index].record = _saveLevels[index].record == 0 ? record : _saveLevels[index].record > record ? record : _saveLevels[index].record;
+            }
+            else
+            {
+                SaveLevel saveLevel = new SaveLevel();
+                saveLevel.category = _currentCategory;
+                saveLevel.package = _currentPackage;
+                saveLevel.level = _currentLevel;
+                saveLevel.record = r;
+                saveLevel.active = true;
+
+                _saveLevels.Add(saveLevel);
+            }
 
             SaveSystem.Instance().Save(_saveLevels, levelManager.GetNumHints(), _ads);
 
@@ -197,11 +204,11 @@ namespace Flow
             {
                 levelManager.SetNumHints(SaveSystem.Instance().GetGame().hints);
                 _ads = SaveSystem.Instance().GetGame().ads;
-                List<SaveLevel> l = SaveSystem.Instance().GetGame().levels;
+                _saveLevels = SaveSystem.Instance().GetGame().levels;
 
-                for (int i = 0; i < l.Count; i++)
+                for (int i = 0; i < _saveLevels.Count; i++)
                 {
-                    logicCategories[l[i].category].GetPackages()[l[i].package].GetLevels()[l[i].level].SetRecord(l[i].record);
+                    logicCategories[_saveLevels[i].category].GetPackages()[_saveLevels[i].package].GetLevels()[_saveLevels[i].level].SetRecord(_saveLevels[i].record);
                 }
             }
         }
@@ -233,6 +240,25 @@ namespace Flow
                 logicCategories[i] = ParseCategoyPackage.Parse(categories[i]);
         }
 
+        /// <summary>
+        /// Metodo que se encarga de comprobar si el nivel actual del juego esta en los niveles ya pasados y guardados
+        /// </summary>
+        /// <param name="index">Parametro pasado por referencia que devuelve el indice del nivel encontrado. Si no lo encuentra devuelve -1</param>
+        /// <returns>Devuelve TRUE si encuentra un nivel. FALSE en caso contrario</returns>
+        private bool ContainsLevel(ref int index)
+        {
+            for (int i = 0; i < _saveLevels.Count; i++)
+            {
+                if (_saveLevels[i].category == _currentCategory && _saveLevels[i].package == _currentPackage && _saveLevels[i].level == _currentLevel)
+                {
+                    index = i;
+                    return true;
+                }
+            }
+
+            index = -1;
+            return false;
+        }
         #endregion
 
     }
