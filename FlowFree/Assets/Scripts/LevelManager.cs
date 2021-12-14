@@ -34,7 +34,7 @@ namespace Flow
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
-        private int _hints;
+        private int _hints = 3;
 
         private void Start()
         {
@@ -143,5 +143,14 @@ namespace Flow
         }
 
         public int GetNumMovements() { return boardManager.GetNumMovements(); }
+
+        public void TakeHint()
+        {
+            if(_hints - 1 >= 0)
+            {
+                _hints--;
+                boardManager.ShowPath();
+            }
+        }
     }
 }

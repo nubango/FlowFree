@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Flow
 {
+    /*
+     Para los muros hay que hacer un metodo en tile que le pasas una direccion (tileactual- anterior) para saber si en esa direccion hay un muro. Devuelve un bool, TRUE si hay muro y FALSE si no hay muro
+     */
     public class TraceInput
     {
         #region ATRIBUTTES
@@ -32,27 +35,32 @@ namespace Flow
         // Flag para no pintar despues de los extremos
         private bool _isEndPath = false;
 
+        // Flag para saber si hemos pulsado fuera de la pantalla y asi no contar un movimiento
+        private bool _pressOutBounds = false;
+
         // cuenta de los movimientos que llevamos en el nivel
         private int _movementsCount = 0;
-
-        // flag que muestra si hemos cambiado de color pulsado
-        private bool _changeColor = false;
 
         private SpriteRenderer _circleFinger;
 
         private Tile[,] _tiles;
+
+        private List<List<Utils.Coord>> _paths;
+
+        private int _countShowPaths;
         #endregion
 
         #region PUBLIC_METHODS
-        public void Init(BoardManager bm, Tile[,] tiles, SpriteRenderer circleFinger, int numFlujos)
+        public void Init(BoardManager bm, Tile[,] tiles, List<List<Utils.Coord>> paths, SpriteRenderer circleFinger, int numFlujos)
         {
             _boardManager = bm;
             _tiles = tiles;
+            _paths = paths;
             _circleFinger = circleFinger;
             _movementsCount = 0;
-            _changeColor = false;
             _currentTraceColor = Color.clear;
             _lastTraceColor = Color.clear;
+            _countShowPaths = 0;
 
             _traceEnds = new bool[numFlujos];
             for (int i = 0; i < _traceEnds.Length; i++)
@@ -141,6 +149,32 @@ namespace Flow
         {
             return _traceEnds.Length;
         }
+
+        /// <summary>
+        /// Metodo que muestra un path completo
+        /// </summary>
+        public void ShowPath()
+        {
+            if (_countShowPaths + 1 == _paths.Count)
+                return;
+            _countShowPaths++;
+
+            for (int i = 0; i < _paths[_countShowPaths].Count - 1; i++)
+            {
+                Utils.Coord p = _paths[_countShowPaths][i];
+
+                Color c;
+                if (_tiles[p.y, p.x].IsEnd())
+                    c = _tiles[p.y, p.x].GetColor();
+                else
+                {
+                    Utils.Coord lastPos = _paths[_countShowPaths][i + 1];
+                    c = _tiles[lastPos.y, lastPos.x].GetColor();
+                }
+                PutTraceInTile(p, _paths[_countShowPaths][i + 1] - p, c);
+            }
+
+        }
         #endregion
 
         #region PRIVATE_METHODS
@@ -153,8 +187,10 @@ namespace Flow
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
             Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(touchPos.x), (int)Mathf.Round(-touchPos.y));
             if (!_boardManager.ValidCoords(indexTile))
+            {
+                _pressOutBounds = true;
                 return;
-
+            }
             Tile tile = _tiles[indexTile.y, indexTile.x];
 
             // Si pulsamos en una casilla con color
@@ -238,7 +274,13 @@ namespace Flow
         /// <param name="dragPos"></param>
         private void TouchRelease(Vector2 dragPos)
         {
-            if (_lastTraceColor != _currentTraceColor && ChangePaths())
+            if (_pressOutBounds)
+            {
+                _pressOutBounds = false;
+                return;
+            }
+
+            if (_lastTraceColor != _currentTraceColor && HasPathsChanged())
             {
                 _movementsCount++;
                 _lastTraceColor = _currentTraceColor;
@@ -268,7 +310,7 @@ namespace Flow
             _currentTraceColor = Color.clear;
         }
 
-        private bool ChangePaths()
+        private bool HasPathsChanged()
         {
             bool change = false;
 
@@ -300,7 +342,6 @@ namespace Flow
             return v;
         }
 
-
         private void GoToDirection(Utils.Coord direction)
         {
             // si vamos en diagonal no hacemos nada
@@ -325,26 +366,27 @@ namespace Flow
             // si la casilla siguiente es el final
             else if ((GetColorIndex(t.GetColor()) == -1 && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() &&
                 _traceStacks[indexTraceStack].Count > 1 && !t.IsEmpty()) ||
-                (GetColorIndex(t.GetColor()) == -1 && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && 
+                (GetColorIndex(t.GetColor()) == -1 && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() &&
                 _traceStacks[indexTraceStack].Count == 1 && !t.IsEmpty()) ||
-                (t.IsEnd() && !_traceStacks[indexTraceStack].Contains(nextPos) && 
+                (t.IsEnd() && !_traceStacks[indexTraceStack].Contains(nextPos) &&
                 t.GetColor() == _currentTraceColor && !t.IsEmpty()))
             {
+
                 // pinto el trazo
-                PutTraceInTile(nextPos);
+                PutTraceInTile(nextPos, _lastColorTile - nextPos, _currentTraceColor);
 
                 _isEndPath = t.IsEnd() && t.GetColor() == _currentTraceColor;
             }
             // si la casilla siguiente es un trazo de otro color y no un final
-            else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && 
+            else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor &&
                 !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty()) ||
-                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && 
+                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor &&
                 !t.IsEnd() && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty()))
             {
                 // vuelvo atras en esa casilla
                 BackToTile(nextPos);
                 // pinto el trazo nuevo
-                PutTraceInTile(nextPos);
+                PutTraceInTile(nextPos, _lastColorTile - nextPos, _currentTraceColor);
             }
 
             if (t.GetColor() == _currentTraceColor)
@@ -370,19 +412,16 @@ namespace Flow
         /// <summary>
         /// Metodo que activa un rastro en la posicion indicada
         /// </summary>
-        private void PutTraceInTile(Utils.Coord coord)
+        private void PutTraceInTile(Utils.Coord coord, Utils.Coord direction, Color color)
         {
             Tile t = _tiles[coord.y, coord.x];
             int indexTraceStack = GetColorIndex(t.GetColor());
-            if (indexTraceStack != -1 && _traceStacks[indexTraceStack].Count > 0 && t.GetColor() != _currentTraceColor)
+            if (indexTraceStack != -1 && _traceStacks[indexTraceStack].Count > 0 && t.GetColor() != color)
                 // eliminamos la ultima casilla del color antiguo
                 _traceStacks[indexTraceStack].Pop();
 
-            // direccion en la que tenemos que activar el trace
-            Utils.Coord direction = _lastColorTile - coord;
-
             if (!t.IsEnd())
-                t.SetColorTrace(_currentTraceColor);
+                t.SetColorTrace(color);
 
             t.ActiveTrace(new Vector2(direction.x, direction.y).normalized);
 

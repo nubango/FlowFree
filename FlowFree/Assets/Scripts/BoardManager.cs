@@ -142,29 +142,49 @@ namespace Flow
                 }
         }
 
-        private void ActivateEmptyTile(Utils.Coord pos)
+        private void ActivateEmptyTile(List<Utils.Coord> empties)
         {
-            _tiles[pos.y, pos.x].SetThinWalls(false, false, false, false);
-            _tiles[pos.y, pos.x].SetEmpty(true);
-
-            foreach (Utils.Coord d in _directions)
+            foreach (Utils.Coord pos in empties)
             {
-                Utils.Coord nextPos = pos + d;
-                if (ValidCoords(nextPos) && !_tiles[nextPos.y, nextPos.x].IsEmpty())
+                _tiles[pos.y, pos.x].SetThickWalls(false, false, false, false);
+                _tiles[pos.y, pos.x].SetThinWalls(false, false, false, false);
+                _tiles[pos.y, pos.x].SetEmpty(true);
+
+                foreach (Utils.Coord d in _directions)
                 {
-                    _tiles[pos.y, pos.x].SetThickWalls(d, true);
+                    Utils.Coord nextPos = pos + d;
+                    if (ValidCoords(nextPos) && !_tiles[nextPos.y, nextPos.x].IsEmpty())
+                    {
+                        _tiles[pos.y, pos.x].SetThickWalls(d, true);
+                    }
+                    else if (ValidCoords(nextPos) && _tiles[nextPos.y, nextPos.x].IsEmpty())
+                    {
+                        // desactivar en la direccion d (direccion donde hay un empty)
+                        _tiles[nextPos.y, nextPos.x].SetThickWalls(d * -1, false);
+                    }
                 }
-                else if (ValidCoords(nextPos) && _tiles[nextPos.y, nextPos.x].IsEmpty())
-                {
-                    // desactivar en la direccion d (direccion donde hay un empty)
-                    _tiles[nextPos.y, nextPos.x].SetThickWalls(d * -1, false);
-                }
+            }
+        }
+
+        private void ActivateInternalWalls(List<Utils.Wall> walls)
+        {
+            foreach (Utils.Wall wall in walls)
+            {
+                _tiles[wall.init.y, wall.init.x].SetThickWalls(wall.end - wall.init, true);
             }
         }
 
         #endregion
 
         #region PUBLIC METHODS
+        /// <summary>
+        /// Metodo que muestra un path completo
+        /// </summary>
+        public void ShowPath()
+        {
+            _traceInput.ShowPath();
+        }
+
         /// <summary>
         /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
         /// </summary>
@@ -269,34 +289,26 @@ namespace Flow
                         _tiles[i, j].SetColorStart(GameManager.Instance().currentSkin.colores[_tiles[i, j].id - 1]);
                         _tiles[i, j].SetTick(true);
                     }
-                    //_tiles[i, j].SetThinWalls(false, false, false, false);
                     _tiles[i, j].SetThinWalls(true, true, true, true);
                     _tiles[i, j].SetEmpty(false);
+
+                    Utils.Coord pos = new Utils.Coord(j, i);
+                    if (map.GetVacios().Count > 0 || map.GetMuros().Count > 0)
+                    {
+                        pos.x = j;
+                        pos.y = i;
+                        ActivateExternalWalls(pos);
+                    }
                 }
             }
 
             if (map.GetVacios().Count > 0)
-            {
-                for (int i = 0; i < _height; i++)
-                {
-                    for (int j = 0; j < _width; j++)
-                    {
+                ActivateEmptyTile(map.GetVacios());
 
-                        Utils.Coord pos = new Utils.Coord(j, i);
+            if (map.GetMuros().Count > 0)
+                ActivateInternalWalls(map.GetMuros());
 
-                        if (map.GetVacios().Contains(pos))
-                        {
-                            ActivateEmptyTile(pos);
-                        }
-                        else
-                        {
-                            ActivateExternalWalls(pos);
-                        }
-                    }
-                }
-            } // fin if(map.GetVacios().Count > 0)
-
-            _traceInput.Init(this, _tiles, circleFinger, map.GetFlujos());
+            _traceInput.Init(this, _tiles, map.GetTuberias(), circleFinger, map.GetFlujos());
 
             MapRescaling();
         }

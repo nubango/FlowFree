@@ -59,6 +59,10 @@ namespace Flow
         {
             GameManager.Instance().DisableWinMenu();
         }
+        public void OnClickTakeHint()
+        {
+            GameManager.Instance().TakeHint();
+        }
     }
 
 }

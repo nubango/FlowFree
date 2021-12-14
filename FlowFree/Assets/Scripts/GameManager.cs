@@ -31,7 +31,7 @@ namespace Flow
         private Logic.Category[] logicCategories;
 
         // Nivel actual
-        private int _currentLevel = 29;
+        private int _currentLevel = 53;
         private int _currentPackage = 2;
         private int _currentCategory = 2;
 
@@ -163,6 +163,11 @@ namespace Flow
         public void DisableWinMenu()
         {
             levelManager.DisableWinMenu();
+        }
+
+        public void TakeHint()
+        {
+            levelManager.TakeHint();
         }
 
         // DEBUG
