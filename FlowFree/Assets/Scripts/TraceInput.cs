@@ -238,7 +238,6 @@ namespace Flow
         /// <param name="dragPos"></param>
         private void TouchRelease(Vector2 dragPos)
         {
-            // falta que al pulsar un color no sume un movimiento. Eso es porque al pulsar un color se añade la casilla inicio a la pila y entonces cuenta como que ha cambiado la longitud de un path
             if (_lastTraceColor != _currentTraceColor && ChangePaths())
             {
                 _movementsCount++;
@@ -316,7 +315,7 @@ namespace Flow
             int indexTraceStack = GetColorIndex(_currentTraceColor);
 
             // si la casilla siguiente es el inicio o si la casilla siguiente es un trazo del mismo color 
-            if ((t.IsEnd() && _traceStacks[indexTraceStack].Contains(nextPos)) || (t.GetColor() == _currentTraceColor && !t.IsEnd()))
+            if ((t.IsEnd() && _traceStacks[indexTraceStack].Contains(nextPos) && !t.IsEmpty()) || (t.GetColor() == _currentTraceColor && !t.IsEnd() && !t.IsEmpty()))
             {
                 // vuelvo atras en esa casilla
                 BackToTile(nextPos);
@@ -324,9 +323,12 @@ namespace Flow
             // si la casilla siguiente esta vacia y la anterior no es un final o
             // si la casilla siguiente esta vacia y la anterior es el inicio o 
             // si la casilla siguiente es el final
-            else if ((GetColorIndex(t.GetColor()) == -1 && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && _traceStacks[indexTraceStack].Count > 1) ||
-                (GetColorIndex(t.GetColor()) == -1 && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && _traceStacks[indexTraceStack].Count == 1) ||
-                (t.IsEnd() && !_traceStacks[indexTraceStack].Contains(nextPos) && t.GetColor() == _currentTraceColor))
+            else if ((GetColorIndex(t.GetColor()) == -1 && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() &&
+                _traceStacks[indexTraceStack].Count > 1 && !t.IsEmpty()) ||
+                (GetColorIndex(t.GetColor()) == -1 && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && 
+                _traceStacks[indexTraceStack].Count == 1 && !t.IsEmpty()) ||
+                (t.IsEnd() && !_traceStacks[indexTraceStack].Contains(nextPos) && 
+                t.GetColor() == _currentTraceColor && !t.IsEmpty()))
             {
                 // pinto el trazo
                 PutTraceInTile(nextPos);
@@ -334,8 +336,10 @@ namespace Flow
                 _isEndPath = t.IsEnd() && t.GetColor() == _currentTraceColor;
             }
             // si la casilla siguiente es un trazo de otro color y no un final
-            else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd()) ||
-                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd() && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd()))
+            else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && 
+                !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty()) ||
+                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && 
+                !t.IsEnd() && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty()))
             {
                 // vuelvo atras en esa casilla
                 BackToTile(nextPos);
