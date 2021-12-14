@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace Flow
 {
-    /*
-     Para los muros hay que hacer un metodo en tile que le pasas una direccion (tileactual- anterior) para saber si en esa direccion hay un muro. Devuelve un bool, TRUE si hay muro y FALSE si no hay muro
-     */
     public class TraceInput
     {
         #region ATRIBUTTES
@@ -255,10 +252,10 @@ namespace Flow
             _currentTilePress = indexTile;
 
             // Calcula la tangente del angulo formado por el triangulo rectangulo que define el segmento que une los dos puntos. 
-            Utils.Coord segment = _lastColorTile - _currentTilePress;
+            Utils.Coord segment = _currentTilePress - _lastColorTile;
 
             segment = Normalize(segment);
-            Vector2 d = new Vector2(-segment.x, -segment.y);
+            Vector2 d = new Vector2(segment.x, segment.y);
             Utils.Coord direction = new Utils.Coord((int)d.x, (int)d.y);
 
             //Debug.Log(direction.x + " " + direction.y);
@@ -355,8 +352,13 @@ namespace Flow
             Tile t = _tiles[nextPos.y, nextPos.x];
             int indexTraceStack = GetColorIndex(_currentTraceColor);
 
+            bool isWall = _tiles[_lastColorTile.y, _lastColorTile.x].IsWallInDirection(direction) || _tiles[nextPos.y, nextPos.x].IsWallInDirection(direction * -1);
+
+            Debug.Log(isWall);
+
             // si la casilla siguiente es el inicio o si la casilla siguiente es un trazo del mismo color 
-            if ((t.IsEnd() && _traceStacks[indexTraceStack].Contains(nextPos) && !t.IsEmpty()) || (t.GetColor() == _currentTraceColor && !t.IsEnd() && !t.IsEmpty()))
+            if ((t.IsEnd() && _traceStacks[indexTraceStack].Contains(nextPos) && !t.IsEmpty() && !isWall) ||
+                (t.GetColor() == _currentTraceColor && !t.IsEnd() && !t.IsEmpty() && !isWall))
             {
                 // vuelvo atras en esa casilla
                 BackToTile(nextPos);
@@ -365,11 +367,11 @@ namespace Flow
             // si la casilla siguiente esta vacia y la anterior es el inicio o 
             // si la casilla siguiente es el final
             else if ((GetColorIndex(t.GetColor()) == -1 && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() &&
-                _traceStacks[indexTraceStack].Count > 1 && !t.IsEmpty()) ||
+                _traceStacks[indexTraceStack].Count > 1 && !t.IsEmpty() && !isWall) ||
                 (GetColorIndex(t.GetColor()) == -1 && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() &&
-                _traceStacks[indexTraceStack].Count == 1 && !t.IsEmpty()) ||
+                _traceStacks[indexTraceStack].Count == 1 && !t.IsEmpty() && !isWall) ||
                 (t.IsEnd() && !_traceStacks[indexTraceStack].Contains(nextPos) &&
-                t.GetColor() == _currentTraceColor && !t.IsEmpty()))
+                t.GetColor() == _currentTraceColor && !t.IsEmpty() && !isWall))
             {
 
                 // pinto el trazo
@@ -379,9 +381,9 @@ namespace Flow
             }
             // si la casilla siguiente es un trazo de otro color y no un final
             else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor &&
-                !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty()) ||
+                !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty() && !isWall) ||
                 (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor &&
-                !t.IsEnd() && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty()))
+                !t.IsEnd() && _tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty() && !isWall))
             {
                 // vuelvo atras en esa casilla
                 BackToTile(nextPos);
@@ -389,7 +391,7 @@ namespace Flow
                 PutTraceInTile(nextPos, _lastColorTile - nextPos, _currentTraceColor);
             }
 
-            if (t.GetColor() == _currentTraceColor)
+            if (t.GetColor() == _currentTraceColor && !t.IsEmpty() && !isWall)
                 _lastColorTile = nextPos;
         }
 
@@ -450,7 +452,6 @@ namespace Flow
 
             while ((position != coord || t.IsEnd()) && _traceStacks[indexTraceStack].Count > 1)
             {
-                Debug.Log(position.x + " " + position.y);
                 _traceStacks[indexTraceStack].Pop();
                 _tiles[position.y, position.x].DesactiveTrace();
 

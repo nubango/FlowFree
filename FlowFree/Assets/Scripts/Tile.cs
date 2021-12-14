@@ -181,6 +181,25 @@ namespace Flow
             return trace.enabled;
         }
 
+        /*
+        Para los muros hay que hacer un metodo en tile que le pasas una direccion (tileactual - anterior) 
+        para saber si en esa direccion hay un muro. Devuelve un bool, TRUE si hay muro y FALSE si no hay muro
+        */
+        public bool IsWallInDirection(Utils.Coord direction)
+        {
+            bool isWall = false;
+            if (direction.y == -1)
+                isWall = upWallThick.enabled;
+            else if (direction.y == 1)
+                isWall = downWallThick.enabled;
+            else if (direction.x == -1)
+                isWall = leftWallThick.enabled;
+            else if (direction.x == 1)
+                isWall = rightWallThick.enabled;
+
+            return isWall;
+        }
+
         /* -Metodos para activar o desactivar el rastro- */
 
         /// <summary>
