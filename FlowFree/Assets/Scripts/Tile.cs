@@ -12,6 +12,7 @@ namespace Flow
         public SpriteRenderer tick;
         [Tooltip("Sprite ninepatch para dibujar el rastro")]
         public SpriteRenderer trace;
+        public SpriteRenderer square;
         [Space]
         public SpriteRenderer upWallThin;
         public SpriteRenderer downWallThin;
@@ -26,6 +27,8 @@ namespace Flow
         [HideInInspector]
         public int id;
 
+        private bool _empty;
+
 #if UNITY_EDITOR
         void Start()
         {
@@ -36,6 +39,24 @@ namespace Flow
             }
         }
 #endif
+        /// <summary>
+        /// Metodo para saber si la casilla es vacia, es decir, que no pertenece al tablero
+        /// </summary>
+        /// <returns>Devuelve TRUE si es vacia y FALSE en caso contrario</returns>
+        public bool IsEmpty() { return _empty; }
+
+        /// <summary>
+        /// Metodo para determinar si una casilla es vacia, es decir, que no pertenece al tablero, o no
+        /// </summary>
+        /// <param name="empty"></param>
+        public void SetEmpty(bool empty)
+        {
+            if (empty)
+            {
+                square.enabled = false;
+            }
+            _empty = empty;
+        }
 
         /// <summary>
         /// devuelve el color del circulo
@@ -43,14 +64,27 @@ namespace Flow
         /// <returns></returns>
         public Color GetColor()
         {
-            return circleEnd.color;
+            return circleTrace.color;
         }
 
         /// <summary>
-        /// Métodos para activar/desactivar los distintos SpriteRenderer incluidos en el prefab
+        /// Cambia el color del trazo
         /// </summary>
         /// <param name="c"></param>
-        public void SetColor(Color c)
+        public void SetColorTrace(Color c)
+        {
+            if (!circleEnd.enabled)
+            {
+                circleTrace.color = c;
+                trace.color = c;
+            }
+        }
+
+        /// <summary>
+        /// Cambia el color de la casilla 
+        /// </summary>
+        /// <param name="c"></param>
+        public void SetColorStart(Color c)
         {
             circleEnd.color = c;
             circleTrace.color = c;
@@ -65,7 +99,7 @@ namespace Flow
         {
             circleEnd.enabled = active;
         }
-        
+
         /// <summary>
         /// Activa/desactiva el circulo del rastro en una casilla (cuando un rastro se queda a mitad)
         /// </summary>
@@ -123,6 +157,21 @@ namespace Flow
             rightWallThick.enabled = right;
         }
 
+        public void SetThickWalls(Utils.Coord direction, bool active)
+        {
+            if (direction.x == direction.y)
+                return;
+
+            if (direction.y == -1)
+                upWallThick.enabled = active;
+            else if (direction.y == 1)
+                downWallThick.enabled = active;
+            else if (direction.x == -1)
+                leftWallThick.enabled = active;
+            else if (direction.x == 1)
+                rightWallThick.enabled = active;
+        }
+
         /// <summary>
         /// TRUE si esta activaso el rastro, FALSE en caso contrario
         /// </summary>
@@ -130,15 +179,6 @@ namespace Flow
         public bool IsTraceActive()
         {
             return trace.enabled;
-        }
-
-        /// <summary>
-        /// Devuelve la direccion en la que esta activa el trazo
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 WhichDirectionIsTraceActive()
-        {
-            return trace.transform.localPosition;
         }
 
         /* -Metodos para activar o desactivar el rastro- */
@@ -162,6 +202,7 @@ namespace Flow
         public void DesactiveTrace()
         {
             trace.enabled = false;
+            SetColorTrace(Color.clear);
         }
 
         private void SetUp(bool enabled)

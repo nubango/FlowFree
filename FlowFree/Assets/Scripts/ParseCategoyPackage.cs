@@ -116,13 +116,14 @@ namespace Flow
                 tuberias.Add(tuberiaDeInt);
             }
 
-            l.setAncho(ancho);
-            l.setAlto(alto);
-            l.setNumLevel(numLevel);
-            l.setFlujos(flujos);
-            l.setVacios(vacios);
-            l.setMuros(muros);
-            l.setTuberias(tuberias);
+            l.SetAncho(ancho);
+            l.SetAlto(alto);
+            l.SetNumLevel(numLevel);
+            l.SetFlujos(flujos);
+            l.SetVacios(vacios);
+            l.SetMuros(muros);
+            l.SetTuberias(tuberias);
+            l.SetRecord(0);
 
             return l;
         }

@@ -1194,7 +1194,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "r\xE9cord: 5"
+  m_Text: "r\xE9cord: "
 --- !u!222 &498017607
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2979,7 +2979,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1213683744}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6047484087390052804, guid: 9b4da96c23cada845bb1f1979cf4dae1, type: 3}
+        m_TargetAssemblyTypeName: Flow.Callbacks, Assembly-CSharp
+        m_MethodName: OnClickPreviousLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1213683744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3295,6 +3307,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1305482291
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1305482293}
+  - component: {fileID: 1305482292}
+  m_Layer: 0
+  m_Name: SaveSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1305482292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305482291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dba6e36905d8ee43849e6215ec80457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1305482293
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305482291}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.44112703, y: 0.27034026, z: -10.423874}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1323542980
 GameObject:
@@ -4295,8 +4350,10 @@ MonoBehaviour:
   levelText: {fileID: 117945508}
   dimensionText: {fileID: 783262247}
   movementsText: {fileID: 1079566341}
+  recordText: {fileID: 498017606}
   flowsText: {fileID: 1693783723}
   descriptionText: {fileID: 1081918315}
+  nextLevelButtonText: {fileID: 1894125422}
   endLevelMenu: {fileID: 2116483265}
 --- !u!4 &1665646021
 Transform:
@@ -4539,7 +4596,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1700471162}
   m_Layer: 5
-  m_Name: Buttons
+  m_Name: Elements
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
