@@ -31,9 +31,9 @@ namespace Flow
         private Logic.Category[] logicCategories;
 
         // Nivel actual
-        private int _currentLevel = 0;
-        private int _currentPackage = 0;
-        private int _currentCategory = 0;
+        private int _currentLevel = 29;
+        private int _currentPackage = 2;
+        private int _currentCategory = 2;
 
         // Array de niveles que guarda la informacion que se va a guardar
         private List<SaveLevel> _saveLevels;

@@ -132,9 +132,49 @@ namespace Flow
             gameObject.transform.localScale = new Vector3(_scaleFactor, _scaleFactor, _scaleFactor);
         }
 
+        private Utils.Coord[] _directions = { new Utils.Coord(0, -1), new Utils.Coord(0, 1), new Utils.Coord(-1, 0), new Utils.Coord(1, 0) };
+        private void ActivateExternalWalls(Utils.Coord pos)
+        {
+            foreach (Utils.Coord d in _directions)
+                if (!ValidCoords(pos + d))
+                {
+                    _tiles[pos.y, pos.x].SetThickWalls(d, true);
+                }
+        }
+
+        private void ActivateEmptyTile(Utils.Coord pos)
+        {
+            _tiles[pos.y, pos.x].SetThinWalls(false, false, false, false);
+            _tiles[pos.y, pos.x].SetEmpty(true);
+
+            foreach (Utils.Coord d in _directions)
+            {
+                Utils.Coord nextPos = pos + d;
+                if (ValidCoords(nextPos) && !_tiles[nextPos.y, nextPos.x].IsEmpty())
+                {
+                    _tiles[pos.y, pos.x].SetThickWalls(d, true);
+                }
+                else if (ValidCoords(nextPos) && _tiles[nextPos.y, nextPos.x].IsEmpty())
+                {
+                    // desactivar en la direccion d (direccion donde hay un empty)
+                    _tiles[nextPos.y, nextPos.x].SetThickWalls(d * -1, false);
+                }
+            }
+        }
+
         #endregion
 
         #region PUBLIC METHODS
+        /// <summary>
+        /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <returns>TRUE si esta dentro de los limites. False en caso contrario</returns>
+        public bool ValidCoords(Utils.Coord coord)
+        {
+            return coord.x >= 0 && coord.y >= 0 && coord.x < GetWidth() && coord.y < GetHeight();
+        }
+
         /// <summary>
         /// Devuelve el ancho del tablero
         /// </summary>
@@ -231,10 +271,30 @@ namespace Flow
                     }
                     //_tiles[i, j].SetThinWalls(false, false, false, false);
                     _tiles[i, j].SetThinWalls(true, true, true, true);
-
-                    //_tiles[i, j].SetThickWalls(false, false, true, true);
+                    _tiles[i, j].SetEmpty(false);
                 }
             }
+
+            if (map.GetVacios().Count > 0)
+            {
+                for (int i = 0; i < _height; i++)
+                {
+                    for (int j = 0; j < _width; j++)
+                    {
+
+                        Utils.Coord pos = new Utils.Coord(j, i);
+
+                        if (map.GetVacios().Contains(pos))
+                        {
+                            ActivateEmptyTile(pos);
+                        }
+                        else
+                        {
+                            ActivateExternalWalls(pos);
+                        }
+                    }
+                }
+            } // fin if(map.GetVacios().Count > 0)
 
             _traceInput.Init(this, _tiles, circleFinger, map.GetFlujos());
 

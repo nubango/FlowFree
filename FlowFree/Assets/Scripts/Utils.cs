@@ -38,5 +38,6 @@ public class Utils
         public static bool operator !=(Coord a, Coord b) => (a.x != b.x || a.y != b.y);
         public static Coord operator -(Coord a, Coord b) => new Coord(a.x - b.x, a.y - b.y);
         public static Coord operator +(Coord a, Coord b) => new Coord(a.x + b.x, a.y + b.y);
+        public static Coord operator *(Coord b, int a) => new Coord(a * b.x, a * b.y);
     }
 }

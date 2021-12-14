@@ -152,7 +152,7 @@ namespace Flow
         {
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
             Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(touchPos.x), (int)Mathf.Round(-touchPos.y));
-            if (!ValidCoords(indexTile))
+            if (!_boardManager.ValidCoords(indexTile))
                 return;
 
             Tile tile = _tiles[indexTile.y, indexTile.x];
@@ -213,7 +213,7 @@ namespace Flow
 
             // Redondeamos y pasamos a int para crear las coordenadas del array de tiles (la Y esta invertida)
             Utils.Coord indexTile = new Utils.Coord((int)Mathf.Round(dragPos.x), (int)Mathf.Round(-dragPos.y));
-            if (!ValidCoords(indexTile))
+            if (!_boardManager.ValidCoords(indexTile))
                 return;
 
             _currentTilePress = indexTile;
@@ -309,7 +309,7 @@ namespace Flow
                 return;
 
             Utils.Coord nextPos = _lastColorTile + direction;
-            if (!ValidCoords(nextPos))
+            if (!_boardManager.ValidCoords(nextPos))
                 return;
 
             Tile t = _tiles[nextPos.y, nextPos.x];
@@ -345,16 +345,6 @@ namespace Flow
 
             if (t.GetColor() == _currentTraceColor)
                 _lastColorTile = nextPos;
-        }
-
-        /// <summary>
-        /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <returns>TRUE si esta dentro de los limites. False en caso contrario</returns>
-        private bool ValidCoords(Utils.Coord coord)
-        {
-            return coord.x >= 0 && coord.y >= 0 && coord.x < _boardManager.GetWidth() && coord.y < _boardManager.GetHeight();
         }
 
         /// <summary>

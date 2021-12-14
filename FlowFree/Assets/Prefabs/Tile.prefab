@@ -552,6 +552,7 @@ MonoBehaviour:
   circleTrace: {fileID: 7312470547802057237}
   tick: {fileID: 4194278096593016870}
   trace: {fileID: 1722383475}
+  square: {fileID: 7167045584905029722}
   upWallThin: {fileID: 1582453134480859549}
   downWallThin: {fileID: 5260973413267650669}
   leftWallThin: {fileID: 7339568445311155867}
