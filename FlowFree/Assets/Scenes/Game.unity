@@ -4429,6 +4429,8 @@ MonoBehaviour:
   flowsText: {fileID: 1693783723}
   descriptionText: {fileID: 1081918315}
   nextLevelButtonText: {fileID: 1894125422}
+  hintText: {fileID: 1586389575}
+  pipePercentageText: {fileID: 427798686}
   endLevelMenu: {fileID: 2116483265}
 --- !u!4 &1665646021
 Transform:

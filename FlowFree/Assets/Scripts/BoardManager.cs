@@ -28,6 +28,8 @@ namespace Flow
 
         private float _scaleFactor;
 
+        private int _emptyTiles;
+
         #region PRIVATE METHODS
         private void Awake()
         {
@@ -185,6 +187,11 @@ namespace Flow
             _traceInput.ShowPath();
         }
 
+        public int GetPercentage()
+        {
+            return _traceInput.GetPercentage();
+        }
+
         /// <summary>
         /// Metodo que comprueba si las coordenadas pasadas por parametro estan dentro del tablero
         /// </summary>
@@ -257,6 +264,11 @@ namespace Flow
             _invalidate = !b;
         }
 
+
+        public int GetNumEmptyTiles()
+        {
+            return _emptyTiles;
+        }
         /// <summary>
         /// Metodo que sirve para asignar el tablero
         /// </summary>
@@ -264,6 +276,7 @@ namespace Flow
         public void SetMap(Logic.Level map)
         {
             _invalidate = false;
+            _emptyTiles = 0;
 
             ResetBoard();
 
@@ -301,6 +314,8 @@ namespace Flow
                     }
                 }
             }
+
+            _emptyTiles = map.GetVacios().Count;
 
             if (map.GetVacios().Count > 0)
                 ActivateEmptyTile(map.GetVacios());

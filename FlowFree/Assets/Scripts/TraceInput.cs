@@ -152,9 +152,8 @@ namespace Flow
         /// </summary>
         public void ShowPath()
         {
-            if (_countShowPaths + 1 == _paths.Count)
+            if (_countShowPaths == _paths.Count)
                 return;
-            _countShowPaths++;
 
             for (int i = 0; i < _paths[_countShowPaths].Count - 1; i++)
             {
@@ -165,12 +164,38 @@ namespace Flow
                     c = _tiles[p.y, p.x].GetColor();
                 else
                 {
-                    Utils.Coord lastPos = _paths[_countShowPaths][i + 1];
+                    Utils.Coord lastPos = _paths[_countShowPaths][i - 1];
                     c = _tiles[lastPos.y, lastPos.x].GetColor();
                 }
+
                 PutTraceInTile(p, _paths[_countShowPaths][i + 1] - p, c);
             }
 
+            _traceEnds[_countShowPaths] = true;
+
+            _countShowPaths++;
+            _movementsCount++;
+
+            if (_countShowPaths == _paths.Count)
+                _boardManager.Win();
+        }
+
+        /// <summary>
+        /// Metodo que devuelve cuan de lleno está el tablero en escala 0-100
+        /// </summary>
+        /// <returns>Devuelve un INT que representa el porcentaje de llenado del tablero</returns>
+        public int GetPercentage()
+        {
+            int count = 0;
+
+            foreach (Tile t in _tiles)
+                if (GetColorIndex(t.GetColor()) != -1)
+                    count++;
+
+            count -= 2 * _paths.Count;
+            int max = _tiles.Length - (2 * _paths.Count) - _boardManager.GetNumEmptyTiles();
+            float p = (float)count / (float)max;
+            return Mathf.RoundToInt(p * 100);
         }
         #endregion
 

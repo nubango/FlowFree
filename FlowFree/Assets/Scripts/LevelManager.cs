@@ -30,11 +30,17 @@ namespace Flow
 
         [Tooltip("Texto del boton de siguiente nivel/paquete")]
         public Text nextLevelButtonText;
+        
+        [Tooltip("Texto del del numero de pistas")]
+        public Text hintText;
+        
+        [Tooltip("Texto del porcentaje de completado")]
+        public Text pipePercentageText;
 
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
-        private int _hints = 3;
+        private int _hints = 100;
 
         private void Start()
         {
@@ -52,6 +58,8 @@ namespace Flow
         {
             movementsText.text = "pasos: " + boardManager.GetNumMovements();
             flowsText.text = "flujos: " + boardManager.GetNumFlowsEnded() + "/" + boardManager.GetNumFlows();
+            hintText.text = _hints + " x";
+            pipePercentageText.text = "tuberia " + boardManager.GetPercentage() + "%";
         }
 
         private void SetUIData(Logic.Level level)
@@ -113,7 +121,7 @@ namespace Flow
         /// </summary>
         public void Win(bool nextPackage)
         {
-            if (nextPackage) 
+            if (nextPackage)
                 nextLevelButtonText.text = "next package";
             else
                 nextLevelButtonText.text = "next level";
@@ -146,11 +154,11 @@ namespace Flow
 
         public void TakeHint()
         {
-            if(_hints - 1 >= 0)
-            {
-                _hints--;
-                boardManager.ShowPath();
-            }
+            if (_hints == 0)
+                return;
+
+            _hints--;
+            boardManager.ShowPath();
         }
     }
 }
