@@ -71,8 +71,8 @@ namespace Flow
             _game.hash = CreateHash((ConcatenateLevels(levels) + hints + ads + Pper()).ToString());
             //Rellenamos el json y lo guardamos
             string jsonData = JsonUtility.ToJson(_game);
-            File.WriteAllText("C:/Users/gonza/Desktop/save.json", jsonData);
-            //File.WriteAllText(Application.persistentDataPath + "/save.json", jsonData);
+            //File.WriteAllText("C:/Users/gonza/Desktop/save.json", jsonData);
+            File.WriteAllText(Application.persistentDataPath + "/save.json", jsonData);
         }
 
         /// <summary>
@@ -84,8 +84,8 @@ namespace Flow
             string txt;
             try
             {
-                txt = File.ReadAllText("C:/Users/gonza/Desktop/save.json");
-                // txt = File.ReadAllText(Application.persistentDataPath + "/save.json");
+                //txt = File.ReadAllText("C:/Users/gonza/Desktop/save.json");
+                txt = File.ReadAllText(Application.persistentDataPath + "/save.json");
             }
             catch (Exception)
             {

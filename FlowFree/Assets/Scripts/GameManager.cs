@@ -31,9 +31,9 @@ namespace Flow
         private Logic.Category[] logicCategories;
 
         // Nivel actual
-        private int _currentLevel = 5;
-        private int _currentPackage = 2;
-        private int _currentCategory = 2;
+        private int _currentLevel = 0;
+        private int _currentPackage = 0;
+        private int _currentCategory = 0;
 
         // Array de niveles que guarda la informacion que se va a guardar
         private List<SaveLevel> _saveLevels;
@@ -129,7 +129,6 @@ namespace Flow
         /// </summary>
         public void Win(int record)
         {
-
             Logic.Level l = logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
 
             int r = l.GetRecord() == 0 ? record : l.GetRecord() > record ? record : l.GetRecord();
@@ -168,6 +167,11 @@ namespace Flow
         public void TakeHint()
         {
             levelManager.TakeHint();
+        }
+
+        public void AddHint()
+        {
+            levelManager.AddHint();
         }
 
         // DEBUG

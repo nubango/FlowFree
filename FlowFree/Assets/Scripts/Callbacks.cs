@@ -32,7 +32,7 @@ namespace Flow
 
         public void OnClickedRewardedVideo()
         {
-            //AdsManager.Instance().ShowRewardedAd();
+            AdsManager.Instance().ShowRewardedVideo();
         }
 
         public void OnClickedLevelPackage(int levelPackage)
@@ -42,7 +42,7 @@ namespace Flow
 
         public void OnClickedBack()
         {
-            //GameManager.Instance().LoadScene();
+            GameManager.Instance().LoadLevelsScene();
         }
 
         public void OnClickNextLevel()

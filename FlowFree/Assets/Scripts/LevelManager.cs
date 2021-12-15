@@ -42,6 +42,8 @@ namespace Flow
 
         private int _hints = 100;
 
+        private bool _endLevel = false;
+
         private void Start()
         {
             DisableWinMenu();
@@ -127,6 +129,7 @@ namespace Flow
                 nextLevelButtonText.text = "next level";
 
 
+            _endLevel = true;
             endLevelMenu.SetActive(true);
             descriptionText.text = "You complete the level in " + boardManager.GetNumMovements() + " moves";
         }
@@ -138,6 +141,12 @@ namespace Flow
         {
             boardManager.SetActiveUpdate(true);
             endLevelMenu.SetActive(false);
+            _endLevel = false;
+        }
+
+        public void AddHint()
+        {
+            _hints++;
         }
 
         public int GetNumHints()
@@ -154,7 +163,7 @@ namespace Flow
 
         public void TakeHint()
         {
-            if (_hints == 0)
+            if (_hints == 0 || _endLevel)
                 return;
 
             _hints--;

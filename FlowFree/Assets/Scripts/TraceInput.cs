@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Flow
 {
+    /*
+    ERRORES:
+    - al acabar el ultimo path y volver atras sin soltar, y sueltas sin acabar el path, cuenta como si te hubieses pasado el nivel
+    - el la ruptura de un path no se consolida hasta que no se suelta la pulsacion
+     */
     public class TraceInput
     {
         #region ATRIBUTTES
@@ -231,7 +236,7 @@ namespace Flow
                 // Activamos el circulo en la posicion pulsada con el color correspondiente
                 _circleFinger.enabled = true;
                 _circleFinger.color = new Color(c.r, c.g, c.b, 0.5f);
-                _circleFinger.transform.position = new Vector3(touchPos.x, touchPos.y, 0);
+                _circleFinger.transform.position = new Vector3(touchPos.x * _boardManager.GetScaleFactor(), touchPos.y * _boardManager.GetScaleFactor(), 0);
 
                 _lastColorTile = indexTile;
 
