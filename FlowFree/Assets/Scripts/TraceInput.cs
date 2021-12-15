@@ -6,6 +6,7 @@ namespace Flow
 {
     /*
     ERRORES:
+    - Al acabar con un path si la casilla siguiente tiene un path de otro color puedes seguir pintando (y no deberias)
     - al acabar el ultimo path y volver atras sin soltar, y sueltas sin acabar el path, cuenta como si te hubieses pasado el nivel
     - el la ruptura de un path no se consolida hasta que no se suelta la pulsacion
      */
@@ -50,6 +51,7 @@ namespace Flow
         private List<List<Utils.Coord>> _paths;
 
         private int _countShowPaths;
+
         #endregion
 
         #region PUBLIC_METHODS
@@ -298,8 +300,8 @@ namespace Flow
         /// <summary>
         ///  Metodo que ocurre cuando se deja de pulsar la pantalla
         /// </summary>
-        /// <param name="dragPos"></param>
-        private void TouchRelease(Vector2 dragPos)
+        /// <param name="releasePos"></param>
+        private void TouchRelease(Vector2 releasePos)
         {
             if (_pressOutBounds)
             {
@@ -315,14 +317,21 @@ namespace Flow
 
             // quitamos el circulo grande
             _circleFinger.enabled = false;
+
+            Tile t = _tiles[_lastColorTile.y, _lastColorTile.x];
+            int indexTraceStack = GetColorIndex(t.GetColor());
+            _isEndPath = t.IsEnd() && _traceStacks[indexTraceStack].Count > 2;
+
             // ponemos el circulo peque�o al ultimo tile presionado
             if (_isEndPath)
             {
                 // animacion correspondiente
                 _isEndPath = false;
-
+                Debug.Log("final de camino");
                 // comprobamos si hemos ganado
-                _traceEnds[GetColorIndex(_currentTraceColor)] = true;
+                int index = GetColorIndex(_currentTraceColor);
+                if (index != -1)
+                    _traceEnds[index] = true;
                 if (AllColorsEnd())
                 {
                     _lastTraceColor = Color.clear;
@@ -384,8 +393,6 @@ namespace Flow
 
             bool isWall = _tiles[_lastColorTile.y, _lastColorTile.x].IsWallInDirection(direction) || _tiles[nextPos.y, nextPos.x].IsWallInDirection(direction * -1);
 
-            Debug.Log(isWall);
-
             // si la casilla siguiente es el inicio o si la casilla siguiente es un trazo del mismo color 
             if ((t.IsEnd() && _traceStacks[indexTraceStack].Contains(nextPos) && !t.IsEmpty() && !isWall) ||
                 (t.GetColor() == _currentTraceColor && !t.IsEnd() && !t.IsEmpty() && !isWall))
@@ -407,7 +414,6 @@ namespace Flow
                 // pinto el trazo
                 PutTraceInTile(nextPos, _lastColorTile - nextPos, _currentTraceColor);
 
-                _isEndPath = t.IsEnd() && t.GetColor() == _currentTraceColor;
             }
             // si la casilla siguiente es un trazo de otro color y no un final
             else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor &&

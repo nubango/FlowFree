@@ -23,6 +23,8 @@ namespace Flow
         // Flag para invalidar el update y evitar el re procese el input
         private bool _invalidate = false;
 
+        private bool _efectiveInvalidate = false;
+
         private int _screenWidth;
         private int _screenHeight;
 
@@ -45,10 +47,10 @@ namespace Flow
             if (_screenWidth != Screen.width || _screenHeight != Screen.height)
                 MapRescaling();
 
-            if (_invalidate)
-                return;
+            if (!_efectiveInvalidate)
+                _traceInput.ProcessInput();
 
-            _traceInput.ProcessInput();
+            _efectiveInvalidate = _invalidate;
         }
 
         /// <summary>
