@@ -40,4 +40,23 @@ public class Utils
         public static Coord operator +(Coord a, Coord b) => new Coord(a.x + b.x, a.y + b.y);
         public static Coord operator *(Coord b, int a) => new Coord(a * b.x, a * b.y);
     }
+
+    public struct TraceInTile
+    {
+        public TraceInTile(Coord position, Coord direction, Color color)
+        {
+            this.position = position;
+            this.direction = direction;
+            this.color = color;
+        }       
+
+        public Coord position { get; set; }
+        public Coord direction { get; set; }
+        public Color color { get; set; }
+
+        public static bool operator ==(TraceInTile a, TraceInTile b) => (a.position == b.position);
+        public static bool operator !=(TraceInTile a, TraceInTile b) => (a.position != b.position);
+        public static bool operator ==(TraceInTile a, Coord b) => (a.position.x == b.x && a.position.y == b.y);
+        public static bool operator !=(TraceInTile a, Coord b) => (a.position.x != b.x || a.position.y == b.y);
+    }
 }

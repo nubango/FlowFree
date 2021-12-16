@@ -28,6 +28,8 @@ namespace Flow
         public int id;
 
         private bool _empty;
+        private Vector2 _directionTrace;
+
 
 #if UNITY_EDITOR
         void Start()
@@ -216,6 +218,13 @@ namespace Flow
                 SetRight(true);
             else if (direction.x < 0)
                 SetLeft(true);
+
+            _directionTrace = direction;
+        }
+
+        public Vector2 GetDirectionTrace()
+        {
+            return _directionTrace;
         }
 
         public void DesactiveTrace()
