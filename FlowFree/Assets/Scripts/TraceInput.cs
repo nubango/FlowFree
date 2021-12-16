@@ -432,7 +432,7 @@ namespace Flow
         }
 
         /// <summary>
-        ///  Metodo que devuelve el indice de la pila de moviminetos correspondiente al color que se le pasa por parametro
+        ///  Metodo que devuelve el indice de la pila de movimientos correspondiente al color que se le pasa por parametro
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
