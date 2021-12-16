@@ -496,7 +496,7 @@ namespace Flow
             if (_traceStacks[indexTraceStack].Count > 0)
                 position = _traceStacks[indexTraceStack].Peek();
 
-            while ((position != coord || t.IsEnd()) && _traceStacks[indexTraceStack].Count > 1)
+            while (position != coord && _traceStacks[indexTraceStack].Count > 1)
             {
                 _traceStacks[indexTraceStack].Pop();
                 _tiles[position.y, position.x].DesactiveTrace();
@@ -515,10 +515,14 @@ namespace Flow
                 if (_temporaryTraceStacks[i].Count > 0 && _temporaryTraceStacks[i].Peek() == position)
                 {
                     Utils.TraceInTile t = _temporaryTraceStacks[i].Peek();
-                    while (_temporaryTraceStacks[i].Count > 0 && GetColorIndex(_tiles[t.position.y, t.position.x].GetColor()) != GetColorIndex(color))
+
+                    while (_temporaryTraceStacks[i].Count > 0 && GetColorIndex(_tiles[t.position.y, t.position.x].GetColor()) == -1)
                     {
                         PutTraceInTile(t.position, t.direction, t.color);
-                        t = _temporaryTraceStacks[i].Pop();
+                        _temporaryTraceStacks[i].Pop();
+
+                        if (_temporaryTraceStacks[i].Count > 0)
+                            t = _temporaryTraceStacks[i].Peek();
                     }
                 }
             }
@@ -539,14 +543,14 @@ namespace Flow
 
             // Eliminamos todos los rastros hasta la posicion pasada por parametro (coord)
             Utils.Coord position = coord;
-            if (_traceStacks[indexTraceStack].Count > 0)
-                position = _traceStacks[indexTraceStack].Peek();
-
             Tile currentTile;
             Utils.Coord direction;
             Color color;
 
-            while ((position != coord || t.IsEnd()) && _traceStacks[indexTraceStack].Count > 1)
+            if (_traceStacks[indexTraceStack].Count > 0)
+                position = _traceStacks[indexTraceStack].Peek();
+
+            while (position != coord && _traceStacks[indexTraceStack].Count > 0)
             {
                 currentTile = _tiles[position.y, position.x];
 
@@ -555,20 +559,27 @@ namespace Flow
                 color = currentTile.GetColor();
                 _temporaryTraceStacks[indexTraceStack].Push(new Utils.TraceInTile(position, direction, color));
 
-                // quito la casilla del camino viejo
-                _traceStacks[indexTraceStack].Pop();
                 currentTile.DesactiveTrace();
 
+                _traceStacks[indexTraceStack].Pop();
                 if (_traceStacks[indexTraceStack].Count > 0)
                     position = _traceStacks[indexTraceStack].Peek();
             }
 
-            //currentTile = _tiles[position.y, position.x];
-            //// guardo el camino temporalmente roto
-            //direction = new Utils.Coord((int)currentTile.GetDirectionTrace().x, (int)currentTile.GetDirectionTrace().y);
-            //color = currentTile.GetColor();
-            //_temporaryTraceStacks[indexTraceStack].Push(new Utils.TraceInTile(position, direction, color));
+            Debug.Log(position.x + " " + position.y);
 
+            if (_traceStacks[indexTraceStack].Count > 0)
+            {
+                _traceStacks[indexTraceStack].Pop();
+                currentTile = _tiles[position.y, position.x];
+
+                // guardo el camino temporalmente roto
+                direction = new Utils.Coord((int)currentTile.GetDirectionTrace().x, (int)currentTile.GetDirectionTrace().y);
+                color = currentTile.GetColor();
+                _temporaryTraceStacks[indexTraceStack].Push(new Utils.TraceInTile(position, direction, color));
+
+                currentTile.DesactiveTrace();
+            }
         }
 
         /// <summary>
