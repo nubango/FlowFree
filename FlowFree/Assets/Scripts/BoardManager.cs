@@ -105,12 +105,13 @@ namespace Flow
             _screenWidth = Screen.width;
             _screenHeight = (int)GameManager.Instance().GetCenterPixelSize();
 
+            
+
             // agrandamos la pantalla para que quepan el baner de abajo y los botones de arriba
             float offsetLateral = 0.98f;
-            float offsetVertical = 0.5f;
 
             float scaleFactorW, scaleFactorH;
-            float offsetX, offsetY;
+            float offsetX = 0, offsetY = 0;
 
             float cameraSize = GameManager.Instance().GetCenterUnitySize();
 
@@ -123,11 +124,11 @@ namespace Flow
             _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
 
             // Calculos para centrar la camara
-            offsetX = (-tilesByWidth / 2) + 0.5f * _scaleFactor;
-            offsetY = (-tilesByHeight / 2) + 0.5f * _scaleFactor;
+            offsetX = (-tilesByWidth / 2) + (0.5f * _scaleFactor);
+            offsetY = (-tilesByHeight / 2) + ((0.5f + GameManager.Instance().GetTopUnitySize()) * _scaleFactor);
 
             offsetX += (tilesByWidth - _tiles.GetLength(1) * _scaleFactor) / 2;
-            offsetY += (tilesByHeight - _tiles.GetLength(0) * _scaleFactor) / 2;
+            //offsetY += (tilesByHeight - _tiles.GetLength(0) * _scaleFactor) / 2;
 
             // asignamos los valores calculados 
             Camera.main.transform.position = new Vector3(-offsetX, offsetY, -10);
