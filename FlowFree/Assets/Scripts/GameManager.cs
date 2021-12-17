@@ -79,6 +79,11 @@ namespace Flow
             return (GetTopPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
         }
 
+        public float GetBottomUnitySize()
+        {
+            return (GetBottomPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
+        }
+
         public float GetTopPixelSize()
         {
             Vector2 refResolution = canvasScaler.referenceResolution;
@@ -89,9 +94,20 @@ namespace Flow
             // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
             return topHeightPixelSize;
         }
+
+        public float GetBottomPixelSize()
+        {
+            Vector2 refResolution = canvasScaler.referenceResolution;
+
+            // calculamos lo que mide en pixeles la zona de arriba de HUD
+            float topHeightPixelSize = (Screen.width * bottomSize) / refResolution.x;
+
+            // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
+            return topHeightPixelSize;
+        }
         public float GetCenterPixelSize()
         {
-            return Screen.height - GetTopPixelSize();
+            return Screen.height - GetTopPixelSize() - GetBottomPixelSize();
         }
         public int GetBottomSize()
         {

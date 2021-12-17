@@ -113,7 +113,7 @@ namespace Flow
 
             float centerUnitySize = GameManager.Instance().GetCenterUnitySize();
 
-            // resolucion de la cámara en unidades de unity 
+            // unidades de unity que ocupa la zona central
             float unitsUnityByHeight = centerUnitySize;
             float unitsUnityByWidth = (_screenWidth * unitsUnityByHeight) / _screenHeight;
 
@@ -122,11 +122,9 @@ namespace Flow
             _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
 
             // Calculos para centrar la camara
-            offsetX = (-unitsUnityByWidth / 2) + (0.5f * _scaleFactor);
-            offsetY = (-centerUnitySize / 2);// - GameManager.Instance().GetTopUnitySize();
-
-            offsetX += (unitsUnityByWidth - _tiles.GetLength(1) * _scaleFactor) / 2;
-            //offsetY += (tilesByHeight - _tiles.GetLength(0) * _scaleFactor) / 2;
+            offsetX = ((-_tiles.GetLength(1) * _scaleFactor) / 2) + (0.5f * _scaleFactor);
+            offsetY = ((-_tiles.GetLength(0) * _scaleFactor) / 2) + (0.5f * _scaleFactor) + 
+                (GameManager.Instance().GetTopUnitySize() / 2) - (GameManager.Instance().GetBottomUnitySize() / 2);
 
             // asignamos los valores calculados 
             Camera.main.transform.position = new Vector3(-offsetX, offsetY, -10);
