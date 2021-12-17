@@ -10,8 +10,11 @@ namespace Flow
         // Dashboard
 #if UNITY_IOS
     private string gameId = "4173828";
+    //private string gameId = "4455936";
+
 #elif UNITY_ANDROID
         private string gameId = "4173829";
+        //private string gameId = "4455937";
 #endif
         [Tooltip("Atajo para deshabilitar anuncios")]
         public bool disableAds;
