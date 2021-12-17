@@ -123,7 +123,7 @@ namespace Flow
                 TouchDrag(unityPos);
             //Lo acabamos de soltar
             else if (release)
-                TouchRelease(unityPos);
+                TouchRelease();
 
         }
 
@@ -306,7 +306,7 @@ namespace Flow
         ///  Metodo que ocurre cuando se deja de pulsar la pantalla
         /// </summary>
         /// <param name="releasePos"></param>
-        private void TouchRelease(Vector2 releasePos)
+        private void TouchRelease()
         {
             if (_pressOutBounds)
             {
@@ -356,6 +356,10 @@ namespace Flow
             _currentTraceColor = Color.clear;
         }
 
+        /// <summary>
+        /// Comprueba si ha cambiado algun rastro
+        /// </summary>
+        /// <returns></returns>
         private bool HasPathsChanged()
         {
             bool change = false;
@@ -366,6 +370,11 @@ namespace Flow
             return change;
         }
 
+        /// <summary>
+        /// Normaliza el vector (x,y) pasado por parámetro
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
         private Utils.Coord Normalize(Utils.Coord v)
         {
             if (Mathf.Abs(v.x) > Mathf.Abs(v.y))
@@ -388,6 +397,10 @@ namespace Flow
             return v;
         }
 
+        /// <summary>
+        /// Metodo que gestiona el pintado de la siguiente casilla
+        /// </summary>
+        /// <param name="direction">Direccion hacia donde se pretende pintar el rastro</param>
         private void GoToDirection(Utils.Coord direction)
         {
             // si vamos en diagonal no hacemos nada
@@ -427,7 +440,9 @@ namespace Flow
             }
             // si la casilla siguiente es un trazo de otro color y no un final
             else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor &&
-                !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty() && !isWall))
+                !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty() && !isWall) ||
+                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd() && !t.IsEmpty() && 
+                !isWall && !IsColorTraceEnded(_tiles[_lastColorTile.y, _lastColorTile.x].GetColor(), _lastColorTile)))
             {
                 // vuelvo atras en esa casilla
                 BackToTileOtherColor(nextPos);
@@ -439,6 +454,18 @@ namespace Flow
             {
                 _lastColorTile = nextPos;
             }
+        }
+
+        /// <summary>
+        /// Metodo que comprueba si el trazo del color pasado por parametro ha terminado
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        private bool IsColorTraceEnded(Color color, Utils.Coord pos)
+        {
+            int index = GetColorIndex(color);
+
+            return _traceStacks[index].Count > 1 && _tiles[pos.y, pos.x].IsEnd();
         }
 
         /// <summary>
@@ -501,14 +528,18 @@ namespace Flow
                 _traceStacks[indexTraceStack].Pop();
                 _tiles[position.y, position.x].DesactiveTrace();
 
-                CheckPutTraceInTile(position, t.GetColor());
+                CheckPutTraceInTile(position);
 
                 if (_traceStacks[indexTraceStack].Count > 0)
                     position = _traceStacks[indexTraceStack].Peek();
             }
         }
 
-        private void CheckPutTraceInTile(Utils.Coord position, Color color)
+        /// <summary>
+        /// Metodo que comprueba y pinta el rastro que ha sido interrumpido anteriormente
+        /// </summary>
+        /// <param name="position">Posicion donde fue interrumpido el rastro, se pintaran las casillas posteriores a la pasada por parámetro</param>
+        private void CheckPutTraceInTile(Utils.Coord position)
         {
             for (int i = 0; i < _temporaryTraceStacks.Length; i++)
             {
@@ -565,8 +596,6 @@ namespace Flow
                 if (_traceStacks[indexTraceStack].Count > 0)
                     position = _traceStacks[indexTraceStack].Peek();
             }
-
-            Debug.Log(position.x + " " + position.y);
 
             if (_traceStacks[indexTraceStack].Count > 0)
             {
