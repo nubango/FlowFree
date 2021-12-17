@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Flow
 {
@@ -16,10 +17,11 @@ namespace Flow
         [Header("Current Skin")]
         public LevelPack.SkinPackage currentSkin;
 
-        [Header("DEBUG")]
-        public int currentLevel = 1;
-        // Asset *GOLPE* de Texto *GOLPE*
-        public TextAsset currentLevelTxt;
+        [Header("Canvas Scaler")]
+        public CanvasScaler canvasScaler;
+
+        public int topSize;
+        public int bottomSize;
         #endregion
 
 
@@ -65,6 +67,36 @@ namespace Flow
         public void LoadGameScene()
         {
             SceneManager.LoadScene("Game");
+        }
+
+        public float GetCenterUnitySize()
+        {
+            return (GetCenterPixelSize() * Camera.main.orthographicSize) / Screen.height;
+        }
+
+        public float GetTopSize()
+        {
+            Vector2 refResolution = canvasScaler.referenceResolution;
+
+            // calculamos lo que mide en pixeles la zona de arriba de HUD
+            float topHeightPixelSize = (Screen.height * topSize) / refResolution.y;
+
+            // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
+            return topHeightPixelSize;
+        }
+        public float GetCenterPixelSize()
+        {
+            Vector2 refResolution = canvasScaler.referenceResolution;
+
+            // calculamos lo que mide en pixeles la zona de arriba de HUD
+            float topHeightPixelSize = (Screen.height * topSize) / refResolution.y;
+
+            // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
+            return Screen.height - topSize;
+        }
+        public int GetBottomSize()
+        {
+            return bottomSize;
         }
         #endregion
 

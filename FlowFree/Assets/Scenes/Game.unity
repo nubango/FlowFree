@@ -5873,6 +5873,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 112d67dbc353ee3419ec53ec728b941d, type: 2}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: topSize
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: rectangles
       value: 
       objectReference: {fileID: 11400000, guid: ece4ec9d74a8a044ca81dfc02682237b, type: 2}
@@ -5880,6 +5884,10 @@ PrefabInstance:
       propertyPath: currentSkin
       value: 
       objectReference: {fileID: 11400000, guid: b15acc52678233e4da3dbe36f9751820, type: 2}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: canvasScaler
+      value: 
+      objectReference: {fileID: 781346936}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: levelManager
       value: 

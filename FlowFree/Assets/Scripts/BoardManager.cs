@@ -44,7 +44,7 @@ namespace Flow
 
         private void Update()
         {
-            if (_screenWidth != Screen.width || _screenHeight != Screen.height)
+            if (_screenWidth != Screen.width || _screenHeight != GameManager.Instance().GetCenterPixelSize())
                 MapRescaling();
 
             if (!_efectiveInvalidate)
@@ -103,23 +103,23 @@ namespace Flow
         private void MapRescaling()
         {
             _screenWidth = Screen.width;
-            _screenHeight = Screen.height;
+            _screenHeight = (int)GameManager.Instance().GetCenterPixelSize();
 
             // agrandamos la pantalla para que quepan el baner de abajo y los botones de arriba
             float offsetLateral = 0.98f;
-            float offsetVertical = 0.7f;
+            float offsetVertical = 0.5f;
 
             float scaleFactorW, scaleFactorH;
             float offsetX, offsetY;
 
-            float cameraSize = Camera.main.orthographicSize;
+            float cameraSize = GameManager.Instance().GetCenterUnitySize();
 
             // resolucion de la cámara en unidades de unity 
             float tilesByHeight = cameraSize * 2;
-            float tilesByWidth = (Screen.width * tilesByHeight) / Screen.height;
+            float tilesByWidth = (_screenWidth * tilesByHeight) / _screenHeight;
 
             scaleFactorW = (tilesByWidth * offsetLateral) / _tiles.GetLength(1);
-            scaleFactorH = (tilesByHeight * offsetVertical) / _tiles.GetLength(0);
+            scaleFactorH = (tilesByHeight) / _tiles.GetLength(0);
             _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
 
             // Calculos para centrar la camara
