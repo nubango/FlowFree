@@ -3805,6 +3805,10 @@ PrefabInstance:
       value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
+      propertyPath: bottomSize
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152030792916384815, guid: dfe97bad9f353c845a2e9b15d3f54d7f, type: 3}
       propertyPath: rectangles
       value: 
       objectReference: {fileID: 11400000, guid: ece4ec9d74a8a044ca81dfc02682237b, type: 2}
