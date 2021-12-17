@@ -441,7 +441,7 @@ namespace Flow
             // si la casilla siguiente es un trazo de otro color y no un final
             else if ((GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor &&
                 !t.IsEnd() && !_tiles[_lastColorTile.y, _lastColorTile.x].IsEnd() && !t.IsEmpty() && !isWall) ||
-                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd() && !t.IsEmpty() && 
+                (GetColorIndex(t.GetColor()) != -1 && t.GetColor() != _currentTraceColor && !t.IsEnd() && !t.IsEmpty() &&
                 !isWall && !IsColorTraceEnded(_tiles[_lastColorTile.y, _lastColorTile.x].GetColor(), _lastColorTile)))
             {
                 // vuelvo atras en esa casilla
@@ -523,7 +523,7 @@ namespace Flow
             if (_traceStacks[indexTraceStack].Count > 0)
                 position = _traceStacks[indexTraceStack].Peek();
 
-            while (position != coord && _traceStacks[indexTraceStack].Count > 1)
+            while ((position != coord || (t.IsEnd() && t.GetColor() == _currentTraceColor)) && _traceStacks[indexTraceStack].Count > 1)
             {
                 _traceStacks[indexTraceStack].Pop();
                 _tiles[position.y, position.x].DesactiveTrace();

@@ -45,7 +45,6 @@ namespace Flow
         {
             if (_instance != null)
             {
-                _instance._game = _game;
                 DestroyImmediate(gameObject);
                 return;
             }

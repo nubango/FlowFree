@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace Flow
 {
+    /*
+     TODO: el levelmanager tiene que ser un sigleton y estar en el dont destroy on load (y pasarle todos los atributos)
+     */
     public class LevelManager : MonoBehaviour
     {
         [Tooltip("Board Manager")]
@@ -30,10 +33,10 @@ namespace Flow
 
         [Tooltip("Texto del boton de siguiente nivel/paquete")]
         public Text nextLevelButtonText;
-        
+
         [Tooltip("Texto del del numero de pistas")]
         public Text hintText;
-        
+
         [Tooltip("Texto del porcentaje de completado")]
         public Text pipePercentageText;
 
@@ -46,14 +49,18 @@ namespace Flow
 
         private void Start()
         {
-            DisableWinMenu();
-            boardManager.SetMap(GameManager.Instance().GetDebugLevel());
-            SetUIData(GameManager.Instance().GetDebugLevel());
+            if (boardManager)
+            {
+                DisableWinMenu();
+                boardManager.SetMap(GameManager.Instance().GetDebugLevel());
+                SetUIData(GameManager.Instance().GetDebugLevel());
+            }
         }
 
         private void Update()
         {
-            UpdateUI();
+            if (boardManager)
+                UpdateUI();
         }
 
         private void UpdateUI()

@@ -34,8 +34,8 @@ namespace Flow
 
         // Nivel actual
         private int _currentLevel = 3;
-        private int _currentPackage = 2;
-        private int _currentCategory = 2;
+        private int _currentPackage = 0;
+        private int _currentCategory = 0;
 
         // Array de niveles que guarda la informacion que se va a guardar
         private List<SaveLevel> _saveLevels;
@@ -239,7 +239,8 @@ namespace Flow
             if (_instance != null)
             {
                 _instance.levelManager = levelManager;
-                _instance._saveLevels = _saveLevels;
+                _instance._saveLevels = _saveLevels != null ? _saveLevels : _instance._saveLevels;
+                _instance.canvasScaler = canvasScaler;
                 _instance.InitCategories();
                 DestroyImmediate(gameObject);
                 return;
