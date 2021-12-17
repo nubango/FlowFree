@@ -71,12 +71,12 @@ namespace Flow
 
         public float GetCenterUnitySize()
         {
-            return (GetCenterPixelSize() * Camera.main.orthographicSize) / Screen.height;
+            return (GetCenterPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
         }
 
         public float GetTopUnitySize()
         {
-            return (GetTopPixelSize() * Camera.main.orthographicSize) / Screen.height;
+            return (GetTopPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
         }
 
         public float GetTopPixelSize()

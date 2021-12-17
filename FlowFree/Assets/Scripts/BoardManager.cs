@@ -105,29 +105,27 @@ namespace Flow
             _screenWidth = Screen.width;
             _screenHeight = (int)GameManager.Instance().GetCenterPixelSize();
 
-            
-
             // agrandamos la pantalla para que quepan el baner de abajo y los botones de arriba
             float offsetLateral = 0.98f;
 
             float scaleFactorW, scaleFactorH;
             float offsetX = 0, offsetY = 0;
 
-            float cameraSize = GameManager.Instance().GetCenterUnitySize();
+            float centerUnitySize = GameManager.Instance().GetCenterUnitySize();
 
             // resolucion de la cámara en unidades de unity 
-            float tilesByHeight = cameraSize * 2;
-            float tilesByWidth = (_screenWidth * tilesByHeight) / _screenHeight;
+            float unitsUnityByHeight = centerUnitySize;
+            float unitsUnityByWidth = (_screenWidth * unitsUnityByHeight) / _screenHeight;
 
-            scaleFactorW = (tilesByWidth * offsetLateral) / _tiles.GetLength(1);
-            scaleFactorH = (tilesByHeight) / _tiles.GetLength(0);
+            scaleFactorW = (unitsUnityByWidth * offsetLateral) / _tiles.GetLength(1);
+            scaleFactorH = (unitsUnityByHeight) / _tiles.GetLength(0);
             _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
 
             // Calculos para centrar la camara
-            offsetX = (-tilesByWidth / 2) + (0.5f * _scaleFactor);
-            offsetY = (-tilesByHeight / 2) + ((0.5f + GameManager.Instance().GetTopUnitySize()) * _scaleFactor);
+            offsetX = (-unitsUnityByWidth / 2) + (0.5f * _scaleFactor);
+            offsetY = (-centerUnitySize / 2);// - GameManager.Instance().GetTopUnitySize();
 
-            offsetX += (tilesByWidth - _tiles.GetLength(1) * _scaleFactor) / 2;
+            offsetX += (unitsUnityByWidth - _tiles.GetLength(1) * _scaleFactor) / 2;
             //offsetY += (tilesByHeight - _tiles.GetLength(0) * _scaleFactor) / 2;
 
             // asignamos los valores calculados 
