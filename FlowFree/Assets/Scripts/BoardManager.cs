@@ -121,12 +121,18 @@ namespace Flow
             scaleFactorH = (unitsUnityByHeight) / _tiles.GetLength(0);
             _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
 
-            // Calculos para centrar la camara
-            offsetX = (-unitsUnityByWidth / 2) + (0.5f * _scaleFactor);
-            offsetY = (-centerUnitySize / 2);// - GameManager.Instance().GetTopUnitySize();
 
-            offsetX += (unitsUnityByWidth - _tiles.GetLength(1) * _scaleFactor) / 2;
-            //offsetY += (tilesByHeight - _tiles.GetLength(0) * _scaleFactor) / 2;
+
+
+            // Calculos para centrar la camara
+            //offsetX = (-unitsUnityByWidth / 2) + (0.5f * _scaleFactor);
+            //offsetY = (-Camera.main.orthographicSize);// - GameManager.Instance().GetTopUnitySize();
+
+            //offsetX += (unitsUnityByWidth - _tiles.GetLength(1) * _scaleFactor) / 2;
+            //offsetY += (unitsUnityByHeight - _tiles.GetLength(0) * _scaleFactor) / 2;
+
+            offsetX = ((-_tiles.GetLength(1) * _scaleFactor) / 2) + (0.5f * _scaleFactor);
+            offsetY = ((-_tiles.GetLength(0) * _scaleFactor) / 2) + (0.5f * _scaleFactor) + (GameManager.Instance().GetTopUnitySize() / 2);
 
             // asignamos los valores calculados 
             Camera.main.transform.position = new Vector3(-offsetX, offsetY, -10);
