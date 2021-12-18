@@ -45,7 +45,9 @@ namespace Flow
         private void Update()
         {
             if (_screenWidth != Screen.width || _screenHeight != GameManager.Instance().GetCenterPixelSize())
+            {
                 MapRescaling();
+            }
 
             if (!_efectiveInvalidate)
                 _traceInput.ProcessInput();
@@ -123,7 +125,7 @@ namespace Flow
 
             // Calculos para centrar la camara
             offsetX = ((-_tiles.GetLength(1) * _scaleFactor) / 2) + (0.5f * _scaleFactor);
-            offsetY = ((-_tiles.GetLength(0) * _scaleFactor) / 2) + (0.5f * _scaleFactor) + 
+            offsetY = ((-_tiles.GetLength(0) * _scaleFactor) / 2) + (0.5f * _scaleFactor) +
                 (GameManager.Instance().GetTopUnitySize() / 2) - (GameManager.Instance().GetBottomUnitySize() / 2);
 
             // asignamos los valores calculados 
@@ -325,6 +327,7 @@ namespace Flow
             _traceInput.Init(this, _tiles, map.GetTuberias(), circleFinger, map.GetFlujos());
 
             MapRescaling();
+
         }
         #endregion
     }

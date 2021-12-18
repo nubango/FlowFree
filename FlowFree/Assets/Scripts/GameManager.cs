@@ -46,12 +46,16 @@ namespace Flow
 
 
 
+
+
+
+
+
         #region PUBLIC_METHODS
         public static GameManager Instance()
         {
             return _instance;
         }
-
 
         #region Methods for loading scenes
         public void LoadCategoryScene()
@@ -69,6 +73,24 @@ namespace Flow
             SceneManager.LoadScene("Game");
         }
 
+        public void LoadPackage(int package)
+        {
+            _currentPackage = package;
+            SceneManager.LoadScene("LevelsScene");
+
+        }
+
+        public void LoadLevel(int level)
+        {
+            _currentLevel = level;
+            SceneManager.LoadScene("Game");
+        }
+        #endregion
+
+
+
+
+        #region Dimension of canvas parts
         public float GetCenterUnitySize()
         {
             return (GetCenterPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
@@ -116,6 +138,9 @@ namespace Flow
         #endregion
 
 
+
+
+        #region Levels management
         /// <summary>
         /// Metodo suma uno al nivel actual
         /// </summary>
@@ -157,19 +182,10 @@ namespace Flow
         {
             return logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
         }
+        #endregion
 
 
-        /// <summary>
-        /// Cambia el nivel actual
-        /// </summary>
-        /// <returns></returns>
-        public Logic.Level AssignCurrentLevel(int category, int package, int level)
-        {
-            _currentCategory = category;
-            _currentPackage = package;
-            _currentLevel = level;
-            return logicCategories[category].GetPackages()[package].GetLevels()[level];
-        }
+
 
         /// <summary>
         /// Metodo que se llama cuando nos hemos pasado un nivel
@@ -220,25 +236,22 @@ namespace Flow
         {
             levelManager.AddHint();
         }
-
-        // DEBUG
-        public Logic.Level GetDebugLevel()
-        {
-            return logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
-        }
-        // DEBUG
         #endregion
+
+
+
+
+
 
 
 
         #region PRIVATE_METHODS
 
-        #region Unity
+        #region Unity methods
         private void Awake()
         {
             if (_instance != null)
             {
-                _instance.levelManager = levelManager;
                 _instance._saveLevels = _saveLevels != null ? _saveLevels : _instance._saveLevels;
                 _instance.canvasScaler = canvasScaler;
                 _instance.InitCategories();

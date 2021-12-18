@@ -37,7 +37,12 @@ namespace Flow
 
         public void OnClickedLevelPackage(int levelPackage)
         {
-            //GameManager.Instance().LoadPackage();
+            GameManager.Instance().LoadPackage(levelPackage);
+        }
+
+        public void OnClickedLevel(int level)
+        {
+            GameManager.Instance().LoadLevel(level);
         }
 
         public void OnClickedBack()

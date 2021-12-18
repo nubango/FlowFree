@@ -43,17 +43,58 @@ namespace Flow
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
-        private int _hints = 100;
+        private int _hints;
 
-        private bool _endLevel = false;
+        private bool _endLevel;
+
+        public static LevelManager _instance;
+
+        private void Awake()
+        {
+            if (_instance != null)
+            {
+                _instance.boardManager = boardManager;
+                _instance.levelText = levelText;
+                _instance.dimensionText = dimensionText;
+                _instance.movementsText = movementsText;
+                _instance.recordText = recordText;
+                _instance.flowsText = flowsText;
+                _instance.descriptionText = descriptionText;
+                _instance.nextLevelButtonText = nextLevelButtonText;
+                _instance.hintText = hintText;
+                _instance.pipePercentageText = pipePercentageText;
+                _instance.endLevelMenu = endLevelMenu;
+
+                _instance.SetUIData(GameManager.Instance().GetCurrentLevel());
+                _instance.DisableWinMenu();
+                _instance.boardManager.SetMap(GameManager.Instance().GetCurrentLevel());
+
+                DestroyImmediate(gameObject);
+                return;
+            }
+
+            _instance = this;
+
+            _hints = 100;
+            _endLevel = false;
+
+            DontDestroyOnLoad(gameObject);
+        }
+
+        //debug
+        public void set(string s)
+        {
+            _instance.recordText.text = s;
+        }
+        //debug
 
         private void Start()
         {
             if (boardManager)
             {
                 DisableWinMenu();
-                boardManager.SetMap(GameManager.Instance().GetDebugLevel());
-                SetUIData(GameManager.Instance().GetDebugLevel());
+                boardManager.SetMap(GameManager.Instance().GetCurrentLevel());
+                SetUIData(GameManager.Instance().GetCurrentLevel());
             }
         }
 
@@ -111,21 +152,6 @@ namespace Flow
         }
 
         /// <summary>
-        /// Esteblece el nivel del paquete y la categoria pasadas por parametro
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="package"></param>
-        /// <param name="level"></param>
-        public void SetLevel(int category, int package, int level)
-        {
-            DisableWinMenu();
-            Logic.Level logicLevel = GameManager.Instance().AssignCurrentLevel(category, package, level);
-
-            SetUIData(logicLevel);
-            boardManager.SetMap(logicLevel);
-        }
-
-        /// <summary>
         /// Metodo activa el menu de nivel ganado
         /// </summary>
         public void Win(bool nextPackage)
@@ -146,9 +172,9 @@ namespace Flow
         /// </summary>
         public void DisableWinMenu()
         {
-            boardManager.SetActiveUpdate(true);
-            endLevelMenu.SetActive(false);
-            _endLevel = false;
+            _instance.boardManager.SetActiveUpdate(true);
+            _instance.endLevelMenu.SetActive(false);
+            _instance._endLevel = false;
         }
 
         public void AddHint()
