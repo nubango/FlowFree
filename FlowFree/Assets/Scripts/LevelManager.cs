@@ -10,6 +10,20 @@ namespace Flow
      */
     public class LevelManager : MonoBehaviour
     {
+        [Header("CATEGORY SCENE OBJECTS")]
+
+        [Header("LEVEL SCENE OBJECTS")]
+        [Tooltip("Titulo: nombre del paquete")]
+        public Text titlePackageText;
+
+        public GameObject gridPrefab;
+        public GameObject linePrefab;
+        public LevelButton levelButtonPrefab;
+        public GameObject content;
+
+
+
+        [Header("GAME SCENE OBJECTS")]
         [Tooltip("Board Manager")]
         public BoardManager boardManager;
 
@@ -46,7 +60,6 @@ namespace Flow
         public Image star;
         public Image check;
 
-        [Header("IU Objects Scaler")]
         public CanvasScaler canvasScaler;
 
         [Tooltip("Panel superior")]
@@ -68,40 +81,135 @@ namespace Flow
         {
             if (_instance != null)
             {
-                _instance.boardManager = boardManager;
-                _instance.levelText = levelText;
-                _instance.dimensionText = dimensionText;
-                _instance.movementsText = movementsText;
-                _instance.recordText = recordText;
-                _instance.flowsText = flowsText;
-                _instance.descriptionText = descriptionText;
-                _instance.nextLevelButtonText = nextLevelButtonText;
-                _instance.hintText = hintText;
-                _instance.pipePercentageText = pipePercentageText;
-                _instance.endLevelMenu = endLevelMenu;
-                _instance.star = star;
-                _instance.check = check;
-                _instance.upperPanel = upperPanel;
-                _instance.statsPanel = statsPanel;
-                _instance.lowerPanel = lowerPanel;
-
-                Flow.Logic.Level l = GameManager.Instance().GetCurrentLevel();
-                _instance.SetUIData(l);
-                _instance.DisableWinMenu();
-                _instance.boardManager.SetMap(l);
-
-                CheckLevelPassed(l);
-
+                TransferInformation();
+                Init();
                 DestroyImmediate(gameObject);
                 return;
             }
 
             _instance = this;
-
             _hints = 100;
             _endLevel = false;
 
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void TransferInformation()
+        {
+            // CATEGORY SCENE OBJECTS
+            // LEVEL SCENE OBJECTS
+            _instance.titlePackageText = titlePackageText;
+
+            // GAME SCENE OBJECTS
+            _instance.boardManager = boardManager;
+            _instance.levelText = levelText;
+            _instance.dimensionText = dimensionText;
+            _instance.movementsText = movementsText;
+            _instance.recordText = recordText;
+            _instance.flowsText = flowsText;
+            _instance.descriptionText = descriptionText;
+            _instance.nextLevelButtonText = nextLevelButtonText;
+            _instance.hintText = hintText;
+            _instance.pipePercentageText = pipePercentageText;
+            _instance.endLevelMenu = endLevelMenu;
+            _instance.star = star;
+            _instance.check = check;
+            _instance.canvasScaler = canvasScaler;
+            _instance.upperPanel = upperPanel;
+            _instance.statsPanel = statsPanel;
+            _instance.lowerPanel = lowerPanel;
+        }
+
+
+        private void Start()
+        {
+            Init();
+        }
+        private void Init()
+        {
+            if (boardManager)
+            {
+                DisableWinMenu();
+                boardManager.SetMap(GameManager.Instance().GetCurrentLevel());
+                SetUIData(GameManager.Instance().GetCurrentLevel());
+                CheckLevelPassed(GameManager.Instance().GetCurrentLevel());
+            }
+            else if (titlePackageText)
+            {
+                ChangeColorTitle();
+                CreateLevelsGrid();
+            }
+        }
+
+        private void CreateLevelsGrid()
+        {
+            Logic.Package pack = GameManager.Instance().GetCurrentPackage();
+            Logic.Level[] levels = pack.GetLevels();
+            Color[] colors = GameManager.Instance().currentSkin.colores;
+
+
+            Color color = colors[1];
+            int i = 0, countColor = 1;
+
+            GameObject grid = Instantiate(gridPrefab);
+            grid.transform.parent = content.transform;
+            GameObject line = Instantiate(linePrefab);
+            line.transform.parent = grid.transform;
+
+            levelButtonPrefab.text.text = (i + 1).ToString();
+            levelButtonPrefab.image.color = color;
+            levelButtonPrefab.SetId(i);
+            GameObject button = Instantiate(levelButtonPrefab.gameObject);
+            button.transform.parent = line.transform;
+
+            while (++i < levels.Length - 1)
+            {
+                if (i % 30 == 0)
+                {
+                    countColor = (countColor + 1) % 5;
+                    grid = Instantiate(gridPrefab);
+                    grid.transform.parent = content.transform;
+                    color = colors[countColor];
+                }
+
+                if (i % 5 == 0)
+                {
+                    line = Instantiate(linePrefab);
+                    line.transform.parent = grid.transform;
+                }
+
+                int l = ((i + 1) % 30) == 0 ? 30 : ((i + 1) % 30);
+                levelButtonPrefab.text.text = l.ToString();
+                levelButtonPrefab.image.color = color;
+                button = Instantiate(levelButtonPrefab.gameObject);
+                button.GetComponent<LevelButton>().SetId(i);
+                button.transform.parent = line.transform;
+            }
+        }
+
+        private void Update()
+        {
+            if (boardManager)
+                UpdateUI();
+        }
+
+        private void ChangeColorTitle()
+        {
+            if (!_instance.titlePackageText)
+                return;
+
+            string text = GameManager.Instance().GetCurrentPackage().GetPackName();
+            string textAux = "";
+            int c = 0;
+            Color[] colors = GameManager.Instance().currentSkin.colores;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                textAux += "<color=#" + ColorUtility.ToHtmlStringRGBA(colors[c]) + ">" + text[i] + "</color>";
+                c = (c + 1) % 5;
+            }
+
+            _instance.titlePackageText.text = textAux;
         }
 
         public float GetCenterUnitySize()
@@ -170,22 +278,6 @@ namespace Flow
             return topHeightPixelSize;
         }
 
-        private void Start()
-        {
-            if (boardManager)
-            {
-                DisableWinMenu();
-                boardManager.SetMap(GameManager.Instance().GetCurrentLevel());
-                SetUIData(GameManager.Instance().GetCurrentLevel());
-            }
-        }
-
-        private void Update()
-        {
-            if (boardManager)
-                UpdateUI();
-        }
-
         private void UpdateUI()
         {
             movementsText.text = "pasos: " + boardManager.GetNumMovements();
@@ -197,6 +289,7 @@ namespace Flow
         private void SetUIData(Logic.Level level)
         {
             levelText.text = "Nivel " + level.GetNumLevel();
+            levelText.color = GameManager.Instance().GetLevelColor();
             dimensionText.text = level.GetAlto() + "x" + level.GetAncho();
             recordText.text = "record: " + level.GetRecord();
         }

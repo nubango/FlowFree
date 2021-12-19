@@ -40,9 +40,9 @@ namespace Flow
             GameManager.Instance().LoadPackage(levelPackage);
         }
 
-        public void OnClickedLevel(int level)
+        public void OnClickedLevel(LevelButton level)
         {
-            GameManager.Instance().LoadLevel(level);
+            GameManager.Instance().LoadLevel(level.GetId(), level.GetColor());
         }
 
         public void OnClickedBack()
