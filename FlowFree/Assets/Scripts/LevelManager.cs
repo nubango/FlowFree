@@ -145,11 +145,9 @@ namespace Flow
         {
             Logic.Package pack = GameManager.Instance().GetCurrentPackage();
             Logic.Level[] levels = pack.GetLevels();
-            Color[] colors = GameManager.Instance().currentSkin.colores;
 
 
-            Color color = colors[1];
-            int i = 0, countColor = 1;
+            int i = 0;
 
             GameObject grid = Instantiate(gridPrefab);
             grid.transform.parent = content.transform;
@@ -157,19 +155,17 @@ namespace Flow
             line.transform.parent = grid.transform;
 
             levelButtonPrefab.text.text = (i + 1).ToString();
-            levelButtonPrefab.image.color = color;
-            levelButtonPrefab.SetId(i);
+            levelButtonPrefab.backgroud.color = levels[i].GetLevelColor();
             GameObject button = Instantiate(levelButtonPrefab.gameObject);
+            button.GetComponent<LevelButton>().SetId(i);
             button.transform.parent = line.transform;
 
             while (++i < levels.Length - 1)
             {
                 if (i % 30 == 0)
                 {
-                    countColor = (countColor + 1) % 5;
                     grid = Instantiate(gridPrefab);
                     grid.transform.parent = content.transform;
-                    color = colors[countColor];
                 }
 
                 if (i % 5 == 0)
@@ -178,11 +174,24 @@ namespace Flow
                     line.transform.parent = grid.transform;
                 }
 
+                Logic.Level level = levels[i];
+
                 int l = ((i + 1) % 30) == 0 ? 30 : ((i + 1) % 30);
                 levelButtonPrefab.text.text = l.ToString();
-                levelButtonPrefab.image.color = color;
+                levelButtonPrefab.backgroud.color = level.GetLevelColor();
                 button = Instantiate(levelButtonPrefab.gameObject);
-                button.GetComponent<LevelButton>().SetId(i);
+
+                LevelButton lb = button.GetComponent<LevelButton>();
+                lb.SetId(i);
+
+                if (level.IsLocked())
+                    lb.SetActiveLocked(true);
+                else if (level.IsPerfectPassed())
+                    lb.SetActiveStar(true);
+                else if (level.IsPassed())
+                    lb.SetActiveTick(true);
+
+
                 button.transform.parent = line.transform;
             }
         }

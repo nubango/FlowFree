@@ -126,6 +126,9 @@ namespace Flow
                 return false;
             }
 
+            if (logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel + 1].IsLocked())
+                return false;
+
             _currentLevel++;
             return true;
         }
@@ -141,6 +144,9 @@ namespace Flow
                 // invalidar el boton?
                 return false;
             }
+
+            if (logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel - 1].IsLocked())
+                return false;
 
             _currentLevel--;
             return true;
@@ -180,7 +186,7 @@ namespace Flow
 
             int index = -1;
             // comprobar si se ha guardado el nivel anteriormente
-            if (ContainsLevel(ref index))
+            if (ContainsLevel(ref index, _currentCategory, _currentPackage, _currentLevel))
             {
                 _saveLevels[index].record = _saveLevels[index].record == 0 ? record : _saveLevels[index].record > record ? record : _saveLevels[index].record;
             }
@@ -191,14 +197,28 @@ namespace Flow
                 saveLevel.package = _currentPackage;
                 saveLevel.level = _currentLevel;
                 saveLevel.record = r;
-                saveLevel.active = true;
+                saveLevel.locked = false;
 
+                _saveLevels.Add(saveLevel);
+            }
+
+
+            bool nextPackage = _currentLevel == logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels().Length - 2;
+
+            if (!nextPackage && !ContainsLevel(ref index, _currentCategory, _currentPackage, _currentLevel + 1))
+            {
+                logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel + 1].SetLocked(false);
+                SaveLevel saveLevel = new SaveLevel();
+                saveLevel.category = _currentCategory;
+                saveLevel.package = _currentPackage;
+                saveLevel.level = _currentLevel + 1;
+                saveLevel.record = 0;
+                saveLevel.locked = false;
                 _saveLevels.Add(saveLevel);
             }
 
             SaveSystem.Instance().Save(_saveLevels, levelManager.GetNumHints(), _ads);
 
-            bool nextPackage = _currentLevel == logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels().Length - 2;
             levelManager.Win(nextPackage);
         }
 
@@ -251,13 +271,15 @@ namespace Flow
             // todo: cambiar de sitio este if
             if (SaveSystem.Instance().Load())
             {
-                levelManager.SetNumHints(SaveSystem.Instance().GetGame().hints);
-                _ads = SaveSystem.Instance().GetGame().ads;
-                _saveLevels = SaveSystem.Instance().GetGame().levels;
+                GameSaving game = SaveSystem.Instance().GetGame();
+                levelManager.SetNumHints(game.hints);
+                _ads = game.ads;
+                _saveLevels = game.levels;
 
                 for (int i = 0; i < _saveLevels.Count; i++)
                 {
                     logicCategories[_saveLevels[i].category].GetPackages()[_saveLevels[i].package].GetLevels()[_saveLevels[i].level].SetRecord(_saveLevels[i].record);
+                    logicCategories[_saveLevels[i].category].GetPackages()[_saveLevels[i].package].GetLevels()[_saveLevels[i].level].SetLocked(_saveLevels[i].locked);
                 }
             }
         }
@@ -294,11 +316,11 @@ namespace Flow
         /// </summary>
         /// <param name="index">Parametro pasado por referencia que devuelve el indice del nivel encontrado. Si no lo encuentra devuelve -1</param>
         /// <returns>Devuelve TRUE si encuentra un nivel. FALSE en caso contrario</returns>
-        private bool ContainsLevel(ref int index)
+        private bool ContainsLevel(ref int index, int category, int package, int level)
         {
             for (int i = 0; i < _saveLevels.Count; i++)
             {
-                if (_saveLevels[i].category == _currentCategory && _saveLevels[i].package == _currentPackage && _saveLevels[i].level == _currentLevel)
+                if (_saveLevels[i].category == category && _saveLevels[i].package == package && _saveLevels[i].level == level)
                 {
                     index = i;
                     return true;

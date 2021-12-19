@@ -9,5 +9,7 @@ namespace LevelPack
         public string packName;
         [Tooltip("Fichero con los niveles")]
         public TextAsset maps;
+        [Tooltip("Flag que determina si los niveles aparecen bloqueados")]
+        public bool locked;
     }
 }

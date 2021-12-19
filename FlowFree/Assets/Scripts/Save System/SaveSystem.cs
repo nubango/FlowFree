@@ -22,7 +22,7 @@ namespace Flow
         public int package;
         public int level;
         public int record;
-        public bool active;
+        public bool locked;
 
         public static bool operator ==(SaveLevel a, SaveLevel b) => (a.category == b.category && a.package == b.package && a.level == b.level);
         public static bool operator !=(SaveLevel a, SaveLevel b) => (a.category != b.category && a.package != b.package && a.level != b.level);
@@ -116,7 +116,7 @@ namespace Flow
             string s = "";
             for (int l = 0; l < levels.Count; l++)
             {
-                s += levels[l].category + levels[l].package + levels[l].level + levels[l].record + levels[l].active.ToString();
+                s += levels[l].category + levels[l].package + levels[l].level + levels[l].record + levels[l].locked.ToString();
             }
 
             return s;

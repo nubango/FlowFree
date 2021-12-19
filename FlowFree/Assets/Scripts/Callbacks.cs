@@ -42,7 +42,8 @@ namespace Flow
 
         public void OnClickedLevel(LevelButton level)
         {
-            GameManager.Instance().LoadLevel(level.GetId());
+            if (!level.locked.enabled)
+                GameManager.Instance().LoadLevel(level.GetId());
         }
 
         public void OnClickedBack()

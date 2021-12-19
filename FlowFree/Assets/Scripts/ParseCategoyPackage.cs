@@ -32,6 +32,11 @@ namespace Flow
             {
                 levels[i] = ParseLevel(textLevels[i]);
                 levels[i].SetLevelColor(GameManager.Instance().currentSkin.colores[((i / 30) + 1) % 5]);
+
+                if (i > 0)
+                    levels[i].SetLocked(levelPackage.locked);
+                else
+                    levels[i].SetLocked(false);
             }
 
             package.SetMaps(levels);
