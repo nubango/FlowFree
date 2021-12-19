@@ -33,6 +33,7 @@ namespace Flow
         private int _currentLevel = 3;
         private int _currentPackage = 0;
         private int _currentCategory = 0;
+        private Color _levelColor = Color.green;
 
         // Array de niveles que guarda la informacion que se va a guardar
         private List<SaveLevel> _saveLevels;
@@ -74,12 +75,12 @@ namespace Flow
         {
             _currentPackage = package;
             SceneManager.LoadScene("LevelsScene");
-
         }
 
-        public void LoadLevel(int level)
+        public void LoadLevel(int level, Color c)
         {
             _currentLevel = level;
+            _levelColor = c;
             SceneManager.LoadScene("Game");
         }
         #endregion
@@ -155,9 +156,18 @@ namespace Flow
         {
             return logicCategories[_currentCategory].GetPackages()[_currentPackage].GetLevels()[_currentLevel];
         }
+
+        /// <summary>
+        /// Metodo que devuelve el paquete actual
+        /// </summary>
+        /// <returns>El paquete actual</returns>
+        public Logic.Package GetCurrentPackage()
+        {
+            return logicCategories[_currentCategory].GetPackages()[_currentPackage];
+        }
         #endregion
 
-
+        public Color GetLevelColor() { return _levelColor; }
 
 
         /// <summary>
