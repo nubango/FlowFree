@@ -169,6 +169,24 @@ namespace Flow
         {
             return logicCategories[_currentCategory].GetPackages()[_currentPackage];
         }
+
+        /// <summary>
+        /// Metodo que devuelve la categoria actual
+        /// </summary>
+        /// <returns>El paquete actual</returns>
+        public Logic.Category GetCurrentCategory()
+        {
+            return logicCategories[_currentCategory];
+        }
+
+        /// <summary>
+        /// Metodo que devuelve el array de categorias
+        /// </summary>
+        /// <returns>El paquete actual</returns>
+        public Logic.Category[] GetCategories()
+        {
+            return logicCategories;
+        }
         #endregion
 
 

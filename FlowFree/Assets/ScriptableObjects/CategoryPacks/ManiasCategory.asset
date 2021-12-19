@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e15f16bbcf3aa3c44811307d9bb56397, type: 3}
   m_Name: ManiasCategory
   m_EditorClassIdentifier: 
+  categoryName: Manias
   categoryColor: {r: 1, g: 0, b: 0, a: 0}
   levelsPackage:
   - {fileID: 11400000, guid: 14a05404cd7afe94da68cb5f1a1f1997, type: 2}

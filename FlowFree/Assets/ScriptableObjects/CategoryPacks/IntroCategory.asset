@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e15f16bbcf3aa3c44811307d9bb56397, type: 3}
   m_Name: IntroCategory
   m_EditorClassIdentifier: 
+  categoryName: Intro
   categoryColor: {r: 0, g: 0.5529412, b: 0, a: 0}
   levelsPackage:
   - {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}

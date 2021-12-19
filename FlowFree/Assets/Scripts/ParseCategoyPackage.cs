@@ -17,6 +17,7 @@ namespace Flow
                 package[i] = ParsePack(categoryPackage.levelsPackage[i]);
             }
 
+            category.SetCategoryName(categoryPackage.categoryName);
             category.SetCategoryColor(categoryPackage.categoryColor);
             category.SetPackage(package);
 

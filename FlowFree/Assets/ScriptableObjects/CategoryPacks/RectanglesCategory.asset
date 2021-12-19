@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e15f16bbcf3aa3c44811307d9bb56397, type: 3}
   m_Name: RectanglesCategory
   m_EditorClassIdentifier: 
+  categoryName: Rectangulos
   categoryColor: {r: 0.9843137, g: 0.5372549, b: 0, a: 0}
   levelsPackage:
   - {fileID: 11400000, guid: 9469faedc45db384dad645ee66571f1c, type: 2}

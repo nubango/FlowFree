@@ -11,6 +11,13 @@ namespace Flow
     public class LevelManager : MonoBehaviour
     {
         [Header("CATEGORY SCENE OBJECTS")]
+        public Text titleCategoryText;
+
+        public GameObject categoryPrefab;
+        public CategoryHeader categoryHeaderPrefab;
+        public GameObject packagesGroupPrefab;
+        public GameObject packagePrefab;
+        public GameObject categoryContent;
 
         [Header("LEVEL SCENE OBJECTS")]
         [Tooltip("Titulo: nombre del paquete")]
@@ -19,9 +26,7 @@ namespace Flow
         public GameObject gridPrefab;
         public GameObject linePrefab;
         public LevelButton levelButtonPrefab;
-        public GameObject content;
-
-
+        public GameObject levelContent;
 
         [Header("GAME SCENE OBJECTS")]
         [Tooltip("Board Manager")]
@@ -97,8 +102,20 @@ namespace Flow
         private void TransferInformation()
         {
             // CATEGORY SCENE OBJECTS
+            _instance.titleCategoryText = titleCategoryText;
+
+            _instance.categoryPrefab = categoryPrefab;
+            _instance.categoryHeaderPrefab = categoryHeaderPrefab;
+            _instance.packagesGroupPrefab = packagesGroupPrefab;
+            _instance.packagePrefab = packagePrefab;
+            _instance.categoryContent = categoryContent;
+
             // LEVEL SCENE OBJECTS
             _instance.titlePackageText = titlePackageText;
+            _instance.gridPrefab = gridPrefab;
+            _instance.linePrefab = linePrefab;
+            _instance.levelButtonPrefab = levelButtonPrefab;
+            _instance.levelContent = levelContent;
 
             // GAME SCENE OBJECTS
             _instance.boardManager = boardManager;
@@ -136,8 +153,15 @@ namespace Flow
             }
             else if (titlePackageText)
             {
-                ChangeColorTitle();
+                if (_instance.titlePackageText)
+                    _instance.titlePackageText.text = ChangeColorTitle(GameManager.Instance().GetCurrentPackage().GetPackName());
                 CreateLevelsGrid();
+            }
+            else if (titleCategoryText)
+            {
+                if (_instance.titleCategoryText)
+                    _instance.titleCategoryText.text = ChangeColorTitle("niveles");
+                CreateCategoryGrid();
             }
         }
 
@@ -150,7 +174,7 @@ namespace Flow
             int i = 0;
 
             GameObject grid = Instantiate(gridPrefab);
-            grid.transform.parent = content.transform;
+            grid.transform.parent = levelContent.transform;
             GameObject line = Instantiate(linePrefab);
             line.transform.parent = grid.transform;
 
@@ -165,7 +189,7 @@ namespace Flow
                 if (i % 30 == 0)
                 {
                     grid = Instantiate(gridPrefab);
-                    grid.transform.parent = content.transform;
+                    grid.transform.parent = levelContent.transform;
                 }
 
                 if (i % 5 == 0)
@@ -186,13 +210,66 @@ namespace Flow
 
                 if (level.IsLocked())
                     lb.SetActiveLocked(true);
-                else if (level.IsPerfectPassed())
+                else if (level.IsPerfectCompleted())
                     lb.SetActiveStar(true);
-                else if (level.IsPassed())
+                else if (level.IsCompleted())
                     lb.SetActiveTick(true);
 
 
                 button.transform.parent = line.transform;
+            }
+        }
+
+        private void CreateCategoryGrid()
+        {
+            Logic.Category[] categories = GameManager.Instance().GetCategories();
+
+            for (int i = 0; i < categories.Length; i++)
+            {
+                GameObject category = Instantiate(categoryPrefab);
+                category.transform.parent = categoryContent.transform;
+
+                GameObject categoryHeader = Instantiate(categoryHeaderPrefab.gameObject);
+                categoryHeader.transform.parent = category.transform;
+                CategoryHeader ch = categoryHeader.GetComponent<CategoryHeader>();
+
+                ch.headerText.text = categories[i].GetName();
+                ch.headerBackground.color = categories[i].GetColor();
+                ch.headerLine.color = categories[i].GetColor();// + new Color(0, 100, 0);
+
+                if (categories[i].IsPerfectCompleted())
+                    ch.SetActiveStar(true);
+                else if (categories[i].IsCompleted())
+                    ch.SetActiveTick(true);
+                else
+                {
+                    ch.SetActiveStar(false);
+                    ch.SetActiveTick(false);
+                }
+
+                GameObject packageGroup = Instantiate(packagesGroupPrefab);
+                packageGroup.transform.parent = category.transform;
+
+                for (int j = 0; j < categories[i].GetPackages().Length; j++)
+                {
+                    Logic.Package package = categories[i].GetPackages()[j];
+                    GameObject packageObject = Instantiate(packagePrefab);
+                    packageObject.transform.parent = packageGroup.transform;
+                    PackageButton pb = packageObject.GetComponent<PackageButton>();
+
+                    pb.packName.text = package.GetPackName();
+                    pb.completedLevels.text = package.GetNumCompletedLevels() + " / " + package.GetTotalNumLevels();
+
+                    if (package.IsPerfectCompleted())
+                        pb.SetActiveStar(true);
+                    else if (package.IsCompleted())
+                        pb.SetActiveTick(true);
+                    else
+                    {
+                        pb.SetActiveStar(false);
+                        pb.SetActiveTick(false);
+                    }
+                }
             }
         }
 
@@ -202,12 +279,8 @@ namespace Flow
                 UpdateUI();
         }
 
-        private void ChangeColorTitle()
+        private string ChangeColorTitle(string text)
         {
-            if (!_instance.titlePackageText)
-                return;
-
-            string text = GameManager.Instance().GetCurrentPackage().GetPackName();
             string textAux = "";
             int c = 0;
             Color[] colors = GameManager.Instance().currentSkin.colores;
@@ -218,7 +291,7 @@ namespace Flow
                 c = (c + 1) % 5;
             }
 
-            _instance.titlePackageText.text = textAux;
+            return textAux;
         }
 
         public float GetCenterUnitySize()
@@ -246,9 +319,9 @@ namespace Flow
 
         private void CheckLevelPassed(Logic.Level l)
         {
-            if (l.IsPassed())
+            if (l.IsCompleted())
             {
-                if (l.IsPerfectPassed())
+                if (l.IsPerfectCompleted())
                 {
                     star.enabled = true;
                     check.enabled = false;
