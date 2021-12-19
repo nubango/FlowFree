@@ -10,6 +10,9 @@ namespace Flow
      */
     public class LevelManager : MonoBehaviour
     {
+        [Header("INTRO SCENE OBJECTS")]
+        public Text titleIntroText;
+
         [Header("CATEGORY SCENE OBJECTS")]
         public Text titleCategoryText;
 
@@ -163,6 +166,11 @@ namespace Flow
                     _instance.titleCategoryText.text = ChangeColorTitle("niveles");
                 CreateCategoryGrid();
             }
+            else if (titleIntroText)
+            {
+                if (_instance.titleIntroText)
+                    _instance.titleIntroText.text = ChangeColorTitle("flow");
+            }
         }
 
         private void CreateLevelsGrid()
@@ -234,8 +242,9 @@ namespace Flow
                 CategoryHeader ch = categoryHeader.GetComponent<CategoryHeader>();
 
                 ch.headerText.text = categories[i].GetName();
-                ch.headerBackground.color = categories[i].GetColor();
-                ch.headerLine.color = categories[i].GetColor();// + new Color(0, 100, 0);
+                ch.headerBackground.color = Color.Lerp(categories[i].GetColor(), Color.black, 0.25f);
+                ch.headerLine.color = categories[i].GetColor();
+
 
                 if (categories[i].IsPerfectCompleted())
                     ch.SetActiveStar(true);
@@ -257,8 +266,11 @@ namespace Flow
                     packageObject.transform.parent = packageGroup.transform;
                     PackageButton pb = packageObject.GetComponent<PackageButton>();
 
-                    pb.packName.text = package.GetPackName();
+                    pb.packName.text = "<color=#" + ColorUtility.ToHtmlStringRGBA(categories[i].GetColor()) + ">" + package.GetPackName() + "</color>";
                     pb.completedLevels.text = package.GetNumCompletedLevels() + " / " + package.GetTotalNumLevels();
+
+                    pb.SetCategory(i);
+                    pb.SetPackage(j);
 
                     if (package.IsPerfectCompleted())
                         pb.SetActiveStar(true);
@@ -422,6 +434,9 @@ namespace Flow
 
 
             _endLevel = true;
+
+            AdsManager.Instance().DisplayVideoAd();
+
             endLevelMenu.SetActive(true);
             descriptionText.text = "You complete the level in " + boardManager.GetNumMovements() + " moves";
         }

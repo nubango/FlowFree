@@ -11,20 +11,6 @@ namespace Flow
      */
     public class Callbacks : MonoBehaviour
     {
-        public void OnClickedPlay(GameObject go)
-        {
-            // El color del texto del boton jugar cambia cada entre los 5 primeros del paquete de color
-            ColorBlock color = go.GetComponent<Button>().colors;
-            // #FF0000, #008D00, #0C29FE, #EAE000, #FB8900
-            Color[] colors = { new Color32(255, 0, 0, 255), new Color32(0, 141, 0, 255), new Color32(12, 41, 254, 255), new Color32(234, 224, 0, 255), new Color32(251, 137, 0, 255) };
-            int rnd = Random.Range(0, colors.Length);
-            color.pressedColor = colors[rnd];
-            go.GetComponent<Button>().colors = color;
-
-            //GameManager.Instance().LoadCategoryScene();
-            GameManager.Instance().LoadGameScene();
-        }
-
         public void OnClickedOptions()
         {
             Debug.Log("OPCIONES!");
@@ -35,9 +21,9 @@ namespace Flow
             AdsManager.Instance().ShowRewardedVideo();
         }
 
-        public void OnClickedLevelPackage(int levelPackage)
+        public void OnClickedLevelPackage(PackageButton pb)
         {
-            GameManager.Instance().LoadPackage(levelPackage);
+            GameManager.Instance().LoadPackage(pb.GetCategory(), pb.GetPackage());
         }
 
         public void OnClickedLevel(LevelButton level)
@@ -46,9 +32,17 @@ namespace Flow
                 GameManager.Instance().LoadLevel(level.GetId());
         }
 
-        public void OnClickedBack()
+        public void OnClickedGoToLevelsScene()
         {
             GameManager.Instance().LoadLevelsScene();
+        }
+        public void OnClickedGoToCategoriesScene()
+        {
+            GameManager.Instance().LoadCategoryScene();
+        }
+        public void OnClickedGoToIntroScene()
+        {
+            GameManager.Instance().LoadIntroScene();
         }
 
         public void OnClickNextLevel()

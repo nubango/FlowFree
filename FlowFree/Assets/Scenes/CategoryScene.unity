@@ -1946,6 +1946,63 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1001 &656474936
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7937042732451466408, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_Name
+      value: AdsManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 440.72723
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1075.5396
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -46.27393
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7937042732451466410, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 659959644214a6c4bb6cf3422f087a60, type: 3}
 --- !u!1 &671613987
 GameObject:
   m_ObjectHideFlags: 0
@@ -2828,7 +2885,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 0
-    m_Bottom: -178
+    m_Bottom: 0
   m_ChildAlignment: 1
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
@@ -6345,7 +6402,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6047484087390052804, guid: 9b4da96c23cada845bb1f1979cf4dae1, type: 3}
         m_TargetAssemblyTypeName: Flow.Callbacks, Assembly-CSharp
-        m_MethodName: OnClickedBack
+        m_MethodName: OnClickedGoToIntroScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
