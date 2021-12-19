@@ -434,6 +434,9 @@ namespace Flow
 
 
             _endLevel = true;
+
+            AdsManager.Instance().DisplayVideoAd();
+
             endLevelMenu.SetActive(true);
             descriptionText.text = "You complete the level in " + boardManager.GetNumMovements() + " moves";
         }
