@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace Flow
 {
+    /// <summary>
+    /// Gestor de anuncios
+    /// </summary>
     public class AdsManager : MonoBehaviour, IUnityAdsListener
     {
         // Dashboard

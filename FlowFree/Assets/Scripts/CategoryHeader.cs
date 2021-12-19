@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace Flow
 {
+    /// <summary>
+    /// Gestiona los datos de un titulo de categoria en el canvas 
+    /// </summary>
     public class CategoryHeader : MonoBehaviour
     {
         public Image headerBackground;

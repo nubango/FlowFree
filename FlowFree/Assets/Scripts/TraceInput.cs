@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Flow
 {
+    /// <summary>
+    /// Clase que gestiona el input de usuario y la generacion de caminos
+    /// </summary>
     public class TraceInput
     {
         #region ATRIBUTTES

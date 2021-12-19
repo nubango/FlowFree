@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Flow
 {
+    /// <summary>
+    /// Clase del objeto casilla
+    /// </summary>
     public class Tile : MonoBehaviour
     {
         [Header("SpriteRenderers")]

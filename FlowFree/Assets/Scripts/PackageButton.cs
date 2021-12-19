@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 namespace Flow
 {
+    /// <summary>
+    /// Gestiona los datos de un paquete de niveles del canvas 
+    /// </summary>
     public class PackageButton : MonoBehaviour
     {
         public Text packName;

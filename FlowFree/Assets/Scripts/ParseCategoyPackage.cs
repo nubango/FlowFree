@@ -5,6 +5,9 @@ using System;
 
 namespace Flow
 {
+    /// <summary>
+    /// Parse de los distintos niveles de informacion que se proporcionan dados TextAssets
+    /// </summary>
     public class ParseCategoyPackage
     {
         public static Logic.Category Parse(LevelPack.CategoryPackage categoryPackage)

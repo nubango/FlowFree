@@ -28,6 +28,9 @@ namespace Flow
         public static bool operator !=(SaveLevel a, SaveLevel b) => (a.category != b.category && a.package != b.package && a.level != b.level);
     }
 
+    /// <summary>
+    /// Clase que gestiona el guardado y cargado de informacion del juego
+    /// </summary>
     [System.Serializable]
     public class SaveSystem : MonoBehaviour
     {

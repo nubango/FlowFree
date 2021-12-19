@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   packName: Hourglass Pack
   maps: {fileID: 4900000, guid: f2f05aa427fb87f409dfac178d4659d3, type: 3}
+  locked: 1

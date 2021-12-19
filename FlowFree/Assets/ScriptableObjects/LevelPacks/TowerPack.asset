@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   packName: Tower Pack
   maps: {fileID: 4900000, guid: 3e96d8f933e4cd344849a49131452847, type: 3}
+  locked: 1
