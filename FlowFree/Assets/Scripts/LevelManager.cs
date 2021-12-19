@@ -189,28 +189,30 @@ namespace Flow
             int i = 0;
 
             GameObject grid = Instantiate(gridPrefab);
-            grid.transform.parent = levelContent.transform;
+            grid.transform.SetParent(levelContent.transform, false);
             GameObject line = Instantiate(linePrefab);
-            line.transform.parent = grid.transform;
+            line.transform.SetParent(grid.transform, false);
 
             levelButtonPrefab.text.text = (i + 1).ToString();
             levelButtonPrefab.backgroud.color = levels[i].GetLevelColor();
             GameObject button = Instantiate(levelButtonPrefab.gameObject);
             button.GetComponent<LevelButton>().SetId(i);
-            button.transform.parent = line.transform;
+            button.transform.SetParent(line.transform, false);
 
             while (++i < levels.Length - 1)
             {
                 if (i % 30 == 0)
                 {
                     grid = Instantiate(gridPrefab);
-                    grid.transform.parent = levelContent.transform;
+                    grid.transform.SetParent(levelContent.transform, false);
+
                 }
 
                 if (i % 5 == 0)
                 {
                     line = Instantiate(linePrefab);
-                    line.transform.parent = grid.transform;
+                    line.transform.SetParent(grid.transform, false);
+
                 }
 
                 Logic.Level level = levels[i];
@@ -230,8 +232,8 @@ namespace Flow
                 else if (level.IsCompleted())
                     lb.SetActiveTick(true);
 
+                button.transform.SetParent(line.transform, false);
 
-                button.transform.parent = line.transform;
             }
         }
 
@@ -245,10 +247,10 @@ namespace Flow
             for (int i = 0; i < categories.Length; i++)
             {
                 GameObject category = Instantiate(categoryPrefab);
-                category.transform.parent = categoryContent.transform;
+                category.transform.SetParent(categoryContent.transform, false);
 
                 GameObject categoryHeader = Instantiate(categoryHeaderPrefab.gameObject);
-                categoryHeader.transform.parent = category.transform;
+                categoryHeader.transform.SetParent(category.transform, false);
                 CategoryHeader ch = categoryHeader.GetComponent<CategoryHeader>();
 
                 ch.headerText.text = categories[i].GetName();
@@ -267,13 +269,15 @@ namespace Flow
                 }
 
                 GameObject packageGroup = Instantiate(packagesGroupPrefab);
-                packageGroup.transform.parent = category.transform;
+                packageGroup.transform.SetParent(category.transform, false);
+
 
                 for (int j = 0; j < categories[i].GetPackages().Length; j++)
                 {
                     Logic.Package package = categories[i].GetPackages()[j];
                     GameObject packageObject = Instantiate(packagePrefab);
-                    packageObject.transform.parent = packageGroup.transform;
+                    packageObject.transform.SetParent(packageGroup.transform, false);
+
                     PackageButton pb = packageObject.GetComponent<PackageButton>();
 
                     pb.packName.text = "<color=#" + ColorUtility.ToHtmlStringRGBA(categories[i].GetColor()) + ">" + package.GetPackName() + "</color>";
