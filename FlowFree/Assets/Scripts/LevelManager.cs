@@ -5,9 +5,6 @@ using UnityEngine.UI;
 
 namespace Flow
 {
-    /*
-     TODO: el levelmanager tiene que ser un sigleton y estar en el dont destroy on load (y pasarle todos los atributos)
-     */
     public class LevelManager : MonoBehaviour
     {
         [Header("INTRO SCENE OBJECTS")]
@@ -102,6 +99,9 @@ namespace Flow
             DontDestroyOnLoad(gameObject);
         }
 
+        /// <summary>
+        /// Transfiere la informacion al instance
+        /// </summary>
         private void TransferInformation()
         {
             // CATEGORY SCENE OBJECTS
@@ -145,6 +145,10 @@ namespace Flow
         {
             Init();
         }
+
+        /// <summary>
+        /// Inicializa los atributos necesarios para la escena en la que esta
+        /// </summary>
         private void Init()
         {
             if (boardManager)
@@ -173,6 +177,9 @@ namespace Flow
             }
         }
 
+        /// <summary>
+        /// Crea el el tablero de niveles (escena de seleccion de niveles)
+        /// </summary>
         private void CreateLevelsGrid()
         {
             Logic.Package pack = GameManager.Instance().GetCurrentPackage();
@@ -228,6 +235,9 @@ namespace Flow
             }
         }
 
+        /// <summary>
+        /// Crea la lista de paquetes (escena de seleccion de paquetes)
+        /// </summary>
         private void CreateCategoryGrid()
         {
             Logic.Category[] categories = GameManager.Instance().GetCategories();
@@ -291,6 +301,11 @@ namespace Flow
                 UpdateUI();
         }
 
+        /// <summary>
+        /// Cambia cada letra a un color del texto pasado por parametro
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         private string ChangeColorTitle(string text)
         {
             string textAux = "";
@@ -306,21 +321,37 @@ namespace Flow
             return textAux;
         }
 
+        /// <summary>
+        /// Devuelve el tamaño en unidades de unity de la zona central, donde esta el tablero de juego
+        /// </summary>
+        /// <returns></returns>
         public float GetCenterUnitySize()
         {
             return (GetCenterPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
         }
 
+        /// <summary>
+        /// Devuelve la el tamaño en unidades de unity de la banda superior en la escena de juego
+        /// </summary>
+        /// <returns></returns>
         public float GetTopUnitySize()
         {
             return (GetTopPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
         }
 
+        /// <summary>
+        /// Devuelve la el tamaño en unidades de unity de la banda superior en la escena de juego
+        /// </summary>
+        /// <returns></returns>
         public float GetBottomUnitySize()
         {
             return (GetBottomPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
         }
 
+        /// <summary>
+        /// Devuelve el tamaño en pixeles de la zona central, donde esta el tablero de juego
+        /// </summary>
+        /// <returns></returns>
         public float GetCenterPixelSize()
         {
             float top = GetTopPixelSize();
@@ -329,6 +360,10 @@ namespace Flow
             return Screen.height - top - bottom;
         }
 
+        /// <summary>
+        /// Comprueba si el nivel pasado por parametro está pasado y activa las imagenes correspondientes
+        /// </summary>
+        /// <param name="l"></param>
         private void CheckLevelPassed(Logic.Level l)
         {
             if (l.IsCompleted())
@@ -350,6 +385,11 @@ namespace Flow
                 check.enabled = false;
             }
         }
+
+        /// <summary>
+        /// Devuelve la el tamaño en pixeles de la banda superior en la escena de juego
+        /// </summary>
+        /// <returns></returns>
         private float GetTopPixelSize()
         {
             Vector2 refResolution = canvasScaler.referenceResolution;
@@ -361,6 +401,10 @@ namespace Flow
             return topHeightPixelSize;
         }
 
+        /// <summary>
+        /// Devuelve la el tamaño en pixeles de la banda inferior en la escena de juego
+        /// </summary>
+        /// <returns></returns>
         private float GetBottomPixelSize()
         {
             Vector2 refResolution = canvasScaler.referenceResolution;
@@ -372,6 +416,9 @@ namespace Flow
             return topHeightPixelSize;
         }
 
+        /// <summary>
+        /// Actualiza la ui del juego
+        /// </summary>
         private void UpdateUI()
         {
             movementsText.text = "pasos: " + boardManager.GetNumMovements();
@@ -380,6 +427,10 @@ namespace Flow
             pipePercentageText.text = "tuberia " + boardManager.GetPercentage() + "%";
         }
 
+        /// <summary>
+        /// Inicializa la ui con los datos del nivel pasado por parametro
+        /// </summary>
+        /// <param name="level"></param>
         private void SetUIData(Logic.Level level)
         {
             levelText.text = "Nivel " + level.GetNumLevel();

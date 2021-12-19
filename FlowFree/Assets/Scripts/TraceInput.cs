@@ -308,11 +308,7 @@ namespace Flow
             Vector2 d = new Vector2(segment.x, segment.y);
             Utils.Coord direction = new Utils.Coord((int)d.x, (int)d.y);
 
-            //Debug.Log(direction.x + " " + direction.y);
-            //Debug.Log(_currentTilePress.x + " " + _currentTilePress.y);
-
             GoToDirection(direction);
-
         }
 
         /// <summary>
@@ -350,7 +346,6 @@ namespace Flow
             {
                 // animacion correspondiente
                 _isEndPath = false;
-                Debug.Log("final de camino");
                 // comprobamos si hemos ganado
                 int index = GetColorIndex(_currentTraceColor);
                 if (index != -1)

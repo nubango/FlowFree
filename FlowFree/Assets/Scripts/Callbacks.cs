@@ -13,7 +13,6 @@ namespace Flow
     {
         public void OnClickedOptions()
         {
-            Debug.Log("OPCIONES!");
         }
 
         public void OnClickedRewardedVideo()
