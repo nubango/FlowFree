@@ -183,10 +183,6 @@ namespace Flow
             return trace.enabled;
         }
 
-        /*
-        Para los muros hay que hacer un metodo en tile que le pasas una direccion (tileactual - anterior) 
-        para saber si en esa direccion hay un muro. Devuelve un bool, TRUE si hay muro y FALSE si no hay muro
-        */
         public bool IsWallInDirection(Utils.Coord direction)
         {
             bool isWall = false;

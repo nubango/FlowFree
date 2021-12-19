@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Clase que gestiona el boton del nivel en la escena levelsScene
+/// </summary>
+
+
 namespace Flow
 {
     public class LevelButton : MonoBehaviour

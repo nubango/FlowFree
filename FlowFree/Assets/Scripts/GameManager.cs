@@ -292,7 +292,6 @@ namespace Flow
 
         private void Start()
         {
-            // todo: cambiar de sitio este if
             if (SaveSystem.Instance().Load())
             {
                 GameSaving game = SaveSystem.Instance().GetGame();

@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace Flow
 {
-
     public class CategoryHeader : MonoBehaviour
     {
         public Image headerBackground;

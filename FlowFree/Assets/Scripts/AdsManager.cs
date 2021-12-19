@@ -85,7 +85,7 @@ namespace Flow
         public void OnUnityAdsReady(string placementId)
         {
             // If the ready Placement is rewarded, activate the button: 
-            if (placementId == rewardedId)
+            if (placementId == rewardedId && hintButton)
             {
                 hintButton.interactable = true;
             }
@@ -100,9 +100,6 @@ namespace Flow
             // Define conditional logic for each ad completion status:
             if (showResult == ShowResult.Finished)
             {
-                // Reward the user for watching the ad to completion.
-                Debug.Log("Video completed - Offer a reward to the player");
-
                 if (surfacingId == rewardedId)
                 {
                     GameManager.Instance().AddHint();
