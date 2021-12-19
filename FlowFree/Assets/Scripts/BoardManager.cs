@@ -44,10 +44,8 @@ namespace Flow
 
         private void Update()
         {
-            if (_screenWidth != Screen.width || _screenHeight != GameManager.Instance().GetCenterPixelSize())
-            {
+            if (_screenWidth != Screen.width || _screenHeight != (int)GameManager.Instance().GetCenterPixelSize())
                 MapRescaling();
-            }
 
             if (!_efectiveInvalidate)
                 _traceInput.ProcessInput();
@@ -111,7 +109,6 @@ namespace Flow
             float offsetLateral = 0.98f;
 
             float scaleFactorW, scaleFactorH;
-            float offsetX = 0, offsetY = 0;
 
             float centerUnitySize = GameManager.Instance().GetCenterUnitySize();
 
@@ -123,13 +120,15 @@ namespace Flow
             scaleFactorH = (unitsUnityByHeight) / _tiles.GetLength(0);
             _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
 
+
+
             // Calculos para centrar la camara
-            offsetX = ((-_tiles.GetLength(1) * _scaleFactor) / 2) + (0.5f * _scaleFactor);
-            offsetY = ((-_tiles.GetLength(0) * _scaleFactor) / 2) + (0.5f * _scaleFactor) +
-                (GameManager.Instance().GetTopUnitySize() / 2) - (GameManager.Instance().GetBottomUnitySize() / 2);
+            float camPosX = (_tiles.GetLength(1) * _scaleFactor / 2) - (0.5f * _scaleFactor);
+            float camPosY = (_tiles.GetLength(0) * _scaleFactor / 2) - (0.5f * _scaleFactor) -
+                (GameManager.Instance().GetTopUnitySize() / 2) + (GameManager.Instance().GetBottomUnitySize() / 2);
 
             // asignamos los valores calculados 
-            Camera.main.transform.position = new Vector3(-offsetX, offsetY, -10);
+            Camera.main.transform.position = new Vector3(camPosX, -camPosY, -10);
 
             // escalamos el tablero
             gameObject.transform.localScale = new Vector3(_scaleFactor, _scaleFactor, _scaleFactor);

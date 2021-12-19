@@ -43,6 +43,19 @@ namespace Flow
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
+
+        [Header("IU Objects Scaler")]
+        public CanvasScaler canvasScaler;
+
+        [Tooltip("Panel superior")]
+        public RectTransform upperPanel;
+
+        [Tooltip("Panle central")]
+        public RectTransform statsPanel;
+
+        [Tooltip("Panel inferior")]
+        public RectTransform lowerPanel;
+
         private int _hints;
 
         private bool _endLevel;
@@ -64,6 +77,9 @@ namespace Flow
                 _instance.hintText = hintText;
                 _instance.pipePercentageText = pipePercentageText;
                 _instance.endLevelMenu = endLevelMenu;
+                _instance.upperPanel = upperPanel;
+                _instance.statsPanel = statsPanel;
+                _instance.lowerPanel = lowerPanel;
 
                 _instance.SetUIData(GameManager.Instance().GetCurrentLevel());
                 _instance.DisableWinMenu();
@@ -81,12 +97,49 @@ namespace Flow
             DontDestroyOnLoad(gameObject);
         }
 
-        //debug
-        public void set(string s)
+        public float GetCenterUnitySize()
         {
-            _instance.recordText.text = s;
+            return (GetCenterPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
         }
-        //debug
+
+        public float GetTopUnitySize()
+        {
+            return (GetTopPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
+        }
+
+        public float GetBottomUnitySize()
+        {
+            return (GetBottomPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
+        }
+
+        public float GetCenterPixelSize()
+        {
+            float top = GetTopPixelSize();
+            float bottom = GetBottomPixelSize();
+            
+            return Screen.height - top - bottom;
+        }
+        private float GetTopPixelSize()
+        {
+            Vector2 refResolution = canvasScaler.referenceResolution;
+
+            // calculamos lo que mide en pixeles la zona de arriba de HUD
+            float topHeightPixelSize = (Screen.width * (upperPanel.sizeDelta.y + statsPanel.sizeDelta.y)) / refResolution.x;
+
+            // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
+            return topHeightPixelSize;
+        }
+
+        private float GetBottomPixelSize()
+        {
+            Vector2 refResolution = canvasScaler.referenceResolution;
+
+            // calculamos lo que mide en pixeles la zona de arriba de HUD
+            float topHeightPixelSize = (Screen.width * lowerPanel.sizeDelta.y) / refResolution.x;
+
+            // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
+            return topHeightPixelSize;
+        }
 
         private void Start()
         {

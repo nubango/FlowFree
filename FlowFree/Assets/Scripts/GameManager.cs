@@ -17,9 +17,6 @@ namespace Flow
         [Header("Current Skin")]
         public LevelPack.SkinPackage currentSkin;
 
-        [Header("Canvas Scaler")]
-        public CanvasScaler canvasScaler;
-
         public int topSize;
         public int bottomSize;
         #endregion
@@ -93,47 +90,23 @@ namespace Flow
         #region Dimension of canvas parts
         public float GetCenterUnitySize()
         {
-            return (GetCenterPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
+            return levelManager.GetCenterUnitySize();
         }
 
         public float GetTopUnitySize()
         {
-            return (GetTopPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
+            return levelManager.GetTopUnitySize();
         }
 
         public float GetBottomUnitySize()
         {
-            return (GetBottomPixelSize() * Camera.main.orthographicSize * 2) / Screen.height;
+            return levelManager.GetBottomUnitySize();
         }
 
-        public float GetTopPixelSize()
-        {
-            Vector2 refResolution = canvasScaler.referenceResolution;
-
-            // calculamos lo que mide en pixeles la zona de arriba de HUD
-            float topHeightPixelSize = (Screen.width * topSize) / refResolution.x;
-
-            // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
-            return topHeightPixelSize;
-        }
-
-        public float GetBottomPixelSize()
-        {
-            Vector2 refResolution = canvasScaler.referenceResolution;
-
-            // calculamos lo que mide en pixeles la zona de arriba de HUD
-            float topHeightPixelSize = (Screen.width * bottomSize) / refResolution.x;
-
-            // restamos el resultado anterior a la resolucion total para saber cuanto espacio nos queda
-            return topHeightPixelSize;
-        }
         public float GetCenterPixelSize()
         {
-            return Screen.height - GetTopPixelSize() - GetBottomPixelSize();
-        }
-        public int GetBottomSize()
-        {
-            return bottomSize;
+            float ret = levelManager.GetCenterPixelSize();
+            return ret;
         }
         #endregion
 
@@ -253,7 +226,6 @@ namespace Flow
             if (_instance != null)
             {
                 _instance._saveLevels = _saveLevels != null ? _saveLevels : _instance._saveLevels;
-                _instance.canvasScaler = canvasScaler;
                 _instance.InitCategories();
                 DestroyImmediate(gameObject);
                 return;
