@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   packName: Rectangle Pack
   maps: {fileID: 4900000, guid: d745273b6df79e9429abb14b28936205, type: 3}
+  locked: 1

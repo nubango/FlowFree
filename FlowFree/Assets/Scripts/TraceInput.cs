@@ -4,10 +4,6 @@ using UnityEngine;
 
 namespace Flow
 {
-    /*
-    ERRORES:
-    - el la ruptura de un path no se consolida hasta que no se suelta la pulsacion
-     */
     public class TraceInput
     {
         #region ATRIBUTTES
@@ -167,6 +163,12 @@ namespace Flow
             if (_countShowPaths == _paths.Count)
                 return;
 
+            while (_traceEnds[_countShowPaths])
+                _countShowPaths = (_countShowPaths + 1) % _paths.Count;
+
+            Utils.Coord p2 = _paths[_countShowPaths][0];
+            _traceStacks[GetColorIndex(_tiles[p2.y, p2.x].GetColor())].Push(p2);
+
             for (int i = 0; i < _paths[_countShowPaths].Count - 1; i++)
             {
                 Utils.Coord p = _paths[_countShowPaths][i];
@@ -180,15 +182,20 @@ namespace Flow
                     c = _tiles[lastPos.y, lastPos.x].GetColor();
                 }
 
-                PutTraceInTile(p, _paths[_countShowPaths][i + 1] - p, c);
+                Utils.Coord pos = _paths[_countShowPaths][i + 1];
+
+                if (GetColorIndex(_tiles[pos.y, pos.x].GetColor()) != -1 && !_tiles[pos.y, pos.x].IsEnd())
+                    BackToTileOtherColor(_paths[_countShowPaths][i + 1]);
+
+                PutTraceInTile(_paths[_countShowPaths][i + 1], p - _paths[_countShowPaths][i + 1], c);
             }
 
             _traceEnds[_countShowPaths] = true;
 
-            _countShowPaths++;
+            _countShowPaths = (_countShowPaths + 1) % _paths.Count;
             _movementsCount++;
 
-            if (_countShowPaths == _paths.Count)
+            if (AllColorsEnd())
                 _boardManager.Win();
         }
 

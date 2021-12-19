@@ -31,8 +31,8 @@ namespace Flow
 
         // Nivel actual
         private int _currentLevel = 3;
-        private int _currentPackage = 0;
-        private int _currentCategory = 0;
+        private int _currentPackage = 2;
+        private int _currentCategory = 2;
 
         // Array de niveles que guarda la informacion que se va a guardar
         private List<SaveLevel> _saveLevels;
