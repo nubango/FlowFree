@@ -234,8 +234,9 @@ namespace Flow
                 CategoryHeader ch = categoryHeader.GetComponent<CategoryHeader>();
 
                 ch.headerText.text = categories[i].GetName();
-                ch.headerBackground.color = categories[i].GetColor();
-                ch.headerLine.color = categories[i].GetColor();// + new Color(0, 100, 0);
+                ch.headerBackground.color = Color.Lerp(categories[i].GetColor(), Color.black, 0.25f);
+                ch.headerLine.color = categories[i].GetColor();
+
 
                 if (categories[i].IsPerfectCompleted())
                     ch.SetActiveStar(true);
@@ -257,7 +258,7 @@ namespace Flow
                     packageObject.transform.parent = packageGroup.transform;
                     PackageButton pb = packageObject.GetComponent<PackageButton>();
 
-                    pb.packName.text = package.GetPackName();
+                    pb.packName.text = "<color=#" + ColorUtility.ToHtmlStringRGBA(categories[i].GetColor()) + ">" + package.GetPackName() + "</color>";
                     pb.completedLevels.text = package.GetNumCompletedLevels() + " / " + package.GetTotalNumLevels();
 
                     if (package.IsPerfectCompleted())
