@@ -12,6 +12,14 @@ namespace Flow
         public Image tick;
         public Image star;
 
+        private int _package;
+        private int _category;
+
+        public void SetPackage(int pack) { _package = pack; }
+        public int GetPackage() { return _package; }
+        public void SetCategory(int cat) { _category = cat; }
+        public int GetCategory() { return _category; }
+
         public void SetActiveTick(bool b) { tick.enabled = b; }
         public void SetActiveStar(bool b) { star.enabled = b; }
     }

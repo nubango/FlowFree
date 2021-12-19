@@ -10,6 +10,9 @@ namespace Flow
      */
     public class LevelManager : MonoBehaviour
     {
+        [Header("INTRO SCENE OBJECTS")]
+        public Text titleIntroText;
+
         [Header("CATEGORY SCENE OBJECTS")]
         public Text titleCategoryText;
 
@@ -163,6 +166,11 @@ namespace Flow
                     _instance.titleCategoryText.text = ChangeColorTitle("niveles");
                 CreateCategoryGrid();
             }
+            else if (titleIntroText)
+            {
+                if (_instance.titleIntroText)
+                    _instance.titleIntroText.text = ChangeColorTitle("flow");
+            }
         }
 
         private void CreateLevelsGrid()
@@ -260,6 +268,9 @@ namespace Flow
 
                     pb.packName.text = "<color=#" + ColorUtility.ToHtmlStringRGBA(categories[i].GetColor()) + ">" + package.GetPackName() + "</color>";
                     pb.completedLevels.text = package.GetNumCompletedLevels() + " / " + package.GetTotalNumLevels();
+
+                    pb.SetCategory(i);
+                    pb.SetPackage(j);
 
                     if (package.IsPerfectCompleted())
                         pb.SetActiveStar(true);

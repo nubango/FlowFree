@@ -2828,7 +2828,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 0
-    m_Bottom: -178
+    m_Bottom: 0
   m_ChildAlignment: 1
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
@@ -6345,7 +6345,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6047484087390052804, guid: 9b4da96c23cada845bb1f1979cf4dae1, type: 3}
         m_TargetAssemblyTypeName: Flow.Callbacks, Assembly-CSharp
-        m_MethodName: OnClickedBack
+        m_MethodName: OnClickedGoToIntroScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

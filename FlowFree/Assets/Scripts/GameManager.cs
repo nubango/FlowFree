@@ -55,6 +55,11 @@ namespace Flow
         }
 
         #region Methods for loading scenes
+        public void LoadIntroScene()
+        {
+            SceneManager.LoadScene("IntroScene");
+
+        }
         public void LoadCategoryScene()
         {
             SceneManager.LoadScene("CategoryScene");
@@ -70,8 +75,9 @@ namespace Flow
             SceneManager.LoadScene("Game");
         }
 
-        public void LoadPackage(int package)
+        public void LoadPackage(int category, int package)
         {
+            _currentCategory = category;
             _currentPackage = package;
             SceneManager.LoadScene("LevelsScene");
         }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: IntroCategory
   m_EditorClassIdentifier: 
   categoryName: Intro
-  categoryColor: {r: 0, g: 0.5529412, b: 0, a: 0}
+  categoryColor: {r: 0, g: 0.5529412, b: 0, a: 1}
   levelsPackage:
   - {fileID: 11400000, guid: ce10d63d9a95ea44e829fb725843c2dd, type: 2}
   - {fileID: 11400000, guid: 827f6dca96beb1649a36e3a68bcd796a, type: 2}
