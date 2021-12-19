@@ -120,8 +120,6 @@ namespace Flow
             scaleFactorH = (unitsUnityByHeight) / _tiles.GetLength(0);
             _scaleFactor = Mathf.Min(scaleFactorW, scaleFactorH);
 
-
-
             // Calculos para centrar la camara
             float camPosX = (_tiles.GetLength(1) * _scaleFactor / 2) - (0.5f * _scaleFactor);
             float camPosY = (_tiles.GetLength(0) * _scaleFactor / 2) - (0.5f * _scaleFactor) -

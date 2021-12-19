@@ -26,6 +26,9 @@ namespace Flow.Logic
         public List<Utils.Wall> GetMuros() { return _muros; }
         public List<List<Utils.Coord>> GetTuberias() { return _tuberias; }
 
+        public bool IsPassed() { return _record >= _flujos; }
+        public bool IsPerfectPassed() { return _record == _flujos; }
+
         public void SetAncho(int ancho) { _ancho = ancho; }
         public void SetAlto(int alto) { _alto = alto; }
         public void SetNumLevel(int numLevel) { _numLevel = numLevel; }

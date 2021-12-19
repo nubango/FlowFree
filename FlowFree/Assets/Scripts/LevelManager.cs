@@ -43,6 +43,8 @@ namespace Flow
         [Tooltip("Menu que sale al pasarte el nivel")]
         public GameObject endLevelMenu;
 
+        public Image star;
+        public Image check;
 
         [Header("IU Objects Scaler")]
         public CanvasScaler canvasScaler;
@@ -77,13 +79,18 @@ namespace Flow
                 _instance.hintText = hintText;
                 _instance.pipePercentageText = pipePercentageText;
                 _instance.endLevelMenu = endLevelMenu;
+                _instance.star = star;
+                _instance.check = check;
                 _instance.upperPanel = upperPanel;
                 _instance.statsPanel = statsPanel;
                 _instance.lowerPanel = lowerPanel;
 
-                _instance.SetUIData(GameManager.Instance().GetCurrentLevel());
+                Flow.Logic.Level l = GameManager.Instance().GetCurrentLevel();
+                _instance.SetUIData(l);
                 _instance.DisableWinMenu();
-                _instance.boardManager.SetMap(GameManager.Instance().GetCurrentLevel());
+                _instance.boardManager.SetMap(l);
+
+                CheckLevelPassed(l);
 
                 DestroyImmediate(gameObject);
                 return;
@@ -116,8 +123,30 @@ namespace Flow
         {
             float top = GetTopPixelSize();
             float bottom = GetBottomPixelSize();
-            
+
             return Screen.height - top - bottom;
+        }
+
+        private void CheckLevelPassed(Logic.Level l)
+        {
+            if (l.IsPassed())
+            {
+                if (l.IsPerfectPassed())
+                {
+                    star.enabled = true;
+                    check.enabled = false;
+                }
+                else
+                {
+                    star.enabled = false;
+                    check.enabled = true;
+                }
+            }
+            else
+            {
+                star.enabled = false;
+                check.enabled = false;
+            }
         }
         private float GetTopPixelSize()
         {
@@ -186,6 +215,7 @@ namespace Flow
             SetUIData(level);
             // cambia el tablero con el siguiente nivel 
             boardManager.SetMap(level);
+            CheckLevelPassed(level);
         }
 
         /// <summary>
@@ -202,6 +232,7 @@ namespace Flow
             SetUIData(level);
             // cambia el tablero con el siguiente nivel 
             boardManager.SetMap(level);
+            CheckLevelPassed(level);
         }
 
         /// <summary>
