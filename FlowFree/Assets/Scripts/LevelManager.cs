@@ -289,7 +289,7 @@ namespace Flow
         private void SetUIData(Logic.Level level)
         {
             levelText.text = "Nivel " + level.GetNumLevel();
-            levelText.color = GameManager.Instance().GetLevelColor();
+            levelText.color = level.GetLevelColor();
             dimensionText.text = level.GetAlto() + "x" + level.GetAncho();
             recordText.text = "record: " + level.GetRecord();
         }

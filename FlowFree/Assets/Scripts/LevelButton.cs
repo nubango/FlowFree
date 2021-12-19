@@ -14,7 +14,5 @@ namespace Flow
 
         public void SetId(int id) { _id = id; }
         public int GetId() { return _id; }
-
-        public Color GetColor() { return image.color; }
     }
 }

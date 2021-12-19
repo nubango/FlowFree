@@ -17,7 +17,7 @@ namespace Flow
                 package[i] = ParsePack(categoryPackage.levelsPackage[i]);
             }
 
-            category.SetCategoriColor(categoryPackage.categoryColor);
+            category.SetCategoryColor(categoryPackage.categoryColor);
             category.SetPackage(package);
 
             return category;
@@ -31,6 +31,7 @@ namespace Flow
             for (int i = 0; i < textLevels.Length - 1; i++)
             {
                 levels[i] = ParseLevel(textLevels[i]);
+                levels[i].SetLevelColor(GameManager.Instance().currentSkin.colores[((i / 30) + 1) % 5]);
             }
 
             package.SetMaps(levels);

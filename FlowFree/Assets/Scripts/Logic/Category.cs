@@ -11,7 +11,7 @@ namespace Flow.Logic
         [Tooltip("Paquetes de la categoria")]
         private Package[] _packages;
 
-        public void SetCategoriColor(Color c) { _categoryColor = c; }
+        public void SetCategoryColor(Color c) { _categoryColor = c; }
         public void SetPackage(Package[] packages) { _packages = packages; }
 
         public Package[] GetPackages() { return _packages; }
