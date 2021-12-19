@@ -192,6 +192,12 @@ namespace Flow
 
             _traceEnds[_countShowPaths] = true;
 
+            Utils.Coord ini = _paths[_countShowPaths][0];
+            Utils.Coord fin = _paths[_countShowPaths][_paths[_countShowPaths].Count - 1];
+
+            _tiles[ini.y, ini.x].SetTick(true);
+            _tiles[fin.y, fin.x].SetTick(true);
+
             _countShowPaths = (_countShowPaths + 1) % _paths.Count;
             _movementsCount++;
 
