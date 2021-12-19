@@ -18,6 +18,8 @@ namespace Flow
 #elif UNITY_ANDROID
         private string gameId = "4173829";
         //private string gameId = "4455937";
+#else
+        private string gameId = "";
 #endif
         [Tooltip("Atajo para deshabilitar anuncios")]
         public bool disableAds;
